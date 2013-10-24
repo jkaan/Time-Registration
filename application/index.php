@@ -1,6 +1,7 @@
 <?php
 
-require '../vendor/autoload.php';
+require('../vendor/autoload.php');
+require('classes/database.php');
 
 $app = new \Slim\Slim(array(
 	'templates.path' => '../templates',
@@ -39,14 +40,23 @@ function slcPage() {
 }
 
 function loginUser() {
-	$db = new PDO('mysql:dbname=sql420872;host=sql4.freemysqlhosting.net', 'sql420872', 'zG5*xE3%');
-	$statement = $db->prepare('SELECT * FROM User WHERE user_Name = :username AND user_Pass = :password');
+	$db = Database::getInstance();
+	$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
 	$statement->bindParam('username', $_POST['username']);
 	$statement->bindParam('password', $_POST['password']);
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	if($results > 0) {
-		echo $results['user_Id'];
+		switch($results['rol_Naam']) {
+			case 'student':
+			studentPage();
+			break;
+			case 'docent':
+			docentPage();
+			break;
+			case 'slc':
+			slcPage();
+		}
 	}
 }
 

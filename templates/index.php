@@ -9,7 +9,7 @@
 <body>
 	<div data-role="header"><h1>Uren Registratie</h1></div>
 
-	<div data-role="content" id="content"></div>
+	<div data-role="content" id="content"><?php echo $page; ?></div>
 
 </body>
 </html>
