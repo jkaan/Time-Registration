@@ -2,20 +2,19 @@
 
 require('../vendor/autoload.php');
 require('classes/database.php');
+require('classes/application.php');
+
+$application = new Application();
+
+$routes = $application->getRoutes();
 
 $app = new \Slim\Slim(array(
 	'templates.path' => '../templates',
 	));
 
-
-$app->get('/', 'startPage');
-$app->get('/student', 'studentPage');
-$app->get('/docent', 'docentPage');
-$app->get('/slc', 'slcPage');
-$app->get('/login', 'loginPage');
-$app->post('/login', 'loginUser');
-$app->get('/uren', 'urenPage');
-$app->post('/uren', 'addStudielast');
+foreach($routes as $route) {
+	$app->$route['method']($route['URL'], $route['action']);
+}
 
 function startPage() {
 	$app = \Slim\Slim::getInstance();
@@ -48,7 +47,7 @@ function urenPage() {
 
 function addStudielast() {
 	$db = Database::getInstance();
-	
+
 	$sql = "INSERT INTO Uren (onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (0, :datum, :studielast, 2)";
 	$statement = $db->prepare($sql);
 	$statement->bindParam('datum', $_POST['date']);

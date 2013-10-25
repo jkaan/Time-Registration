@@ -33,12 +33,27 @@
 
 		<div data-role="collapsible">
 			<h3>Gebruikers Beheer</h3>
-			<p>I'm the collapsible set content for section 2.</p>
-		</div>
 
-		<div data-role="collapsible">
-			<h3>Section 2</h3>
-			<p>I'm the collapsible set content for section 2.</p>
+			<div data-role="collapsible">
+				<h3>Gebruiker toevoegen</h3>
+				<p>I'm the collapsible set content for section 1.</p>
+			</div>
+
+			<div data-role="collapsible">
+				<h3>Gebruiker wijzigen</h3>
+				<p>I'm the collapsible set content for section 2.</p>
+			</div>
+
+			<div data-role="collapsible">
+				<h3>Gebruiker verwijderen</h3>
+				<p>I'm the collapsible set content for section 2.</p>
+			</div>
+
+			<div data-role="collapsible">
+				<h3>Gebruiker koppelen aan cursus</h3>
+				<p>I'm the collapsible set content for section 2.</p>
+			</div>
+
 		</div>
 
 	</div>
