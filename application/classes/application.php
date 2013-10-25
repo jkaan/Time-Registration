@@ -5,9 +5,6 @@ class Application {
 	private $routes;
 
 	public function __construct() {
-		$slim = new \Slim\Slim(array(
-			'templates.path' => '../templates',
-			));
 		$this->setRoutes();
 	}
 
@@ -59,4 +56,5 @@ class Application {
 	public function getRoutes() {
 		return $this->routes;
 	}
+	
 }
