@@ -68,15 +68,30 @@ function loginUser() {
 	if($results > 0) {
 		switch($results['rol_Naam']) {
 			case 'student':
+			$_POST['userId'] = $results['user_Id'];
+			$_POST['userNaam'] = $results['user_Name'];
+			$_POST['rolNaam'] = $results['rol_Naam'];
 			studentPage();
 			break;
 			case 'docent':
+			$_POST['userId'] = $results['user_Id'];
+			$_POST['userNaam'] = $results['user_Name'];
+			$_POST['rolNaam'] = $results['rol_Naam'];
 			docentPage();
 			break;
 			case 'slc':
+			$_POST['userId'] = $results['user_Id'];
+			$_POST['userNaam'] = $results['user_Name'];
+			$_POST['rolNaam'] = $results['rol_Naam'];
 			slcPage();
 		}
 	}
+}
+
+function logoutUser() {
+	unset($_POST['userId']);
+	unset($_POST['userNaam']);
+	unset($_POST['rolNaam']);
 }
 
 $app->run();
