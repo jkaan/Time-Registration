@@ -45,6 +45,7 @@ function docentPage($id) {
 
 function slcPage($id) {
 	$app = \Slim\Slim::getInstance();
+<<<<<<< HEAD
 	$twigRenderer = new TwigRenderer();
 	echo $twigRenderer->renderTemplate('slc.twig');
 }
@@ -56,6 +57,16 @@ function urenPage($id) {
 	}
 	else
 		$app->render('noaccess.php', array('page' => 'Geen toegang'));
+=======
+	if(isLogged($id)){
+		$twigRenderer = new TwigRenderer();
+		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
+	} else {
+		$app->render('noaccess.php', array('page' => 'Geen toegang'));
+		$twigRenderer = new TwigRenderer();
+		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
+	}
+>>>>>>> ed6fdefc3c148bc33cb4c712c28bca6bcf4a711e
 }
 
 
@@ -133,19 +144,22 @@ function loginUser() {
 	if($results > 0) {
 		switch($results['rol_Naam']) {
 			case 'student':
-				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/student/' . $results['user_Id']);
+			updateUserOnlineTime($results['user_Id']);
+			$app = \Slim\Slim::getInstance();
+			$app->redirect(BASE . '/student/' . $results['user_Id']);
 			break;
 			case 'docent':
-				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/docent/' . $results['user_Id']);
+			// nothing happens here
 			break;
 			case 'slc':
+<<<<<<< HEAD
 				updateUserOnlineTime($results['user_Id']);
 				$app = \Slim\Slim::getInstance();
 				$app->redirect(BASE . '/slc/' . $results['user_Id']);
+=======
+			$app = \Slim\Slim::getInstance();
+			$app->redirect(BASE . '/slc/' . $results['user_Id']);
+>>>>>>> ed6fdefc3c148bc33cb4c712c28bca6bcf4a711e
 		}
 	}
 }
