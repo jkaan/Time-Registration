@@ -47,7 +47,7 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/student/:id/uren/',
+				'URL' => '/student/:id/uren',
 				'action' => 'urenPage',
 				),
 			array(
