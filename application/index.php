@@ -43,32 +43,22 @@ function docentPage($id) {
 		$app->render('noaccess.php', array('page' => 'Geen toegang'));
 }
 
-function urenPage($id) {
-	$app = \Slim\Slim::getInstance();
-<<<<<<< HEAD
-	if(isLogged($id)){
-		$app->render('uren.php', array('page' => 'Uren Page'));
-	}
-	else
-		$app->render('noaccess.php', array('page' => 'Geen toegang'));
-	$twigRenderer = new TwigRenderer();
-	echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
-
-	//isLogged($id);
-	//$app->render('uren.php', array('page' => 'Uren Page'));
-
-=======
-	$twigRenderer = new TwigRenderer();
-	echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
-	isLogged($id);
->>>>>>> 7ce25faf07155b464ca4729a8a3db2d6ad60e8f7
-}
-
-function slcPage() {
+function slcPage($id) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	echo $twigRenderer->renderTemplate('slc.twig');
 }
+
+function urenPage($id) {
+	$twigRenderer = new TwigRenderer();
+	if(isLogged($id)){
+		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
+	}
+	else
+		$app->render('noaccess.php', array('page' => 'Geen toegang'));
+}
+
+
 
 function getUserDetails($id) {
 	$db = Database::getInstance();
@@ -153,7 +143,9 @@ function loginUser() {
 				$app->redirect(BASE . '/docent/' . $results['user_Id']);
 			break;
 			case 'slc':
-			slcPage();
+				updateUserOnlineTime($results['user_Id']);
+				$app = \Slim\Slim::getInstance();
+				$app->redirect(BASE . '/slc/' . $results['user_Id']);
 		}
 	}
 }

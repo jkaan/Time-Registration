@@ -27,7 +27,7 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/slc',
+				'URL' => '/slc/:id',
 				'action' => 'slcPage',
 				),
 			array(
