@@ -45,6 +45,7 @@ function docentPage($id) {
 
 function urenPage($id) {
 	$app = \Slim\Slim::getInstance();
+<<<<<<< HEAD
 	if(isLogged($id)){
 		$app->render('uren.php', array('page' => 'Uren Page'));
 	}
@@ -56,6 +57,11 @@ function urenPage($id) {
 	//isLogged($id);
 	//$app->render('uren.php', array('page' => 'Uren Page'));
 
+=======
+	$twigRenderer = new TwigRenderer();
+	echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
+	isLogged($id);
+>>>>>>> 7ce25faf07155b464ca4729a8a3db2d6ad60e8f7
 }
 
 function slcPage() {
