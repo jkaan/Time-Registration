@@ -45,9 +45,8 @@ function docentPage($id) {
 
 function slcPage($id) {
 	$app = \Slim\Slim::getInstance();
-<<<<<<< HEAD
 	$twigRenderer = new TwigRenderer();
-	echo $twigRenderer->renderTemplate('slc.twig');
+	echo $twigRenderer->renderTemplate('slc.twig', array('id' => $id));
 }
 
 function urenPage($id) {
@@ -57,7 +56,6 @@ function urenPage($id) {
 	}
 	else
 		$app->render('noaccess.php', array('page' => 'Geen toegang'));
-=======
 	if(isLogged($id)){
 		$twigRenderer = new TwigRenderer();
 		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
@@ -66,7 +64,6 @@ function urenPage($id) {
 		$twigRenderer = new TwigRenderer();
 		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
 	}
->>>>>>> ed6fdefc3c148bc33cb4c712c28bca6bcf4a711e
 }
 
 
@@ -152,14 +149,11 @@ function loginUser() {
 			// nothing happens here
 			break;
 			case 'slc':
-<<<<<<< HEAD
 				updateUserOnlineTime($results['user_Id']);
 				$app = \Slim\Slim::getInstance();
 				$app->redirect(BASE . '/slc/' . $results['user_Id']);
-=======
 			$app = \Slim\Slim::getInstance();
 			$app->redirect(BASE . '/slc/' . $results['user_Id']);
->>>>>>> ed6fdefc3c148bc33cb4c712c28bca6bcf4a711e
 		}
 	}
 }
