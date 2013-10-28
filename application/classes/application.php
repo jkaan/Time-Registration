@@ -17,7 +17,7 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/student',
+				'URL' => '/student/:id',
 				'action' => 'studentPage',
 				),
 			array(
@@ -46,8 +46,13 @@ class Application {
 				'action' => 'urenPage',
 				),
 			array(
+				'method' => 'get',
+				'URL' => '/student/uren/:id',
+				'action' => 'urenPage',
+				),
+			array(
 				'method' => 'post',
-				'URL' => '/uren',
+				'URL' => '/student/uren/:id',
 				'action' => 'addStudieLast',
 				)
 			);
