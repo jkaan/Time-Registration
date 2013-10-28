@@ -3,6 +3,7 @@
 require('../vendor/autoload.php');
 require('classes/database.php');
 require('classes/application.php');
+require('config.php');
 
 $app = new \Slim\Slim(array(
 	'templates.path' => '../templates',
@@ -11,6 +12,7 @@ $app = new \Slim\Slim(array(
 $application = new Application();
 
 $routes = $application->getRoutes();
+
 
 foreach($routes as $route) {
 	$app->$route['method']($route['URL'], $route['action']);
@@ -25,9 +27,10 @@ function loginPage() {
 	$app = \Slim\Slim::getInstance();
 	$app->render('login.php');
 }
-function studentPage() {
+function studentPage($id) {
 	$app = \Slim\Slim::getInstance();
-	$app->render('index.php', array('page' => 'Student Page'));
+	global $base;
+	$app->render('index.php', array('page' => 'Student Page', 'id' => $id, 'base' => $base));
 }
 
 function docentPage() {
@@ -35,7 +38,7 @@ function docentPage() {
 	$app->render('index.php', array('page' => 'Docent Page'));
 }
 
-function urenPage() {
+function urenPage($id) {
 	$app = \Slim\Slim::getInstance();
 	$app->render('uren.php', array('page' => 'Uren Page'));
 }
@@ -45,37 +48,43 @@ function slcPage() {
 	$app->render('slc.php');
 }
 
-function addStudielast() {
+function addStudielast($id) {
 	$db = Database::getInstance();
 
-	$sql = "INSERT INTO Uren (onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (0, :datum, :studielast, 2)";
+	$sql = "INSERT INTO Uren (onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (0, :datum, :studielast, :user_id)";
 	$statement = $db->prepare($sql);
 	$statement->bindParam('datum', $_POST['date']);
 	$statement->bindParam('studielast', $_POST['studielast']);
+	$statement->bindParam('user_id', $id);
 	$statement->execute();
 	$db = null;
 }
 
 function loginUser() {
 	$db = Database::getInstance();
-
+	global $base;
 	$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
 	$statement->bindParam('username', $_POST['username']);
 	$statement->bindParam('password', $_POST['password']);
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	if($results > 0) {
-		$_POST['userId'] = $results['user_Id'];
-		$_POST['userNaam'] = $results['user_Name'];
-		$_POST['rolNaam'] = $results['rol_Naam'];
 		switch($results['rol_Naam']) {
 			case 'student':
-			studentPage();
+			$app = \Slim\Slim::getInstance();
+			$app->redirect($base.'/student/'.$results['user_Id']);
+			//studentPage();
 			break;
 			case 'docent':
+			$_POST['userId'] = $results['user_Id'];
+			$_POST['userNaam'] = $results['user_Name'];
+			$_POST['rolNaam'] = $results['rol_Naam'];
 			docentPage();
 			break;
 			case 'slc':
+			$_POST['userId'] = $results['user_Id'];
+			$_POST['userNaam'] = $results['user_Name'];
+			$_POST['rolNaam'] = $results['rol_Naam'];
 			slcPage();
 		}
 	}
