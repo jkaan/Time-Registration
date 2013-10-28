@@ -22,8 +22,8 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/docent/:id',
-				'action' => 'docentPage',
+				'URL' => '/slc/:id',
+				'action' => 'slcPage',
 				),
 			array(
 				'method' => 'get',
