@@ -40,13 +40,9 @@ function docentPage() {
 
 function urenPage($id) {
 	$app = \Slim\Slim::getInstance();
-<<<<<<< HEAD
 	$twigRenderer = new TwigRenderer();
 	echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
-=======
 	isLogged($id);
-	$app->render('uren.php', array('page' => 'Uren Page'));
->>>>>>> b97536811e4c00a20266bd8739b32172f3cae5e4
 }
 
 function slcPage() {
