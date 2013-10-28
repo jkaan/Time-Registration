@@ -47,12 +47,12 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/student/uren/:id',
+				'URL' => '/student/:id/uren/',
 				'action' => 'urenPage',
 				),
 			array(
 				'method' => 'post',
-				'URL' => '/student/uren/:id',
+				'URL' => '/student/:id/uren',
 				'action' => 'addStudieLast',
 				)
 			);

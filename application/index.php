@@ -3,7 +3,7 @@
 require('../vendor/autoload.php');
 require('classes/database.php');
 require('classes/application.php');
-require('config.php');
+require_once('config.php');
 
 $app = new \Slim\Slim(array(
 	'templates.path' => '../templates',
@@ -12,7 +12,6 @@ $app = new \Slim\Slim(array(
 $application = new Application();
 
 $routes = $application->getRoutes();
-
 
 foreach($routes as $route) {
 	$app->$route['method']($route['URL'], $route['action']);
@@ -29,8 +28,7 @@ function loginPage() {
 }
 function studentPage($id) {
 	$app = \Slim\Slim::getInstance();
-	global $base;
-	$app->render('index.php', array('page' => 'Student Page', 'id' => $id, 'base' => $base));
+	$app->render('index.php', array('page' => 'Student Page', 'id' => $id));
 }
 
 function docentPage() {
@@ -52,7 +50,7 @@ function addStudielast($id) {
 	$db = Database::getInstance();
 
 	$sql = "INSERT INTO Uren (onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (0, :datum, :studielast, :user_id)";
-	$statement = $db->prepare($sql);
+	$statement = $db->prepare($sql);	
 	$statement->bindParam('datum', $_POST['date']);
 	$statement->bindParam('studielast', $_POST['studielast']);
 	$statement->bindParam('user_id', $id);
@@ -62,7 +60,6 @@ function addStudielast($id) {
 
 function loginUser() {
 	$db = Database::getInstance();
-	global $base;
 	$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
 	$statement->bindParam('username', $_POST['username']);
 	$statement->bindParam('password', $_POST['password']);
@@ -72,19 +69,12 @@ function loginUser() {
 		switch($results['rol_Naam']) {
 			case 'student':
 			$app = \Slim\Slim::getInstance();
-			$app->redirect($base.'/student/'.$results['user_Id']);
-			//studentPage();
+			$app->redirect(BASE . '/student/' . $results['user_Id']);
 			break;
 			case 'docent':
-			$_POST['userId'] = $results['user_Id'];
-			$_POST['userNaam'] = $results['user_Name'];
-			$_POST['rolNaam'] = $results['rol_Naam'];
 			docentPage();
 			break;
 			case 'slc':
-			$_POST['userId'] = $results['user_Id'];
-			$_POST['userNaam'] = $results['user_Name'];
-			$_POST['rolNaam'] = $results['rol_Naam'];
 			slcPage();
 		}
 	}

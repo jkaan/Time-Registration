@@ -7,5 +7,5 @@ RewriteEngine On
 # RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteBase /sop/urenregistratie/application/
+RewriteBase /urenregistratie/application/
 RewriteRule ^ index.php [QSA,L]

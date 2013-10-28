@@ -10,7 +10,7 @@
 	
 	<div data-role="header"><h1>Login Page</h1></div>
 
-	<form data-ajax="false" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+	<form data-ajax="false" action="<?php echo BASE . '/login' ?>" method="POST">
 		<input type="text" name="username" id="username" placeholder="Username" />
 		<input type="password" name="password" id="password" placeholder="Password" />
 		<input type="submit" value="Login" data-theme="b">
