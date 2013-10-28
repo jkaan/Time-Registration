@@ -1,13 +1,12 @@
 <?php
 
 require('../vendor/autoload.php');
-require('classes/database.php');
-require('classes/application.php');
+require('classes/database.class.php');
+require('classes/application.class.php');
+require('classes/TwigRenderer.class.php');
 require_once('config.php');
 
-$app = new \Slim\Slim(array(
-	'templates.path' => '../templates',
-	));
+$app = new \Slim\Slim();
 
 $application = new Application();
 
@@ -19,31 +18,36 @@ foreach($routes as $route) {
 
 function startPage() {
 	$app = \Slim\Slim::getInstance();
-	$app->render('index.php', array('page' => 'Start Page'));
+	$twigRenderer = new TwigRenderer();
+	echo $twigRenderer->renderTemplate('index.twig', array('page' => 'Start Page'));
 }
 
 function loginPage() {
 	$app = \Slim\Slim::getInstance();
-	$app->render('login.php');
+	$twigRenderer = new TwigRenderer();
+	echo $twigRenderer->renderTemplate('login.twig', array('page' => 'Start Page'));
 }
 function studentPage($id) {
 	$app = \Slim\Slim::getInstance();
-	$app->render('index.php', array('page' => 'Student Page', 'id' => $id));
+	$twigRenderer = new TwigRenderer();
+	echo $twigRenderer->renderTemplate('student.twig', array('id' => $id));
 }
 
 function docentPage() {
 	$app = \Slim\Slim::getInstance();
-	$app->render('index.php', array('page' => 'Docent Page'));
+	// $app->render('index.php', array('page' => 'Docent Page'));
 }
 
 function urenPage($id) {
 	$app = \Slim\Slim::getInstance();
-	$app->render('uren.php', array('page' => 'Uren Page'));
+	$twigRenderer = new TwigRenderer();
+	echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
 }
 
 function slcPage() {
 	$app = \Slim\Slim::getInstance();
-	$app->render('slc.php');
+	$twigRenderer = new TwigRenderer();
+	echo $twigRenderer->renderTemplate('slc.twig');
 }
 
 function addStudielast($id) {
@@ -78,12 +82,6 @@ function loginUser() {
 			slcPage();
 		}
 	}
-}
-
-function logoutUser() {
-	unset($_POST['userId']);
-	unset($_POST['userNaam']);
-	unset($_POST['rolNaam']);
 }
 
 $app->run();

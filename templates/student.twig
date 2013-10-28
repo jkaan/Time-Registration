@@ -1,0 +1,13 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header"><h1>Student Page</h1></div>
+
+{% endblock header %}
+
+{% block content %}
+
+<a href="{{ constant('BASE') }}/student/{{ id }}/uren" data-role="button">Link button</a>
+
+{% endblock content %}
