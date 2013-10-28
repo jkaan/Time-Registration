@@ -57,12 +57,12 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/docent/:id/course/add',
+				'URL' => '/slc/:id/course/add',
 				'action' => 'addCourse',
 				),
 			array(
 				'method' => 'post',
-				'URL' => '/docent/:id/course/add',
+				'URL' => '/slc/:id/course/add',
 				'action' => 'addCourse',
 				)
 			);
