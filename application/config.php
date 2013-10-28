@@ -1,6 +1,4 @@
 <?php
-/* CONFIG FILE */
-
-$base = "http://localhost/sop/urenregistratie/application";
-
-?>
+if(!defined('BASE')) {
+	DEFINE('BASE', 'http://localhost/urenregistratie/application');
+}
