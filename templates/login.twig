@@ -1,0 +1,17 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header"><h1>Uren</h1></div>
+
+{% endblock header %}
+
+{% block content %}
+
+<form data-ajax="false" action="{{ constant('BASE') }}/login" method="POST">
+	<input type="text" name="username" id="username" placeholder="Username" />
+	<input type="password" name="password" id="password" placeholder="Password" />
+	<input type="submit" value="Login" data-theme="b">
+</form>
+
+{% endblock content %}
