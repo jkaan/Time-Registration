@@ -40,12 +40,28 @@ function docentPage() {
 
 function urenPage($id) {
 	$app = \Slim\Slim::getInstance();
+	isLogged($id);
 	$app->render('uren.php', array('page' => 'Uren Page'));
 }
 
 function slcPage() {
 	$app = \Slim\Slim::getInstance();
 	$app->render('slc.php');
+}
+
+function isLogged($id){
+	$logged = false;
+	$db = Database::getInstance();
+	$sql = "SELECT user_Online FROM User WHERE user_Id = ".$id;
+	$statement = $db->prepare($sql);
+	$statement->execute();
+	$results = $statement->fetch(PDO::FETCH_ASSOC);
+	$time = strtotime($results['user_Online']) + 3600; // Add 1 hour
+	if($time > strtotime(date('y-m-d G:i:s')))
+	{
+		$logged = true;
+	}
+	return $logged;
 }
 
 function addStudielast($id) {
@@ -72,8 +88,9 @@ function loginUser() {
 		switch($results['rol_Naam']) {
 			case 'student':
 			$app = \Slim\Slim::getInstance();
+			$statement = $db->prepare("UPDATE User SET user_Online = NOW() WHERE user_Id=".$results['user_Id']);
+			$statement->execute();
 			$app->redirect($base.'/student/'.$results['user_Id']);
-			//studentPage();
 			break;
 			case 'docent':
 			$_POST['userId'] = $results['user_Id'];

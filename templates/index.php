@@ -21,6 +21,7 @@
 	<div data-role="content" id="content">
 		<?php echo $page; ?>		
 	</div>
-	<a href="<?php echo $base; ?>/student/uren/<?php echo $id; ?>" data-role="button">Link button</a>
+
+	<a href="<?php echo $base; ?>/student/<?php echo $id; ?>/uren" data-role="button">Uren invullen</a>
 </body>
 </html>
