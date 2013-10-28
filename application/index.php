@@ -31,15 +31,23 @@ function studentPage($id) {
 	$app->render('index.php', array('page' => 'Student Page', 'id' => $id));
 }
 
-function docentPage() {
+function docentPage($id) {
 	$app = \Slim\Slim::getInstance();
-	$app->render('index.php', array('page' => 'Docent Page'));
+	$result = getUserDetails($id);
+	if((isLogged($id)) && ($result['Rol_rol_Id'] == 2)){
+		$app->render('index.php', array('page' => 'Docent Page', 'id' => $id, 'rol_id' => $result['Rol_rol_Id']));
+	}	
+	else
+		$app->render('noaccess.php', array('page' => 'Geen toegang'));
 }
 
 function urenPage($id) {
 	$app = \Slim\Slim::getInstance();
-	isLogged($id);
-	$app->render('uren.php', array('page' => 'Uren Page'));
+	if(isLogged($id)){
+		$app->render('uren.php', array('page' => 'Uren Page'));
+	}
+	else
+		$app->render('noaccess.php', array('page' => 'Geen toegang'));
 }
 
 function slcPage() {
@@ -47,6 +55,16 @@ function slcPage() {
 	$app->render('slc.php');
 }
 
+function getUserDetails($id) {
+	$db = Database::getInstance();
+	$statement = $db->prepare("SELECT user_Name, user_Code, user_email, user_Klas, Rol_rol_Id FROM User, Rol WHERE user_Id = ".$id);
+	$statement->execute();
+	return $results = $statement->fetch(PDO::FETCH_ASSOC);
+}
+/*
+Controleert of de gebruiker ingelogd.
+De gebruiker is voor een bepaalde tijd ingelogd (gedefinieerd in de config.php).
+*/
 function isLogged($id){
 	$logged = false;
 	$db = Database::getInstance();
@@ -54,7 +72,7 @@ function isLogged($id){
 	$statement = $db->prepare($sql);
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
-	$time = strtotime($results['user_Online']) + 3600; // Add 1 hour
+	$time = strtotime($results['user_Online']) + AUTH_TIME; // Add 1 hour
 	if($time > strtotime(date('y-m-d G:i:s')))
 	{
 		$logged = true;
@@ -74,6 +92,32 @@ function addStudielast($id) {
 	$db = null;
 }
 
+function addCourse($id) {
+	$app = \Slim\Slim::getInstance();
+	if(!empty($_POST)){
+		$db = Database::getInstance();
+		$sql = "INSERT INTO Cursus (cursus_Name, cursus_Code, User_user_Id) VALUES (:cursus_name, :cursus_code, :user_id)";
+		$statement = $db->prepare($sql);
+		$statement->bindParam('cursus_name', $_POST['coursename']);
+		$statement->bindParam('cursus_code', $_POST['coursecode']);
+		$statement->bindParam('user_id', $id);
+		$statement->execute();
+	}
+	else{
+		if(isLogged($id)){
+			$app->render('addcourse.php', array('page' => 'Toevoegen van een nieuwe course'));
+		}
+		else
+			$app->render('noaccess.php', array('page' => 'Geen toegang!'));
+	}
+}
+
+function updateUserOnlineTime($id) {
+	$db = Database::getInstance();
+	$statement = $db->prepare("UPDATE User SET user_Online = NOW() WHERE user_Id=".$id);
+	$statement->execute();
+}
+
 function loginUser() {
 	$db = Database::getInstance();
 	$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
@@ -84,13 +128,14 @@ function loginUser() {
 	if($results > 0) {
 		switch($results['rol_Naam']) {
 			case 'student':
-			$app = \Slim\Slim::getInstance();
-			$statement = $db->prepare("UPDATE User SET user_Online = NOW() WHERE user_Id=".$results['user_Id']);
-			$statement->execute();
-			$app->redirect(BASE . '/student/' . $results['user_Id']);
+				updateUserOnlineTime($results['user_Id']);
+				$app = \Slim\Slim::getInstance();
+				$app->redirect(BASE . '/student/' . $results['user_Id']);
 			break;
 			case 'docent':
-			docentPage();
+				updateUserOnlineTime($results['user_Id']);
+				$app = \Slim\Slim::getInstance();
+				$app->redirect(BASE . '/docent/' . $results['user_Id']);
 			break;
 			case 'slc':
 			slcPage();

@@ -12,7 +12,10 @@
 	<div data-role="content" id="content">
 		<?php echo $page; ?>
 	</div>
-
-	<a href="<?php echo BASE; ?>/student/<?php echo $id; ?>/uren" data-role="button">Uren invullen</a>
+	<?php if ($rol_id == 1){?>
+	<a href="<?php echo BASE; ?>/student/<?php echo $id; ?>/uren/add" data-role="button">Uren invullen</a>
+	<?php } elseif ($rol_id == 2){?>
+	<a href="<?php echo BASE; ?>/docent/<?php echo $id; ?>/course/add" data-role="button">Nieuwe course</a>
+	<?php }?>
 </body>
 </html>

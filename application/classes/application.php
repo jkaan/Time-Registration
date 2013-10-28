@@ -22,7 +22,7 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/docent',
+				'URL' => '/docent/:id',
 				'action' => 'docentPage',
 				),
 			array(
@@ -47,13 +47,23 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/student/:id/uren',
+				'URL' => '/student/:id/uren/add',
 				'action' => 'urenPage',
 				),
 			array(
 				'method' => 'post',
-				'URL' => '/student/:id/uren',
+				'URL' => '/student/:id/uren/add',
 				'action' => 'addStudieLast',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/docent/:id/course/add',
+				'action' => 'addCourse',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/docent/:id/course/add',
+				'action' => 'addCourse',
 				)
 			);
 	}
