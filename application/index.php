@@ -12,7 +12,6 @@ $application = new Application();
 
 $routes = $application->getRoutes();
 
-
 foreach($routes as $route) {
 	$app->$route['method']($route['URL'], $route['action']);
 }
@@ -66,23 +65,17 @@ function loginUser() {
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	if($results > 0) {
+		$_POST['userId'] = $results['user_Id'];
+		$_POST['userNaam'] = $results['user_Name'];
+		$_POST['rolNaam'] = $results['rol_Naam'];
 		switch($results['rol_Naam']) {
 			case 'student':
-			$_POST['userId'] = $results['user_Id'];
-			$_POST['userNaam'] = $results['user_Name'];
-			$_POST['rolNaam'] = $results['rol_Naam'];
 			studentPage();
 			break;
 			case 'docent':
-			$_POST['userId'] = $results['user_Id'];
-			$_POST['userNaam'] = $results['user_Name'];
-			$_POST['rolNaam'] = $results['rol_Naam'];
 			docentPage();
 			break;
 			case 'slc':
-			$_POST['userId'] = $results['user_Id'];
-			$_POST['userNaam'] = $results['user_Name'];
-			$_POST['rolNaam'] = $results['rol_Naam'];
 			slcPage();
 		}
 	}
