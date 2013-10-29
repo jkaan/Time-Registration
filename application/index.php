@@ -39,8 +39,9 @@ function docentPage($id) {
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 2)){
 		$app->render('index.php', array('page' => 'Docent Page', 'id' => $id, 'rol_id' => $result['Rol_rol_Id']));
 	}	
-	else
+	else {
 		$app->render('noaccess.php', array('page' => 'Geen toegang'));
+	}
 }
 
 function slcPage($id) {
@@ -54,14 +55,13 @@ function urenPage($id) {
 	if(isLogged($id)){
 		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
 	}
-	else
-		$app->render('noaccess.php', array('page' => 'Geen toegang'));
+	else {		
+		$twigRenderer->renderTemplate('noaccess.php', array('page' => 'Geen toegang')); 
+	}
 	if(isLogged($id)){
-		$twigRenderer = new TwigRenderer();
 		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
 	} else {
 		$app->render('noaccess.php', array('page' => 'Geen toegang'));
-		$twigRenderer = new TwigRenderer();
 		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
 	}
 }
@@ -72,22 +72,21 @@ function getUserDetails($id) {
 	$db = Database::getInstance();
 	$statement = $db->prepare("SELECT user_Name, user_Code, user_email, user_Klas, Rol_rol_Id FROM User, Rol WHERE user_Id = ".$id);
 	$statement->execute();
-	return $results = $statement->fetch(PDO::FETCH_ASSOC);
+	return $statement->fetch(PDO::FETCH_ASSOC);
 }
 /*
 Controleert of de gebruiker ingelogd.
 De gebruiker is voor een bepaalde tijd ingelogd (gedefinieerd in de config.php).
 */
-function isLogged($id){
+function isLogged($id) {
 	$logged = false;
 	$db = Database::getInstance();
-	$sql = "SELECT user_Online FROM User WHERE user_Id = ".$id;
+	$sql = "SELECT user_Online FROM User WHERE user_Id = " . $id;
 	$statement = $db->prepare($sql);
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	$time = strtotime($results['user_Online']) + AUTH_TIME; // Add 1 hour
-	if($time > strtotime(date('y-m-d G:i:s')))
-	{
+	if($time > strtotime(date('y-m-d G:i:s'))) {
 		$logged = true;
 	}
 	return $logged;
@@ -102,7 +101,6 @@ function addStudielast($id) {
 	$statement->bindParam('studielast', $_POST['studielast']);
 	$statement->bindParam('user_id', $id);
 	$statement->execute();
-	$db = null;
 }
 
 function addCourse($id) {
@@ -127,7 +125,7 @@ function addCourse($id) {
 
 function updateUserOnlineTime($id) {
 	$db = Database::getInstance();
-	$statement = $db->prepare("UPDATE User SET user_Online = NOW() WHERE user_Id=".$id);
+	$statement = $db->prepare("UPDATE User SET user_Online = NOW() WHERE user_Id= " . $id);
 	$statement->execute();
 }
 
@@ -149,9 +147,7 @@ function loginUser() {
 			// nothing happens here
 			break;
 			case 'slc':
-				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/slc/' . $results['user_Id']);
+			updateUserOnlineTime($results['user_Id']);
 			$app = \Slim\Slim::getInstance();
 			$app->redirect(BASE . '/slc/' . $results['user_Id']);
 		}

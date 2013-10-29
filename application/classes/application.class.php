@@ -66,10 +66,10 @@ class Application {
 				'action' => 'addCourse',
 				)
 			);
-	}
+}
 
-	public function getRoutes() {
-		return $this->routes;
-	}
-	
+public function getRoutes() {
+	return $this->routes;
+}
+
 }
