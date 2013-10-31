@@ -36,7 +36,7 @@ function studentPage($id) {
 function docentPage($id) {
 	$app = \Slim\Slim::getInstance();
 	$result = getUserDetails($id);
-	if((isLogged($id)) && ($result['Rol_rol_Id'] == 2)){
+	if((isLogged($id)) && ($result['Rol_rol_Id'] == 2)) {
 		$app->render('index.php', array('page' => 'Docent Page', 'id' => $id, 'rol_id' => $result['Rol_rol_Id']));
 	}	
 	else {
@@ -47,7 +47,12 @@ function docentPage($id) {
 function slcPage($id) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
-	echo $twigRenderer->renderTemplate('slc.twig', array('id' => $id));
+	$result = getUserDetails($id);
+	if((isLogged($id)) && ($result['Rol_rol_Id'] == 3)) {
+		echo $twigRenderer->renderTemplate('slc.twig', array('id' => $id));
+	} else {
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
 }
 
 function urenPage($id) {
@@ -56,13 +61,7 @@ function urenPage($id) {
 		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
 	}
 	else {		
-		$twigRenderer->renderTemplate('noaccess.php', array('page' => 'Geen toegang')); 
-	}
-	if(isLogged($id)){
-		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
-	} else {
-		$app->render('noaccess.php', array('page' => 'Geen toegang'));
-		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
+		echo $twigRenderer->renderTemplate('noaccess.twig'); 
 	}
 }
 
@@ -70,7 +69,7 @@ function urenPage($id) {
 
 function getUserDetails($id) {
 	$db = Database::getInstance();
-	$statement = $db->prepare("SELECT user_Name, user_Code, user_email, user_Klas, Rol_rol_Id FROM User, Rol WHERE user_Id = ".$id);
+	$statement = $db->prepare("SELECT user_Name, user_Code, user_email, user_Klas, Rol_rol_Id FROM User, Rol WHERE user_Id = " . $id);
 	$statement->execute();
 	return $statement->fetch(PDO::FETCH_ASSOC);
 }
