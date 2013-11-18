@@ -35,12 +35,13 @@ function studentPage($id) {
 
 function docentPage($id) {
 	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 2)) {
-		$app->render('index.php', array('page' => 'Docent Page', 'id' => $id, 'rol_id' => $result['Rol_rol_Id']));
+		echo $twigRenderer->renderTemplate('docent.twig', array('id' => $id));
 	}	
 	else {
-		$app->render('noaccess.php', array('page' => 'Geen toegang'));
+		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
 }
 
@@ -104,6 +105,7 @@ function addStudielast($id) {
 
 function addCourse($id) {
 	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)){
 		$db = Database::getInstance();
 		$sql = "INSERT INTO Cursus (cursus_Name, cursus_Code, User_user_Id) VALUES (:cursus_name, :cursus_code, :user_id)";
@@ -115,10 +117,11 @@ function addCourse($id) {
 	}
 	else{
 		if(isLogged($id)){
-			$app->render('addcourse.php', array('page' => 'Toevoegen van een nieuwe course'));
+			echo $twigRenderer->renderTemplate('addcourse.twig', array('page' => 'Toevoegen van een nieuwe course')); 
+			//$app->render('addcourse.twig', array('page' => 'Toevoegen van een nieuwe course'));
 		}
 		else
-			$app->render('noaccess.php', array('page' => 'Geen toegang!'));
+			echo $twigRenderer->renderTemplate('noaccess.twig'); 
 	}
 }
 
@@ -143,7 +146,9 @@ function loginUser() {
 			$app->redirect(BASE . '/student/' . $results['user_Id']);
 			break;
 			case 'docent':
-			// nothing happens here
+			updateUserOnlineTime($results['user_Id']);
+			$app = \Slim\Slim::getInstance();
+			$app->redirect(BASE . '/docent/' . $results['user_Id']);
 			break;
 			case 'slc':
 			updateUserOnlineTime($results['user_Id']);

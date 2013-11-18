@@ -64,6 +64,11 @@ class Application {
 				'method' => 'post',
 				'URL' => '/slc/:id/course/add',
 				'action' => 'addCourse',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/docent/:id/',
+				'action' => 'docentPage',
 				)
 			);
 }
