@@ -69,6 +69,11 @@ class Application {
 				'method' => 'get',
 				'URL' => '/docent/:id/',
 				'action' => 'docentPage',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/student/:id/profiel',
+				'action' => 'studentProfiel',
 				)
 			);
 }

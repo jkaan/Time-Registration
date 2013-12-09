@@ -2,21 +2,32 @@
 
 {% block header %}
 
-<div data-role="header"><h1>Uren</h1></div>
+<div data-role="header">
+<a href="index.html" data-rel="back">Back</a>
+<h1>Uren</h1>
+</div>
 
 {% endblock header %}
 
 {% block content %}
 
 <form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren" method="POST">
-	<!-- Veld voor het onderdeel-->
+	<!-- Veld voor het cursus -->
+	<label for="select-choice-0" class="select">Cursus:</label>
+	<select name="cursus" id="select-choice-0">
+		<option value="1">SOP</option>
+		<option value="2">SOR</option>
+		<option value="3">EBUS</option>
+		<option value="4">BPM</option>
+	</select>
+	<!--Veld voor het onderdeel -->
 	<label for="select-choice-0" class="select">Onderdeel:</label>
 	<select name="onderdeel" id="select-choice-0">
 		<option value="1">1</option>
 		<option value="2">2</option>
 		<option value="3">3</option>
 		<option value="4">4</option>
-	</select>
+	</select>	
 	<!-- Veld voor de datum -->
 	<label for="date">Datum:</label>
 	<input type="date" width=" 30px;" name="date" id="date" value=""  />	

@@ -2,12 +2,18 @@
 
 {% block header %}
 
-<div data-role="header"><h1>Student Page</h1></div>
+<div data-role="header">
+<a href="index.html" data-rel="back">Back</a>
+<h1>Student Page</h1>
+</div>
 
 {% endblock header %}
 
 {% block content %}
 <?php echo "hello" ?>
 <a href="{{ constant('BASE') }}/student/{{ id }}/uren/add" data-role="button">Uren invullen</a>
+<a href="{{ constant('BASE') }}/student/{{ id }}/overzicht" data-role="button">Overzicht</a>
+<a href="{{ constant('BASE') }}/student/{{ id }}/feedback" data-role="button">Feedback</a>
+<a href="{{ constant('BASE') }}/student/{{ id }}/profiel" data-role="button">Profiel</a>
 
 {% endblock content %}

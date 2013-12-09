@@ -2,12 +2,14 @@
 
 {% block header %}
 
-<div data-role="header"><h1>Student Page</h1></div>
+<div data-role="header">
+<a href="index.html" data-rel="back">Back</a>
+<h1>Student Page</h1></div>
 
 {% endblock header %}
 
 {% block content %}
 <?php echo "hello" ?>
-<a href="nolink" data-role="button">Een link met geen doel</a>
+<a href="nolink" data-role="button">Een link zonder doel</a>
 
 {% endblock content %}

@@ -1,0 +1,83 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+<a href="index.html" data-rel="back">Back</a>
+<h1>Uren</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+
+<form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren" method="POST">
+	<!-- Veld voor naam -->
+	<table>
+		<tr>
+			<td>
+				<label for="basic">Afbeelding:</label>
+			</td>
+			<td>
+				<img src="{{ constant('TEMPLATE_BASE') }}/images/person-icon.png" with="100" height="100" />			
+				<input type="file"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="basic">Naam:</label>
+			</td>
+			<td>
+				<label for="basic">{{name}}</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="basic">Studentnummer:</label>
+			</td>
+			<td>
+				<label for="basic">{{code}}</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="basic">Klas:</label>
+			</td>
+			<td>
+				<label for="basic">{{klas}}</label>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="basic">Email:</label>
+			</td>
+			<td>
+				<label for="basic">{{email}}</label>
+			</td>
+		</tr>
+		<tr> 
+			<td colspan="2"><label for="basic">Laat onderstaande velden leeg indien je je wachtwoord wil behouden.</label></td> </tr>
+		<tr>
+			<td>
+				<label for="basic">Wachtwoord:</label>
+			</td>
+			<td>
+				<input type="text" name="wachtwoord1" id="basic" data-mini="true" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="basic">Herhaling:</label>
+			</td>
+			<td>
+				<input type="text" name="wachtwoord2" id="basic" data-mini="true" />
+			</td>
+		</tr>
+	</table>
+	
+
+	<!-- Submit knop -->
+	<input type="submit" value="Opslaan" data-theme="b">
+</form>
+
+{% endblock content %}
