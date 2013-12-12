@@ -1,0 +1,37 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header"><h1>Toevoegen van student</h1></div>
+
+{% endblock header %}
+
+{% block content %}
+
+<form data-ajax="false" action="{{ constant('BASE') }}/slc/{{ id }}/student/add" method="POST">
+
+	<!-- Veld voor Student Naam -->
+	<label for="basic">Student Naam:</label>
+	<input type="text" name="studentname" id="basic" data-mini="true" />
+
+	<!-- Veld voor Student Code -->
+	<label for="basic">Student Code:</label>
+	<input type="number" name="studentcode" id="basic" data-mini="true" />
+
+	<!-- Veld voor Student Email -->
+	<label for="basic">Student Email:</label>
+	<input type="text" name="studentemail" id="basic" data-mini="true" />	
+
+	<!-- Veld voor Student Paswoord -->
+	<label for="basic">Student Paswoord:</label>
+	<input type="password" name="studentpassword" id="basic" data-mini="true" />
+
+	<!-- Veld voor Student Klas -->
+	<label for="basic">Student Klas:</label>
+	<input type="text" name="studentklas" id="basic" data-mini="true" />
+
+	<!-- Submit knop -->
+	<input type="submit" value="Opslaan" data-theme="b">
+</form>
+
+{% endblock content %}

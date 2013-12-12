@@ -129,14 +129,35 @@ function addCourse($id) {
 		$statement->bindParam('cursus_code', $_POST['coursecode']);
 		$statement->bindParam('user_id', $id);
 		$statement->execute();
-	}
-	else{
+	} else {
 		if(isLogged($id)){
-			echo $twigRenderer->renderTemplate('addcourse.twig', array('page' => 'Toevoegen van een nieuwe course')); 
-			//$app->render('addcourse.twig', array('page' => 'Toevoegen van een nieuwe course'));
-		}
-		else
+			echo $twigRenderer->renderTemplate('addcourse.twig', array('page' => 'Toevoegen van een nieuwe course', 'id' => $id)); 
+		} else {
 			echo $twigRenderer->renderTemplate('noaccess.twig'); 
+		}
+	}
+}
+
+function addStudent($id) {
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	if(!empty($_POST)) {	
+		$db = Database::getInstance();
+		$sql = "INSERT INTO User (user_Name, user_Code, user_Email, user_Pass, user_Klas, Rol_rol_Id) 
+		VALUES (:user_name, :user_code, :user_email, :user_pass, :user_klas, 1)";
+		$statement = $db->prepare($sql);
+		$statement->bindParam('user_name', $_POST['studentname']);
+		$statement->bindParam('user_code', $_POST['studentcode']);
+		$statement->bindParam('user_email', $_POST['studentemail']);
+		$statement->bindParam('user_pass', $_POST['studentpassword']);
+		$statement->bindParam('user_klas', $_POST['studentklas']);
+		$statement->execute();
+	} else {
+		if(isLogged($id)) {
+			echo $twigRenderer->renderTemplate('addstudent.twig', array('id' => $id));
+		} else {
+			echo $twigRenderer->renderTemplate('noaccess.twig');
+		}
 	}
 }
 
@@ -147,30 +168,30 @@ function updateUserOnlineTime($id) {
 }
 
 function loginUser() {
-		$db = Database::getInstance();
-		$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
-		$statement->bindParam('username', $_POST['username']);
-		$statement->bindParam('password', $_POST['password']);
-		$statement->execute();
-		$results = $statement->fetch(PDO::FETCH_ASSOC);
-		if($results > 0) {
-			switch($results['rol_Naam']) {
-				case 'student':
-				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/student/' . $results['user_Id']);
-				break;
-				case 'docent':
-				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/docent/' . $results['user_Id']);
-				break;
-				case 'slc':
-				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/slc/' . $results['user_Id']);
-			}
+	$db = Database::getInstance();
+	$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
+	$statement->bindParam('username', $_POST['username']);
+	$statement->bindParam('password', $_POST['password']);
+	$statement->execute();
+	$results = $statement->fetch(PDO::FETCH_ASSOC);
+	if($results > 0) {
+		switch($results['rol_Naam']) {
+			case 'student':
+			updateUserOnlineTime($results['user_Id']);
+			$app = \Slim\Slim::getInstance();
+			$app->redirect(BASE . '/student/' . $results['user_Id']);
+			break;
+			case 'docent':
+			updateUserOnlineTime($results['user_Id']);
+			$app = \Slim\Slim::getInstance();
+			$app->redirect(BASE . '/docent/' . $results['user_Id']);
+			break;
+			case 'slc':
+			updateUserOnlineTime($results['user_Id']);
+			$app = \Slim\Slim::getInstance();
+			$app->redirect(BASE . '/slc/' . $results['user_Id']);
 		}
+	}
 }
 
 $app->run();
