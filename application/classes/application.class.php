@@ -67,6 +67,16 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+				'URL' => '/slc/:id/student/add',
+				'action' => 'addStudent',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/slc/:id/student/add',
+				'action' => 'addStudent',
+				),
+			array(
+				'method' => 'get',
 				'URL' => '/docent/:id/',
 				'action' => 'docentPage',
 				),
