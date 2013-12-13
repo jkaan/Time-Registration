@@ -26,13 +26,132 @@ function studentProfiel($id){
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
+	$error = false;
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
-		echo $twigRenderer->renderTemplate('profiel.twig', array('name' => $result['user_Name'], 'code' => $result['user_Code'], 'email' => $result['user_email'], 'klas' => $result['user_Klas']));
+		if(!empty($_POST)){
+			if($_POST['wachtwoord1'] == $_POST['wachtwoord2'])
+			{
+				$newpass = $_POST['wachtwoord2'];
+				$db = Database::getInstance();
+				$sql = "UPDATE User SET user_Pass = :pass WHERE user_Id =" .$id;
+				$statement = $db->prepare($sql);
+				$statement->bindParam('pass', $newpass);
+				$statement->execute();
+			}else{
+				$error = true;
+			}
+		}
+		echo $twigRenderer->renderTemplate('profiel.twig', array('name' => $result['user_Name'], 'code' => $result['user_Code'], 'email' => $result['user_email'], 'klas' => $result['user_Klas'], 'id' => $id, 'online' => $error));
+		
 	}	
 	else {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
 }
+
+function studentFeedback($id) {
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	$result = getUserDetails($id);
+	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
+		$db = Database::getInstance();
+		$statement = $db->prepare("SELECT feedback_Id, feedback_wknr, feedback_Titel, Cursus_cursus_Id FROM Feedback WHERE User_user_Id = " . $id);
+		$statement->execute();
+		$feedbackData = $statement->fetchAll(PDO::FETCH_ASSOC);
+		echo $twigRenderer->renderTemplate('feedback.twig', array('name' => $result['user_Name'], 'data' => $feedbackData));
+		
+	}	
+	else {
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
+function studentFeedbackItem($id, $itemId) {
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	$result = getUserDetails($id);
+	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
+		$db = Database::getInstance();
+		$statement = $db->prepare("SELECT feedback_wknr, feedback_Titel, feedback_Text, Cursus_cursus_Id FROM Feedback WHERE User_user_Id = " . $id . " AND feedback_Id = " . $itemId );
+		$statement->execute();
+		$feedbackItemData = $statement->fetchAll(PDO::FETCH_ASSOC);
+		echo $twigRenderer->renderTemplate('feedbackItem.twig', array('name' => $result['user_Name'], 'data' => $feedbackItemData));
+		
+	}	
+	else {
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
+// verkrijg de eerste - en laatste dag van de gegeven week. 
+function getStartAndEndDate($week, $year)
+{
+
+    $time = strtotime("1 January $year", time());
+    $day = date('w', $time);
+    $time += ((7*$week)+1-$day)*24*3600;
+    $return[0] = date('Y-n-j', $time);
+    $time += 6*24*3600;
+    $return[1] = date('Y-n-j', $time);
+    return $return;
+}
+
+function min_naar_uren($minuten){ 
+	return sprintf("%d:%02d", floor($minuten / 60), (abs($minuten) % 60));
+}
+function studentOverzicht($id){
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	$result = getUserDetails($id);
+	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
+	$weeknr = 0;
+	$array = null;
+	$weeknumberNow = date("W", strtotime(START_SEMESTER));
+		if(!empty($_POST)){
+			$parts = explode("-", $_POST['week']);
+			$weeknr = $parts[0];
+			$startandenddate = getStartAndEndDate($weeknr, $parts[1]);
+			$db = Database::getInstance();
+			$statement = $db->prepare("SELECT uren_Id, SUM(uren_Studielast) as studielast, (SELECT cursus_Name FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus FROM Uren as u WHERE uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."' AND User_user_Id = " . $id . " GROUP BY cursus"  );
+			$statement->execute();
+			$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
+			$array = array();
+			foreach($urenoverzichtData as $uren )
+			{
+				$studielast_in_uren = min_naar_uren($uren['studielast']);
+				$array[] = array('uren_Id' => $uren['uren_Id'], 'studielast' => $studielast_in_uren, 'cursus' => $uren['cursus']);
+			}
+		}
+		//var_dump(generateWeeknumbersFromDate($weeknumberNow));
+		echo $twigRenderer->renderTemplate('urenoverzicht.twig', array('name' => $result['user_Name'], 'id' => $id, 'weeknr' => $weeknr, 'urenoverzichtarray' => $array, 'weeknummers' => generateWeeknumbersFromDate($weeknumberNow)));
+		
+	}	
+	else {
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
+function generateWeeknumbersFromDate($weeknr)
+{
+	$maxWeekNr = 52;
+	$array = array();
+	$newweeknr = $weeknr;
+	$leerjaar = explode("-", LEERJAAR);
+	$l = 0;
+	for($i=1; $i <= $maxWeekNr; $i++)
+	{
+		if($newweeknr < $maxWeekNr){
+			$array[] = array('week' => $newweeknr, 'jaar' => $leerjaar[$l]);
+		}else
+		{
+			$newweeknr = 0;
+			$l = 1;
+		}
+		$newweeknr = $newweeknr +1;
+	}
+	return $array;
+}
+
 function loginPage() {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();

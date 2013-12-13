@@ -1,0 +1,36 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+<a href="index.html" data-rel="back">Back</a>
+<h1>Goed gewerkt!</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+
+
+<table data-role="table" id="movie-table" data-mode="reflow" class="ui-responsive table-stroke">
+      <thead>
+        <tr>
+          <th data-priority="1">Cursus:</th>
+          <th data-priority="persist">Week:</th>
+          <th data-priority="2">Docent</th>
+          <th data-priority="4">Feedback</th>
+        </tr>
+      </thead>
+      <tbody>
+		{% for fbk in data %}
+			<tr>
+			  <td>{{ fbk.Cursus_cursus_Id }}</td>
+			  <td>{{ fbk.feedback_wknr }}</td>
+			  <td>Anton Bil</td>
+			  <td>{{ fbk.feedback_Text }}</td>
+			</tr>
+		{% endfor %}
+      </tbody>
+    </table>
+
+{% endblock content %}

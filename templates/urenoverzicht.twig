@@ -1,0 +1,69 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+<a href="index.html" data-rel="back">Back</a>
+<h1>Uren</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+<script>
+$(document).ready(function() {
+$('select').change(function( event ) {
+	$("#test").submit();
+});
+
+});
+</script>
+<form data-ajax="false" id="test" action="{{ constant('BASE') }}/student/{{ id }}/overzicht" method="POST">
+		<label for="select-choice-0" class="select">Week:</label>
+		<select onchange="this.form.submit()" name="week" id="select-choice-0">
+				<option value="Standaard">Selecteer weeknummer</option>
+			{% for weeknummer in weeknummers %}
+				{% if weeknummer.week == weeknr %}					
+					<option value="{{ weeknummer.week }}-{{weeknummer.jaar }}" selected>{{ weeknummer.week }}</option>
+				{% else %}
+					<option value="{{ weeknummer.week }}-{{weeknummer.jaar }}">{{ weeknummer.week }}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+	</form>
+	{% if urenoverzichtarray != null %}
+		<!--<table data-role="table" id="movie-table" data-mode="reflow" class="ui-responsive table-stroke">
+		  <thead>
+			<tr>
+			  <th data-priority="1">Cursus:</th>
+			  <th data-priority="2">Week:</th>
+			  <th data-priority="persist">Totaal</th>
+			</tr>
+		  </thead>
+		  <tbody>
+			<tr>
+				<td>SOP</td>
+				<td>1 (1-1-2014, 7-1-2014)</td>
+				<td>5</td>
+			</tr>
+		  </tbody>
+		</table>-->
+         <table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+              <thead>
+                <tr>
+                  <th>Cursus</th>
+				  <th>Totaal uren</th>
+                </tr>
+              </thead>
+              <tbody>
+				{% for data in urenoverzichtarray %}
+					<tr>
+					  <td>{{ data.cursus }}</td>
+					  <td>{{ data.studielast }}</td>
+					</tr>
+				{% endfor %}				
+              </tbody>
+            </table>
+		{% endif %}
+
+{% endblock content %}

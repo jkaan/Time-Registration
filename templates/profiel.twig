@@ -11,9 +11,24 @@
 
 {% block content %}
 
-<form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren" method="POST">
+{% if online == true %}
+<script>
+$(document).on('pageinit', '.ui-page',function(event){
+    setTimeout(function () {
+        $('#popupBasic').popup('open');
+    }, 0);
+})
+</script>
+<div data-role="popup" id="popupBasic">
+	<p>Het wachtwoord komt niet overeen. Probeer opnieuw</p>
+</div>
+{% endif %}
+
+
+<form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/profiel" method="POST">
 	<!-- Veld voor naam -->
 	<table>
+		<!--
 		<tr>
 			<td>
 				<label for="basic">Afbeelding:</label>
@@ -23,6 +38,7 @@
 				<input type="file"/>
 			</td>
 		</tr>
+		-->
 		<tr>
 			<td>
 				<label for="basic">Naam:</label>
