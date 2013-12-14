@@ -5,6 +5,7 @@ require('classes/database.class.php');
 require('classes/application.class.php');
 require('classes/TwigRenderer.class.php');
 require_once('config.php');
+require_once('configvariables.php');
 
 $app = new \Slim\Slim();
 
@@ -87,13 +88,13 @@ function studentFeedbackItem($id, $itemId) {
 function getStartAndEndDate($week, $year)
 {
 
-    $time = strtotime("1 January $year", time());
-    $day = date('w', $time);
-    $time += ((7*$week)+1-$day)*24*3600;
-    $return[0] = date('Y-n-j', $time);
-    $time += 6*24*3600;
-    $return[1] = date('Y-n-j', $time);
-    return $return;
+	$time = strtotime("1 January $year", time());
+	$day = date('w', $time);
+	$time += ((7*$week)+1-$day)*24*3600;
+	$return[0] = date('Y-n-j', $time);
+	$time += 6*24*3600;
+	$return[1] = date('Y-n-j', $time);
+	return $return;
 }
 
 function min_naar_uren($minuten){ 
@@ -104,9 +105,9 @@ function studentOverzicht($id){
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
-	$weeknr = 0;
-	$array = null;
-	$weeknumberNow = date("W", strtotime(START_SEMESTER));
+		$weeknr = 0;
+		$array = null;
+		$weeknumberNow = date("W", strtotime(START_SEMESTER));
 		if(!empty($_POST)){
 			$parts = explode("-", $_POST['week']);
 			$weeknr = $parts[0];
