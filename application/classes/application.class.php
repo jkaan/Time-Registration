@@ -84,6 +84,31 @@ class Application {
 				'method' => 'get',
 				'URL' => '/student/:id/profiel',
 				'action' => 'studentProfiel',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/student/:id/profiel',
+				'action' => 'studentProfiel',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/student/:id/feedback',
+				'action' => 'studentFeedback',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/student/:id/feedback/:itemId',
+				'action' => 'studentFeedbackItem',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/student/:id/overzicht',
+				'action' => 'studentOverzicht',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/student/:id/overzicht',
+				'action' => 'studentOverzicht',
 				)
 			);
 }
