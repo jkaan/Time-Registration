@@ -64,8 +64,12 @@ function docentPage($id) {
 function slcPage($id) {
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
+	$db = Database::getInstance();
+	$statement = $db->prepare('SELECT * FROM Cursus');
+	$statement->execute();
+	$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 3)) {
-		echo $twigRenderer->renderTemplate('slc.twig', array('id' => $id));
+		echo $twigRenderer->renderTemplate('slc.twig', array('id' => $id, 'courses' => $courses));
 	} else {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
@@ -128,7 +132,10 @@ function addCourse($id) {
 		$statement->bindParam('cursus_name', $_POST['coursename']);
 		$statement->bindParam('cursus_code', $_POST['coursecode']);
 		$statement->bindParam('user_id', $id);
-		$statement->execute();
+		
+		if($statement->execute()) {
+			echo $twigRenderer->renderTemplate('slc.twig', array('message' => 'Added a new course.', 'id' => $id));
+		}
 	} else {
 		if(isLogged($id)){
 			echo $twigRenderer->renderTemplate('addcourse.twig', array('page' => 'Toevoegen van een nieuwe course', 'id' => $id)); 
@@ -144,7 +151,7 @@ function addStudent($id) {
 	if(!empty($_POST)) {	
 		$db = Database::getInstance();
 		$sql = "INSERT INTO User (user_Name, user_Code, user_Email, user_Pass, user_Klas, Rol_rol_Id) 
-		VALUES (:user_name, :user_code, :user_email, :user_pass, :user_klas, 1)";
+		VALUES (:user_name, :user_code, :user_email, :user_pass, :user_klas, 1)"; // 1 is hardcoded because a student always has a role of 1
 		$statement = $db->prepare($sql);
 		$statement->bindParam('user_name', $_POST['studentname']);
 		$statement->bindParam('user_code', $_POST['studentcode']);
@@ -152,6 +159,10 @@ function addStudent($id) {
 		$statement->bindParam('user_pass', $_POST['studentpassword']);
 		$statement->bindParam('user_klas', $_POST['studentklas']);
 		$statement->execute();
+
+		if($statement->execute()) {
+			echo $twigRenderer->renderTemplate('slc.twig', array('message' => 'Added a new user.', 'id' => $id));
+		}
 	} else {
 		if(isLogged($id)) {
 			echo $twigRenderer->renderTemplate('addstudent.twig', array('id' => $id));

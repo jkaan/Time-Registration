@@ -15,7 +15,6 @@ class TwigRenderer {
 		$twig = new Twig_Environment($loader, array(
 			'cache', '../templates/cache',
 			));
-
 		return $twig->render($page, $array);
 	}
 }

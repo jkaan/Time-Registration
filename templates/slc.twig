@@ -2,11 +2,20 @@
 
 {% block header %}
 
-<div data-role="header"><h1>SLC</h1></div>
+<div data-role="header">
+	<h1>
+		SLC
+	</h1>
+</div>
 
 {% endblock header %}
 
 {% block content %}
+
+{# This part is optional, it contains the message a function returns #}
+{% if message is defined %}
+{{ message }}
+{% endif %}
 
 <div data-theme="a" data-role="collapsible-set">
 
@@ -20,7 +29,26 @@
 
 		<div data-role="collapsible">
 			<h3>Cursus wijzigen</h3>
-			<p>I'm the collapsible set content for section 2.</p>
+			<table id="my-table">
+				<thead>
+					<tr>
+						<th>Cursus ID</th>
+						<th>Cursus Naam</th>
+						<th>Cursus Code</th>
+						<th>Docent</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for course in courses %}
+					<tr>
+						<td>{{ course.cursus_Id }}</td>
+						<td>{{ course.cursus_Name }}</td>
+						<td>{{ course.cursus_Code }}</td>
+						<td>{{ course.User_user_Id }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
 		</div>
 
 		<div data-role="collapsible">
