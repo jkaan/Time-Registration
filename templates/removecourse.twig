@@ -1,0 +1,17 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header"><h1>Remove course with ID: {{ courseId }}</h1></div>
+
+{% endblock header %}
+
+{% block content %}
+
+<form data-ajax="false" action="{{ constant('BASE') }}/slc/{{ id }}/course/remove/{{ courseId }}" method="POST">
+	<p>Zeker dat je cursus {{ course.cursus_Name }} op inactief wilt zetten?</p>
+	<input id="courseId" type="hidden" name="courseId" value="{{ courseId }}">
+	<input type="submit" value="Verwijderen" data-theme="b">
+</form>
+
+{% endblock content %}

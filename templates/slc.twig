@@ -21,41 +21,33 @@
 
 	<div data-role="collapsible">
 		<h3>Cursus beheer</h3>
-
-		<div data-role="collapsible">
-			<h3>Cursus toevoegen</h3>
-			<a href="{{ constant('BASE') }}/slc/{{ id }}/course/add" data-role="button">Nieuwe course</a>
-		</div>
-
-		<div data-role="collapsible">
-			<h3>Cursus wijzigen</h3>
-			<table id="my-table">
-				<thead>
-					<tr>
-						<th>Cursus ID</th>
-						<th>Cursus Naam</th>
-						<th>Cursus Code</th>
-						<th>Docent</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for course in courses %}
-					<tr>
-						<td>{{ course.cursus_Id }}</td>
-						<td>{{ course.cursus_Name }}</td>
-						<td>{{ course.cursus_Code }}</td>
-						<td>{{ course.User_user_Id }}</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-
-		<div data-role="collapsible">
-			<h3>Cursus verwijderen</h3>
-			<p>I'm the collapsible set content for section 2.</p>
-		</div>
-
+		<h4>Cursus toevoegen</h4>
+		<a href="{{ constant('BASE') }}/slc/{{ id }}/course/add" data-role="button">Nieuwe course</a>
+		<h4>Cursus wijzigen</h4>
+		<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+			<thead>
+				<tr>
+					<th>Cursus ID</th>
+					<th>Cursus Naam</th>
+					<th>Cursus Code</th>
+					<th>Docent</th>
+					<th>Wijzigen</th>
+					<th>Verwijderen</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for course in courses %}
+				<tr>
+					<th>{{ course.cursus_Id }}</th>
+					<td>{{ course.cursus_Name }}</td>
+					<td>{{ course.cursus_Code }}</td>
+					<td>{{ course.User_user_Id }}</td>
+					<td><a href="{{ constant('BASE') }}/slc/{{ id }}/course/edit/{{ course.cursus_Id }}" data-role="button">&#10004;</a></td>
+					<td><a href="{{ constant('BASE') }}/slc/{{ id }}/course/remove/{{ course.cursus_Id }}" data-role="button">&#10004;</a></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 	</div>
 
 	<div data-role="collapsible">
