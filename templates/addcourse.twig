@@ -2,24 +2,28 @@
 
 {% block header %}
 
-<div data-role="header"><h1>{{page}}</h1></div>
+<div data-role="header">
+	<h1>
+		Toevoegen van nieuwe course
+	</h1>
+</div>
 
 {% endblock header %}
 
 {% block content %}
 
-	<form data-ajax="false" action="{{ constant('BASE') }}/slc/{{ id }}/course/add" method="POST">
-				
-		<!-- Veld voor coursenaam -->
-		<label for="basic">Naam:</label>
-		<input type="text" name="coursename" id="basic" data-mini="true" />
-		
-		<!-- Veld voor coursecode -->
-		<label for="basic">Cursuscode:</label>
-		<input type="text" name="coursecode" id="basic" data-mini="true" />		
-		
-		<!-- Submit knop -->
-		<input type="submit" value="Opslaan" data-theme="b">
-		</form>
+<form data-ajax="false" action="{{ constant('BASE') }}/slc/{{ id }}/course/add" method="POST">
+
+	<!-- Veld voor coursenaam -->
+	<label for="basic">Naam:</label>
+	<input type="text" name="coursename" id="basic" data-mini="true" />
+
+	<!-- Veld voor coursecode -->
+	<label for="basic">Cursuscode:</label>
+	<input type="text" name="coursecode" id="basic" data-mini="true" />		
+
+	<!-- Submit knop -->
+	<input type="submit" value="Opslaan" data-theme="b">
+</form>
 
 {% endblock content %}

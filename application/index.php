@@ -185,7 +185,8 @@ function slcPage($id) {
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
 	$db = Database::getInstance();
-	$statement = $db->prepare('SELECT * FROM Cursus');
+	$statement = $db->prepare('SELECT * FROM Cursus WHERE actief = :actief');
+	$statement->bindValue('actief', 1);
 	$statement->execute();
 	$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 3)) {
@@ -247,10 +248,11 @@ function addCourse($id) {
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)){
 		$db = Database::getInstance();
-		$sql = "INSERT INTO Cursus (cursus_Name, cursus_Code, User_user_Id) VALUES (:cursus_name, :cursus_code, :user_id)";
+		$sql = "INSERT INTO Cursus (cursus_Name, cursus_Code, actief, User_user_Id) VALUES (:cursus_name, :cursus_code, :actief, :user_id)";
 		$statement = $db->prepare($sql);
 		$statement->bindParam('cursus_name', $_POST['coursename']);
 		$statement->bindParam('cursus_code', $_POST['coursecode']);
+		$statement->bindParam('actief', 1);
 		$statement->bindParam('user_id', $id);
 		
 		if($statement->execute()) {
@@ -258,9 +260,68 @@ function addCourse($id) {
 		}
 	} else {
 		if(isLogged($id)){
-			echo $twigRenderer->renderTemplate('addcourse.twig', array('page' => 'Toevoegen van een nieuwe course', 'id' => $id)); 
+			echo $twigRenderer->renderTemplate('addcourse.twig', array('id' => $id)); 
 		} else {
 			echo $twigRenderer->renderTemplate('noaccess.twig'); 
+		}
+	}
+}
+
+function editCourse($id, $courseId) {
+	$twigRenderer = new TwigRenderer();
+	if(!empty($_POST)) {
+		$db = Database::getInstance();
+		$sql = "UPDATE Cursus SET cursus_Name = :courseName, cursus_Code = :courseCode WHERE cursus_Id = :cursusId";
+		$statement = $db->prepare($sql);
+		$statement->bindParam('courseName', $_POST['courseName']);
+		$statement->bindParam('courseCode', $_POST['courseCode']);
+		$statement->bindParam('cursusId', $courseId);
+		
+		if($statement->execute()) {
+			echo $twigRenderer->renderTemplate('slc.twig', array('message' => 'Wijzigen van cursus met ID: ' . $courseId . ' is gelukt!', 'id' => $id));
+		}
+	} else {
+		if(isLogged($id)) {
+			$db = Database::getInstance();
+			$sql = "SELECT * FROM Cursus WHERE cursus_Id = :cursusID";
+			$statement = $db->prepare($sql);
+			$statement->bindParam('cursusID', $courseId);
+			$statement->execute();
+			$results = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+			echo $twigRenderer->renderTemplate('editcourse.twig', array('course' => $results[0], 'id' => $id, 'courseId' => $courseId));
+		} else {
+			echo $twigRenderer->renderTemplate('noaccess.twig');
+		}
+	}
+}
+
+function removeCourse($id, $courseId) {
+	$twigRenderer = new TwigRenderer();
+	if(!empty($_POST)) {
+		$db = Database::getInstance();
+		$sql = "UPDATE Cursus SET actief = :actief WHERE cursus_Id = :cursusId";
+		$statement = $db->prepare($sql);
+		$statement->bindParam('cursusId', $courseId);
+		$statement->bindValue('actief', 0);
+
+		if($statement->execute()) {
+			echo $twigRenderer->renderTemplate('slc.twig', array('message' => 'Verwijderen van cursus met ID: ' . $courseId . ' is gelukt!', 'id' => $id));
+		} else {
+			print_r($statement->errorInfo());
+		}
+	} else {
+		if(isLogged($id)) {
+			$db = Database::getInstance();
+			$sql = "SELECT * FROM Cursus WHERE cursus_Id = :cursusID";
+			$statement = $db->prepare($sql);
+			$statement->bindParam('cursusID', $courseId);
+			$statement->execute();
+			$results = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+			echo $twigRenderer->renderTemplate('removecourse.twig', array('course' => $results[0], 'id' => $id, 'courseId' => $courseId));
+		} else {
+			echo $twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
 }

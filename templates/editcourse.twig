@@ -1,0 +1,25 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header"><h1>Edit course with ID: {{ courseId }}</h1></div>
+
+{% endblock header %}
+
+{% block content %}
+
+<form data-ajax="false" action="{{ constant('BASE') }}/slc/{{ id }}/course/edit/{{ courseId }}" method="POST">
+
+	<!-- Veld voor coursenaam -->
+	<label for="basic">Naam:</label>
+	<input type="text" name="courseName" id="basic" data-mini="true" value="{{ course.cursus_Name }}" />
+
+	<!-- Veld voor coursecode -->
+	<label for="basic">Cursuscode:</label>
+	<input type="text" name="courseCode" id="basic" data-mini="true" value="{{ course.cursus_Code }}" />		
+
+	<!-- Submit knop -->
+	<input type="submit" value="Opslaan" data-theme="b">
+</form>
+
+{% endblock content %}

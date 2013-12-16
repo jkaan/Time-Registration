@@ -67,6 +67,26 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+				'URL' => '/slc/:id/course/edit/:courseId',
+				'action' => 'editCourse',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/slc/:id/course/edit/:courseId',
+				'action' => 'editCourse',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/slc/:id/course/remove/:courseId',
+				'action' => 'removeCourse',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/slc/:id/course/remove/:courseId',
+				'action' => 'removeCourse',
+				),
+			array(
+				'method' => 'get',
 				'URL' => '/slc/:id/student/add',
 				'action' => 'addStudent',
 				),
