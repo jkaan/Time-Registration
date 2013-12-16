@@ -185,12 +185,18 @@ function slcPage($id) {
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
 	$db = Database::getInstance();
+	// Gets the courses
 	$statement = $db->prepare('SELECT * FROM Cursus WHERE actief = :actief');
 	$statement->bindValue('actief', 1);
 	$statement->execute();
 	$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+	// Gets all the students
+	$statement = $db->prepare('SELECT * FROM User');
+	$statement->execute();
+	$students = $statement->fetchAll(PDO::FETCH_ASSOC);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 3)) {
-		echo $twigRenderer->renderTemplate('slc.twig', array('id' => $id, 'courses' => $courses));
+		echo $twigRenderer->renderTemplate('slc.twig', array('id' => $id, 'courses' => $courses, 'students' => $students));
 	} else {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
@@ -252,11 +258,13 @@ function addCourse($id) {
 		$statement = $db->prepare($sql);
 		$statement->bindParam('cursus_name', $_POST['coursename']);
 		$statement->bindParam('cursus_code', $_POST['coursecode']);
-		$statement->bindParam('actief', 1);
+		$statement->bindValue('actief', 1);
 		$statement->bindParam('user_id', $id);
 		
 		if($statement->execute()) {
-			echo $twigRenderer->renderTemplate('slc.twig', array('message' => 'Added a new course.', 'id' => $id));
+			$app->flash('message', 'test');
+			session_start();
+			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
 		}
 	} else {
 		if(isLogged($id)){
@@ -278,7 +286,7 @@ function editCourse($id, $courseId) {
 		$statement->bindParam('cursusId', $courseId);
 		
 		if($statement->execute()) {
-			echo $twigRenderer->renderTemplate('slc.twig', array('message' => 'Wijzigen van cursus met ID: ' . $courseId . ' is gelukt!', 'id' => $id));
+			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
 		}
 	} else {
 		if(isLogged($id)) {
@@ -306,7 +314,7 @@ function removeCourse($id, $courseId) {
 		$statement->bindValue('actief', 0);
 
 		if($statement->execute()) {
-			echo $twigRenderer->renderTemplate('slc.twig', array('message' => 'Verwijderen van cursus met ID: ' . $courseId . ' is gelukt!', 'id' => $id));
+			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
 		} else {
 			print_r($statement->errorInfo());
 		}
@@ -339,14 +347,45 @@ function addStudent($id) {
 		$statement->bindParam('user_email', $_POST['studentemail']);
 		$statement->bindParam('user_pass', $_POST['studentpassword']);
 		$statement->bindParam('user_klas', $_POST['studentklas']);
-		$statement->execute();
 
 		if($statement->execute()) {
-			echo $twigRenderer->renderTemplate('slc.twig', array('message' => 'Added a new user.', 'id' => $id));
+			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
 		}
 	} else {
 		if(isLogged($id)) {
 			echo $twigRenderer->renderTemplate('addstudent.twig', array('id' => $id));
+		} else {
+			echo $twigRenderer->renderTemplate('noaccess.twig');
+		}
+	}
+}
+
+function editStudent($id, $studentId) {
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	if(!empty($_POST)) {
+		$db = Database::getInstance();
+		$sql = "UPDATE User SET user_Name = :userName, user_Code = :userCode, user_Email = :userEmail, user_Pass = :userPass, user_Klas = :userKlas WHERE user_Id = :userID";
+		$statement = $db->prepare($sql);
+		$statement->bindParam('userName', $_POST['studentname']);
+		$statement->bindParam('userCode', $_POST['studentcode']);
+		$statement->bindParam('userEmail', $_POST['studentemail']);
+		$statement->bindParam('userPass', $_POST['studentpassword']);
+		$statement->bindParam('userKlas', $_POST['studentklas']);
+		$statement->bindParam('userID', $studentId);
+
+		if($statement->execute()) {
+			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
+		}
+	} else {
+		if(isLogged($id)) {
+			$db = Database::getInstance();
+			$sql = "SELECT * FROM User WHERE user_Id = :userId";
+			$statement = $db->prepare($sql);
+			$statement->bindParam('userId', $studentId);
+			$statement->execute();
+			$student = $statement->fetchAll(PDO::FETCH_ASSOC);
+			echo $twigRenderer->renderTemplate('editstudent.twig', array('studentId' => $studentId, 'id' => $id, 'student' => $student[0]));
 		} else {
 			echo $twigRenderer->renderTemplate('noaccess.twig');
 		}
