@@ -10,24 +10,40 @@
 {% endblock header %}
 
 {% block content %}
-
-<form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren" method="POST">
+<script>
+		function test(value)
+		{
+			$.ajax({
+				url: 'http://localhost/sop/urenregistratie/application/selectOnderdeel.php',
+				type: 'POST',
+				data: {cursus_id: value},
+				dataType:'json',
+				success: function(data){
+					console.log(data);
+					for(var i in data){
+						 $("#onderdeel").append($("<option></option>").attr("value", data[i]['onderdeel_Id']).text(data[i]['onderdeel_Name']));
+					}
+					
+				}
+			});
+		}
+</script>
+<form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren/add" method="POST">
 	<!-- Veld voor het cursus -->
 	<label for="select-choice-0" class="select">Cursus:</label>
-	<select name="cursus" id="select-choice-0">
-		<option value="1">SOP</option>
-		<option value="2">SOR</option>
-		<option value="3">EBUS</option>
-		<option value="4">BPM</option>
+	<select name="cursus" id="cursus" onChange="test(this.value)">
+		<option>Selecteer je cursus</option>
+		{% for course in courses %}
+			<option value="{{ course.cursus_Id }}">{{ course.cursus_Name }}</option>
+		{% endfor %}
 	</select>
+	
 	<!--Veld voor het onderdeel -->
 	<label for="select-choice-0" class="select">Onderdeel:</label>
-	<select name="onderdeel" id="select-choice-0">
-		<option value="1">1</option>
-		<option value="2">2</option>
-		<option value="3">3</option>
-		<option value="4">4</option>
+	<select name="onderdeel" id="onderdeel" class="onderdeel">
+		<option value="0">Selecteer het onderdeel</option>
 	</select>	
+	
 	<!-- Veld voor de datum -->
 	<label for="date">Datum:</label>
 	<input type="date" width=" 30px;" name="date" id="date" value=""  />	
