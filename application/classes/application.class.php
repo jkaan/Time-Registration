@@ -53,7 +53,7 @@ class Application {
 			array(
 				'method' => 'post',
 				'URL' => '/student/:id/uren/add',
-				'action' => 'addStudieLast',
+				'action' => 'urenPage',
 				),
 			array(
 				'method' => 'get',

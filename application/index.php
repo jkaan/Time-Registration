@@ -4,7 +4,6 @@ require('../vendor/autoload.php');
 require('classes/database.class.php');
 require('classes/application.class.php');
 require('classes/TwigRenderer.class.php');
-require_once('config.php');
 require_once('configvariables.php');
 
 $app = new \Slim\Slim();
@@ -197,8 +196,24 @@ function slcPage($id) {
 
 function urenPage($id) {
 	$twigRenderer = new TwigRenderer();
+	$db = Database::getInstance();
 	if(isLogged($id)){
-		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id));
+		if(!empty($_POST)){
+			$sql = "INSERT INTO Uren (Onderdeel_onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (:onderdeel, :datum, :studielast, :user_id)";
+			$statement = $db->prepare($sql);	
+			$statement->bindParam('datum', $_POST['date']);
+			$statement->bindParam('onderdeel', $_POST['onderdeel']);
+			$statement->bindParam('studielast', $_POST['studielast']);
+			$statement->bindParam('user_id', $id);
+			$statement->execute();
+			
+		}			
+		$statement = $db->prepare("SELECT cursus_Id, cursus_Name FROM Cursus WHERE actief <> 0");
+		$statement->execute();
+		$coursearray = $statement->fetchALL(PDO::FETCH_ASSOC);
+		//var_dump($coursearray);
+		echo $twigRenderer->renderTemplate('uren.twig', array('id' => $id, 'courses' => $coursearray));
+		
 	}
 	else {		
 		echo $twigRenderer->renderTemplate('noaccess.twig'); 
@@ -225,7 +240,8 @@ function isLogged($id) {
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	$time = strtotime($results['user_Online']) + AUTH_TIME; // Add 1 hour
-	if($time > strtotime(date('y-m-d G:i:s'))) {
+	$timenow = date('Y-m-d G:i:s');	
+	if($time > $timenow) {
 		$logged = true;
 	}
 	return $logged;
