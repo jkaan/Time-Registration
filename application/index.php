@@ -5,6 +5,7 @@ require('classes/database.class.php');
 require('classes/application.class.php');
 require('classes/TwigRenderer.class.php');
 require_once('configvariables.php');
+require_once('config.php');
 
 $app = new \Slim\Slim();
 

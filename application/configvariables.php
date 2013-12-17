@@ -1,8 +1,4 @@
 <?php
-if(!defined('BASE')) {
-	DEFINE('BASE', 'http://localhost/sop/urenregistratie/application');
-}
-
 if(!defined('AUTH_TIME')) {
 	DEFINE('AUTH_TIME', 3600);
 }
