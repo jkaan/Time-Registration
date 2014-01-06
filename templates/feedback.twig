@@ -3,34 +3,34 @@
 {% block header %}
 
 <div data-role="header">
-<a href="index.html" data-rel="back">Back</a>
-<h1>Uren</h1>
+  <a href="index.html" data-rel="back">Back</a>
+  <h1>Uren</h1>
 </div>
 
 {% endblock header %}
 
 {% block content %}
-         <table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
-              <thead>
-                <tr>
-                  <th data-priority="1">Weeknummer</th>
-				  <th>Title</th>
-                  <th data-priority="2">Cursus</th>
-                  <th data-priority="3">Docent</th>
-                </tr>
-              </thead>
-              <tbody>
-					{% for fbk in data %}
-						<tr>
-						  <td>{{ fbk.feedback_wknr }}</td>
-						  <td><a href="feedback/{{fbk.feedback_Id}}">{{ fbk.feedback_Titel }}</a></td>
-						  <td>{{ fbk.Cursus_cursus_Id }}</td>
-						  <td>Anton Bil</td>
-						</tr>
-					{% endfor %}
-				
-              </tbody>
-            </table>
+<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+  <thead>
+    <tr>
+      <th data-priority="1">Weeknummer</th>
+      <th>Title</th>
+      <th data-priority="2">Cursus</th>
+      <th data-priority="3">Docent</th>
+    </tr>
+  </thead>
+  <tbody>
+   {% for fbk in data %}
+   <tr>
+    <td>{{ fbk.feedback_wknr }}</td>
+    <td><a href="feedback/{{fbk.feedback_Id}}">{{ fbk.feedback_Titel }}</a></td>
+    <td>{{ fbk.Cursus_cursus_Id }}</td>
+    <td>Anton Bil</td>
+  </tr>
+  {% endfor %}
+  
+</tbody>
+</table>
 
 
 {% endblock content %}

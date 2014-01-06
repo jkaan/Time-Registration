@@ -42,6 +42,17 @@ class Twig_Extension_Core extends Twig_Extension
     }
 
     /**
+     * This method is an extension, makes it possible to use sessions in templates
+     * @return array An array containing the session variable
+     */
+    public function getGlobals() {
+        session_start();
+        return array(
+            'session' => $_SESSION,
+            );
+    }
+
+    /**
      * Sets the default format to be used by the date filter.
      *
      * @param string $format             The default date format string
@@ -137,7 +148,7 @@ class Twig_Extension_Core extends Twig_Extension
             new Twig_TokenParser_Flush(),
             new Twig_TokenParser_Do(),
             new Twig_TokenParser_Embed(),
-        );
+            );
     }
 
     /**
@@ -191,15 +202,15 @@ class Twig_Extension_Core extends Twig_Extension
             // escaping
             new Twig_SimpleFilter('escape', 'twig_escape_filter', array('needs_environment' => true, 'is_safe_callback' => 'twig_escape_filter_is_safe')),
             new Twig_SimpleFilter('e', 'twig_escape_filter', array('needs_environment' => true, 'is_safe_callback' => 'twig_escape_filter_is_safe')),
-        );
+            );
 
-        if (function_exists('mb_get_info')) {
-            $filters[] = new Twig_SimpleFilter('upper', 'twig_upper_filter', array('needs_environment' => true));
-            $filters[] = new Twig_SimpleFilter('lower', 'twig_lower_filter', array('needs_environment' => true));
-        }
+if (function_exists('mb_get_info')) {
+    $filters[] = new Twig_SimpleFilter('upper', 'twig_upper_filter', array('needs_environment' => true));
+    $filters[] = new Twig_SimpleFilter('lower', 'twig_lower_filter', array('needs_environment' => true));
+}
 
-        return $filters;
-    }
+return $filters;
+}
 
     /**
      * Returns a list of global functions to add to the existing list.
@@ -215,7 +226,7 @@ class Twig_Extension_Core extends Twig_Extension
             new Twig_SimpleFunction('random', 'twig_random', array('needs_environment' => true)),
             new Twig_SimpleFunction('date', 'twig_date_converter', array('needs_environment' => true)),
             new Twig_SimpleFunction('include', 'twig_include', array('needs_environment' => true, 'needs_context' => true, 'is_safe' => array('all'))),
-        );
+            );
     }
 
     /**
@@ -236,8 +247,8 @@ class Twig_Extension_Core extends Twig_Extension
             new Twig_SimpleTest('constant', null, array('node_class' => 'Twig_Node_Expression_Test_Constant')),
             new Twig_SimpleTest('empty', 'twig_test_empty'),
             new Twig_SimpleTest('iterable', 'twig_test_iterable'),
-        );
-    }
+            );
+}
 
     /**
      * Returns a list of operators to add to the existing list.
@@ -251,7 +262,7 @@ class Twig_Extension_Core extends Twig_Extension
                 'not' => array('precedence' => 50, 'class' => 'Twig_Node_Expression_Unary_Not'),
                 '-'   => array('precedence' => 500, 'class' => 'Twig_Node_Expression_Unary_Neg'),
                 '+'   => array('precedence' => 500, 'class' => 'Twig_Node_Expression_Unary_Pos'),
-            ),
+                ),
             array(
                 'or'          => array('precedence' => 10, 'class' => 'Twig_Node_Expression_Binary_Or', 'associativity' => Twig_ExpressionParser::OPERATOR_LEFT),
                 'and'         => array('precedence' => 15, 'class' => 'Twig_Node_Expression_Binary_And', 'associativity' => Twig_ExpressionParser::OPERATOR_LEFT),
@@ -280,48 +291,48 @@ class Twig_Extension_Core extends Twig_Extension
                 'is'          => array('precedence' => 100, 'callable' => array($this, 'parseTestExpression'), 'associativity' => Twig_ExpressionParser::OPERATOR_LEFT),
                 'is not'      => array('precedence' => 100, 'callable' => array($this, 'parseNotTestExpression'), 'associativity' => Twig_ExpressionParser::OPERATOR_LEFT),
                 '**'          => array('precedence' => 200, 'class' => 'Twig_Node_Expression_Binary_Power', 'associativity' => Twig_ExpressionParser::OPERATOR_RIGHT),
-            ),
-        );
+                ),
+);
+}
+
+public function parseNotTestExpression(Twig_Parser $parser, Twig_NodeInterface $node)
+{
+    return new Twig_Node_Expression_Unary_Not($this->parseTestExpression($parser, $node), $parser->getCurrentToken()->getLine());
+}
+
+public function parseTestExpression(Twig_Parser $parser, Twig_NodeInterface $node)
+{
+    $stream = $parser->getStream();
+    $name = $stream->expect(Twig_Token::NAME_TYPE)->getValue();
+    $arguments = null;
+    if ($stream->test(Twig_Token::PUNCTUATION_TYPE, '(')) {
+        $arguments = $parser->getExpressionParser()->parseArguments(true);
     }
 
-    public function parseNotTestExpression(Twig_Parser $parser, Twig_NodeInterface $node)
-    {
-        return new Twig_Node_Expression_Unary_Not($this->parseTestExpression($parser, $node), $parser->getCurrentToken()->getLine());
-    }
+    $class = $this->getTestNodeClass($parser, $name, $node->getLine());
 
-    public function parseTestExpression(Twig_Parser $parser, Twig_NodeInterface $node)
-    {
-        $stream = $parser->getStream();
-        $name = $stream->expect(Twig_Token::NAME_TYPE)->getValue();
-        $arguments = null;
-        if ($stream->test(Twig_Token::PUNCTUATION_TYPE, '(')) {
-            $arguments = $parser->getExpressionParser()->parseArguments(true);
+    return new $class($node, $name, $arguments, $parser->getCurrentToken()->getLine());
+}
+
+protected function getTestNodeClass(Twig_Parser $parser, $name, $line)
+{
+    $env = $parser->getEnvironment();
+    $testMap = $env->getTests();
+    if (!isset($testMap[$name])) {
+        $message = sprintf('The test "%s" does not exist', $name);
+        if ($alternatives = $env->computeAlternatives($name, array_keys($env->getTests()))) {
+            $message = sprintf('%s. Did you mean "%s"', $message, implode('", "', $alternatives));
         }
 
-        $class = $this->getTestNodeClass($parser, $name, $node->getLine());
-
-        return new $class($node, $name, $arguments, $parser->getCurrentToken()->getLine());
+        throw new Twig_Error_Syntax($message, $line, $parser->getFilename());
     }
 
-    protected function getTestNodeClass(Twig_Parser $parser, $name, $line)
-    {
-        $env = $parser->getEnvironment();
-        $testMap = $env->getTests();
-        if (!isset($testMap[$name])) {
-            $message = sprintf('The test "%s" does not exist', $name);
-            if ($alternatives = $env->computeAlternatives($name, array_keys($env->getTests()))) {
-                $message = sprintf('%s. Did you mean "%s"', $message, implode('", "', $alternatives));
-            }
-
-            throw new Twig_Error_Syntax($message, $line, $parser->getFilename());
-        }
-
-        if ($testMap[$name] instanceof Twig_SimpleTest) {
-            return $testMap[$name]->getNodeClass();
-        }
-
-        return $testMap[$name] instanceof Twig_Test_Node ? $testMap[$name]->getClass() : 'Twig_Node_Expression_Test';
+    if ($testMap[$name] instanceof Twig_SimpleTest) {
+        return $testMap[$name]->getNodeClass();
     }
+
+    return $testMap[$name] instanceof Twig_Test_Node ? $testMap[$name]->getClass() : 'Twig_Node_Expression_Test';
+}
 
     /**
      * Returns the name of the extension.
@@ -898,123 +909,123 @@ function twig_escape_filter(Twig_Environment $env, $string, $strategy = 'html', 
             // Using a static variable to avoid initializing the array
             // each time the function is called. Moving the declaration on the
             // top of the function slow downs other escaping strategies.
-            static $htmlspecialcharsCharsets;
+        static $htmlspecialcharsCharsets;
 
-            if (null === $htmlspecialcharsCharsets) {
-                if ('hiphop' === substr(PHP_VERSION, -6)) {
-                    $htmlspecialcharsCharsets = array('utf-8' => true, 'UTF-8' => true);
-                } else {
-                    $htmlspecialcharsCharsets = array(
-                        'ISO-8859-1' => true, 'ISO8859-1' => true,
-                        'ISO-8859-15' => true, 'ISO8859-15' => true,
-                        'utf-8' => true, 'UTF-8' => true,
-                        'CP866' => true, 'IBM866' => true, '866' => true,
-                        'CP1251' => true, 'WINDOWS-1251' => true, 'WIN-1251' => true,
-                        '1251' => true,
-                        'CP1252' => true, 'WINDOWS-1252' => true, '1252' => true,
-                        'KOI8-R' => true, 'KOI8-RU' => true, 'KOI8R' => true,
-                        'BIG5' => true, '950' => true,
-                        'GB2312' => true, '936' => true,
-                        'BIG5-HKSCS' => true,
-                        'SHIFT_JIS' => true, 'SJIS' => true, '932' => true,
-                        'EUC-JP' => true, 'EUCJP' => true,
-                        'ISO8859-5' => true, 'ISO-8859-5' => true, 'MACROMAN' => true,
+        if (null === $htmlspecialcharsCharsets) {
+            if ('hiphop' === substr(PHP_VERSION, -6)) {
+                $htmlspecialcharsCharsets = array('utf-8' => true, 'UTF-8' => true);
+            } else {
+                $htmlspecialcharsCharsets = array(
+                    'ISO-8859-1' => true, 'ISO8859-1' => true,
+                    'ISO-8859-15' => true, 'ISO8859-15' => true,
+                    'utf-8' => true, 'UTF-8' => true,
+                    'CP866' => true, 'IBM866' => true, '866' => true,
+                    'CP1251' => true, 'WINDOWS-1251' => true, 'WIN-1251' => true,
+                    '1251' => true,
+                    'CP1252' => true, 'WINDOWS-1252' => true, '1252' => true,
+                    'KOI8-R' => true, 'KOI8-RU' => true, 'KOI8R' => true,
+                    'BIG5' => true, '950' => true,
+                    'GB2312' => true, '936' => true,
+                    'BIG5-HKSCS' => true,
+                    'SHIFT_JIS' => true, 'SJIS' => true, '932' => true,
+                    'EUC-JP' => true, 'EUCJP' => true,
+                    'ISO8859-5' => true, 'ISO-8859-5' => true, 'MACROMAN' => true,
                     );
-                }
             }
+        }
 
-            if (isset($htmlspecialcharsCharsets[$charset])) {
-                return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-            }
+        if (isset($htmlspecialcharsCharsets[$charset])) {
+            return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+        }
 
-            if (isset($htmlspecialcharsCharsets[strtoupper($charset)])) {
+        if (isset($htmlspecialcharsCharsets[strtoupper($charset)])) {
                 // cache the lowercase variant for future iterations
-                $htmlspecialcharsCharsets[$charset] = true;
+            $htmlspecialcharsCharsets[$charset] = true;
 
-                return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-            }
+            return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+        }
 
-            $string = twig_convert_encoding($string, 'UTF-8', $charset);
-            $string = htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $string = twig_convert_encoding($string, 'UTF-8', $charset);
+        $string = htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-            return twig_convert_encoding($string, $charset, 'UTF-8');
+        return twig_convert_encoding($string, $charset, 'UTF-8');
 
         case 'js':
             // escape all non-alphanumeric characters
             // into their \xHH or \uHHHH representations
-            if ('UTF-8' != $charset) {
-                $string = twig_convert_encoding($string, 'UTF-8', $charset);
-            }
+        if ('UTF-8' != $charset) {
+            $string = twig_convert_encoding($string, 'UTF-8', $charset);
+        }
 
-            if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
-                throw new Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
-            }
+        if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
+            throw new Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
+        }
 
-            $string = preg_replace_callback('#[^a-zA-Z0-9,\._]#Su', '_twig_escape_js_callback', $string);
+        $string = preg_replace_callback('#[^a-zA-Z0-9,\._]#Su', '_twig_escape_js_callback', $string);
 
-            if ('UTF-8' != $charset) {
-                $string = twig_convert_encoding($string, $charset, 'UTF-8');
-            }
+        if ('UTF-8' != $charset) {
+            $string = twig_convert_encoding($string, $charset, 'UTF-8');
+        }
 
-            return $string;
+        return $string;
 
         case 'css':
-            if ('UTF-8' != $charset) {
-                $string = twig_convert_encoding($string, 'UTF-8', $charset);
-            }
+        if ('UTF-8' != $charset) {
+            $string = twig_convert_encoding($string, 'UTF-8', $charset);
+        }
 
-            if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
-                throw new Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
-            }
+        if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
+            throw new Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
+        }
 
-            $string = preg_replace_callback('#[^a-zA-Z0-9]#Su', '_twig_escape_css_callback', $string);
+        $string = preg_replace_callback('#[^a-zA-Z0-9]#Su', '_twig_escape_css_callback', $string);
 
-            if ('UTF-8' != $charset) {
-                $string = twig_convert_encoding($string, $charset, 'UTF-8');
-            }
+        if ('UTF-8' != $charset) {
+            $string = twig_convert_encoding($string, $charset, 'UTF-8');
+        }
 
-            return $string;
+        return $string;
 
         case 'html_attr':
-            if ('UTF-8' != $charset) {
-                $string = twig_convert_encoding($string, 'UTF-8', $charset);
-            }
+        if ('UTF-8' != $charset) {
+            $string = twig_convert_encoding($string, 'UTF-8', $charset);
+        }
 
-            if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
-                throw new Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
-            }
+        if (0 == strlen($string) ? false : (1 == preg_match('/^./su', $string) ? false : true)) {
+            throw new Twig_Error_Runtime('The string to escape is not a valid UTF-8 string.');
+        }
 
-            $string = preg_replace_callback('#[^a-zA-Z0-9,\.\-_]#Su', '_twig_escape_html_attr_callback', $string);
+        $string = preg_replace_callback('#[^a-zA-Z0-9,\.\-_]#Su', '_twig_escape_html_attr_callback', $string);
 
-            if ('UTF-8' != $charset) {
-                $string = twig_convert_encoding($string, $charset, 'UTF-8');
-            }
+        if ('UTF-8' != $charset) {
+            $string = twig_convert_encoding($string, $charset, 'UTF-8');
+        }
 
-            return $string;
+        return $string;
 
         case 'url':
             // hackish test to avoid version_compare that is much slower, this works unless PHP releases a 5.10.*
             // at that point however PHP 5.2.* support can be removed
-            if (PHP_VERSION < '5.3.0') {
-                return str_replace('%7E', '~', rawurlencode($string));
-            }
+        if (PHP_VERSION < '5.3.0') {
+            return str_replace('%7E', '~', rawurlencode($string));
+        }
 
-            return rawurlencode($string);
+        return rawurlencode($string);
 
         default:
-            static $escapers;
+        static $escapers;
 
-            if (null === $escapers) {
-                $escapers = $env->getExtension('core')->getEscapers();
-            }
+        if (null === $escapers) {
+            $escapers = $env->getExtension('core')->getEscapers();
+        }
 
-            if (isset($escapers[$strategy])) {
-                return call_user_func($escapers[$strategy], $env, $string, $charset);
-            }
+        if (isset($escapers[$strategy])) {
+            return call_user_func($escapers[$strategy], $env, $string, $charset);
+        }
 
-            $validStrategies = implode(', ', array_merge(array('html', 'js', 'url', 'css', 'html_attr'), array_keys($escapers)));
+        $validStrategies = implode(', ', array_merge(array('html', 'js', 'url', 'css', 'html_attr'), array_keys($escapers)));
 
-            throw new Twig_Error_Runtime(sprintf('Invalid escaping strategy "%s" (valid ones: %s).', $strategy, $validStrategies));
+        throw new Twig_Error_Runtime(sprintf('Invalid escaping strategy "%s" (valid ones: %s).', $strategy, $validStrategies));
     }
 }
 
@@ -1103,7 +1114,7 @@ function _twig_escape_html_attr_callback($matches)
         38 => 'amp',  /* ampersand */
         60 => 'lt',   /* less-than sign */
         62 => 'gt',   /* greater-than sign */
-    );
+        );
 
     $chr = $matches[0];
     $ord = ord($chr);
@@ -1218,7 +1229,7 @@ if (function_exists('mb_get_info')) {
     {
         if (null !== ($charset = $env->getCharset())) {
             return mb_strtoupper(mb_substr($string, 0, 1, $charset), $charset).
-                         mb_strtolower(mb_substr($string, 1, mb_strlen($string, $charset), $charset), $charset);
+            mb_strtolower(mb_substr($string, 1, mb_strlen($string, $charset), $charset), $charset);
         }
 
         return ucfirst(strtolower($string));
@@ -1397,7 +1408,7 @@ function twig_array_batch($items, $size, $fill = null)
             $result[$last] = array_merge(
                 $result[$last],
                 array_fill(0, $fillCount, $fill)
-            );
+                );
         }
     }
 

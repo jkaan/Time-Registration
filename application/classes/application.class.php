@@ -97,6 +97,16 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+				'URL' => '/slc/:id/student/edit/:studentId',
+				'action' => 'editStudent',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/slc/:id/student/edit/:studentId',
+				'action' => 'editStudent',
+				),
+			array(
+				'method' => 'get',
 				'URL' => '/docent/:id/',
 				'action' => 'docentPage',
 				),
