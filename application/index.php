@@ -4,9 +4,11 @@ require('../vendor/autoload.php');
 require('classes/database.class.php');
 require('classes/application.class.php');
 require('classes/TwigRenderer.class.php');
+require_once('config.php');
 require_once('configvariables.php');
 
 $app = new \Slim\Slim();
+$app->add(new \Slim\Middleware\SessionCookie(array('secret' => 'myappsecret')));
 
 $application = new Application();
 
@@ -234,6 +236,10 @@ Controleert of de gebruiker ingelogd is.
 De gebruiker is voor een bepaalde tijd ingelogd (gedefinieerd in de config.php).
 */
 function isLogged($id) {
+	var_dump($_SESSION['id']);
+	
+	$sessieparts = explode('-', $_SESSION['id']);
+	var_dump($sessieparts);
 	$logged = false;
 	$db = Database::getInstance();
 	$sql = "SELECT user_Online FROM User WHERE user_Id = " . $id;
@@ -241,7 +247,7 @@ function isLogged($id) {
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	$time = strtotime($results['user_Online']) + AUTH_TIME; // Add 1 hour
-	$timenow = date('Y-m-d G:i:s');	
+	$timenow = strtotime(date('Y-m-d G:i:s'));	
 	if($time > $timenow) {
 		$logged = true;
 	}
@@ -371,8 +377,26 @@ function addStudent($id) {
 
 function updateUserOnlineTime($id) {
 	$db = Database::getInstance();
-	$statement = $db->prepare("UPDATE User SET user_Online = NOW() WHERE user_Id= " . $id);
+	$date = date('Y-m-d G:i:s');
+	$statement = $db->prepare("UPDATE User SET user_Online = '".$date."' WHERE user_Id= " . $id);
 	$statement->execute();
+}
+
+function generateSessionId()
+{
+	$chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,-";
+    srand((double)microtime()*1000000);
+    $i = 0;
+    $pass = '' ;
+    while ($i<=10) 
+    {
+        $num  = rand() % 33;
+        $tmp  = substr($chars, $num, 1);
+        $pass = $pass . $tmp;
+        $i++;
+    }
+	$pass = $pass."-".strtotime(date('H:i:s'));
+    return $pass;
 }
 
 function loginUser() {
@@ -381,6 +405,7 @@ function loginUser() {
 	$statement->bindParam('username', $_POST['username']);
 	$statement->bindParam('password', $_POST['password']);
 	$statement->execute();
+	$_SESSION['id'] = generateSessionId();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	if($results > 0) {
 		switch($results['rol_Naam']) {
