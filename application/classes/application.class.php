@@ -107,6 +107,16 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+				'URL' => '/slc/:id/student/remove/:studentId',
+				'action' => 'removeStudent',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/slc/:id/student/remove/:studentId',
+				'action' => 'removeStudent',
+				),
+			array(
+				'method' => 'get',
 				'URL' => '/docent/:id/',
 				'action' => 'docentPage',
 				),
