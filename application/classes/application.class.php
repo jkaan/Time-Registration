@@ -139,6 +139,31 @@ class Application {
 				'method' => 'post',
 				'URL' => '/student/:id/overzicht',
 				'action' => 'studentOverzicht',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/docent/:id/overzicht',
+				'action' => 'docentOverzicht',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/docent/:id/overzicht',
+				'action' => 'docentOverzicht',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/docent/:id/overzicht/details/:userid-:weeknr-:cursusid',
+				'action' => 'docentOverzichtDetail',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/docent/:id/overzicht/feedback/:userid-:weeknr-:cursusid',
+				'action' => 'docentFeedback',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/docent/:id/overzicht/feedback/:userid-:weeknr-:cursusid',
+				'action' => 'docentFeedback',
 				)
 			);
 }

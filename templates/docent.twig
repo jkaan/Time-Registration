@@ -10,8 +10,10 @@
 
 	{% block content %}
 
-	<a href="nolink" data-role="button">Een link zonder doel</a>
+	<a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht" data-role="button">Overzicht</a>
 
-	<a href="nolink" data-role="button">Een link met geen doel</a>
+	<a href="nolink" data-role="button">Cursus beheer</a>
+	
+	<a href="nolink" data-role="button">Gebruikersbeheer</a>
 
 	{% endblock content %}

@@ -1,0 +1,55 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+	<a href="index.html" data-rel="back">Back</a>
+	<h1>Uren</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+<script>
+$(document).ready(function() {
+	$('select').change(function( event ) {
+		$("#test").submit();
+	});
+
+});
+</script>
+<form data-ajax="false" id="test" action="{{ constant('BASE') }}/docent/{{ id }}/overzicht" method="POST">
+	<label for="select-choice-0" class="select">Week:</label>
+	<select onchange="this.form.submit()" name="week" id="select-choice-0">
+		<option value="Standaard">Selecteer weeknummer</option>
+		{% for weeknummer in weeknummers %}
+		{% if weeknummer.week == weeknr %}					
+		<option value="{{ weeknummer.week }}-{{weeknummer.jaar }}" selected>{{ weeknummer.week }}</option>
+		{% else %}
+		<option value="{{ weeknummer.week }}-{{weeknummer.jaar }}">{{ weeknummer.week }}</option>
+		{% endif %}
+		{% endfor %}
+	</select>
+</form>
+{% if urenoverzichtarray != null %}
+		<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+			<thead>
+				<tr>
+					<th>Student</th>
+					<th>Totaal uren</th>
+					<th>Opties</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for data in urenoverzichtarray %}
+				<tr>
+					<td>{{ data.user_Name }}</td>
+					<td>{{ data.studielast }}</td>
+					<td><a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht/details/{{data.user_Id}}-{{ weeknr }}-{{ cursus_Id }}">Details</a> | <a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht/feedback/{{data.user_Id}}-{{ weeknr }}-{{ cursus_Id }}">Feedback</a> </td>
+				</tr>
+				{% endfor %}				
+			</tbody>
+		</table>
+		{% endif %}
+
+		{% endblock content %}

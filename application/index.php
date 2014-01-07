@@ -9,7 +9,6 @@ require_once('configvariables.php');
 require_once('config.php');
 
 $app = new \Slim\Slim();
-$app->add(new \Slim\Middleware\SessionCookie(array('secret' => 'myappsecret')));
 
 $application = new Application();
 
@@ -183,6 +182,122 @@ function docentPage($id) {
 	}
 }
 
+function docentOverzicht($id){
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	$result = getUserDetails($id);
+	if((isLogged($id))) {
+		$weeknr = 0;
+		$cursus_Id = 1;
+		$array = null;
+		$weeknumberNow = date("W", strtotime(START_SEMESTER));
+		if(!empty($_POST)){
+			$parts = explode("-", $_POST['week']);
+			$weeknr = $parts[0];
+			$startandenddate = getStartAndEndDate($weeknr, $parts[1]);
+			$db = Database::getInstance();
+			
+			$statement = $db->prepare("SELECT
+										User_user_Id as user_Id,
+										(SELECT user_Name FROM User WHERE Uren.User_user_Id = user_Id) as user_Name, 
+										SUM(uren_Studielast) as studielast										
+										FROM
+										Uren
+										WHERE
+										Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursus_Id."'))
+										AND
+										User_user_Id in (SELECT user_Id FROM User WHERE User_user_Id = user_Id AND Rol_rol_Id = 1)
+										AND
+										uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
+										GROUP BY User_user_Id"  
+									);
+			$statement->execute();
+			$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
+			$array = array();
+			foreach($urenoverzichtData as $uren )
+			{
+				$studielast_in_uren = min_naar_uren($uren['studielast']);
+				$array[] = array('user_Id' => $uren['user_Id'], 'user_Name' => $uren['user_Name'], 'studielast' => $studielast_in_uren);
+			}
+
+		}
+		//var_dump(generateWeeknumbersFromDate($weeknumberNow));
+		echo $twigRenderer->renderTemplate('urenoverzicht_docent.twig', array('cursus_Id' => $cursus_Id, 'name' => $result['user_Name'], 'id' => $id, 'weeknr' => $weeknr, 'urenoverzichtarray' => $array, 'weeknummers' => generateWeeknumbersFromDate($weeknumberNow)));
+		
+	}	
+	else {
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
+function docentOverzichtDetail($id, $userid, $weeknr, $cursusid){
+	$twigRenderer = new TwigRenderer();
+	$db = Database::getInstance();
+			$startandenddate = getStartAndEndDate($weeknr, 2013);	
+			$statement = $db->prepare("SELECT
+											(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,
+											SUM(uren_Studielast) as studielast										
+										FROM
+											Uren
+										WHERE
+											Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursusid."'))
+										AND
+											User_user_Id = '".$userid."'
+										AND
+											uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
+										GROUP BY Onderdeel_onderdeel_Id"  
+									);
+			$statement->execute();
+			$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
+			var_dump($urenoverzichtData);
+			$array = array();
+			foreach($urenoverzichtData as $uren )
+			{
+				$studielast_in_uren = min_naar_uren($uren['studielast']);
+				$array[] = array('onderdeel' => $uren['onderdeel'], 'studielast' => $studielast_in_uren);
+			}
+	echo $twigRenderer->renderTemplate('urenoverzichtdetail_docent.twig', array('id' => $id, 'onderdeeloverzichtarray' => $array));
+}
+
+function docentFeedback($id, $userid, $weeknr, $cursusid){
+	$twigRenderer = new TwigRenderer();
+	$db = Database::getInstance();
+	if((isLogged($id))) {
+		if(!empty($_POST)){
+			$pieces = explode("- ", $_POST['titel']);
+			if($pieces['1'] == 'Update')
+			{
+				$sql = "UPDATE Feedback SET feedback_Text = :feedback, feedbackUpdate_Date = NOW() WHERE User_user_Id = :user_id AND Docent_Id = :docent_id AND feedback_wknr = :wknr AND Cursus_cursus_Id = :cursus_id";
+				$statement = $db->prepare($sql);			
+				$statement->bindParam('user_id', $userid);
+				$statement->bindParam('docent_id', $id);
+				$statement->bindParam('wknr', $weeknr);
+				$statement->bindParam('cursus_id', $cursusid);
+				$statement->bindParam('feedback', $_POST['feedback']);;
+				$statement->execute();	
+			}else{
+				$sql = "INSERT INTO Feedback (feedback_wknr, feedback_Titel, feedback_Text, User_user_Id, Docent_Id, Cursus_cursus_Id, feedback_Date) VALUES (:wknr, :titel, :feedback, :user_id, :docent_id, :cursus_id, NOW())";
+				$statement = $db->prepare($sql);	
+				$statement->bindParam('wknr', $weeknr);
+				$statement->bindParam('titel', $_POST['titel']);
+				$statement->bindParam('feedback', $_POST['feedback']);
+				$statement->bindParam('user_id', $userid);
+				$statement->bindParam('docent_id', $id);
+				$statement->bindParam('cursus_id', $cursusid);
+				$statement->execute();			
+			}
+		}
+			$sql = "SELECT feedback_Id, feedback_titel, feedback_Text FROM Feedback WHERE User_user_ID = '".$userid."' AND feedback_wknr = '".$weeknr."'";
+			$statement = $db->prepare($sql);
+			$statement->execute();
+			$feedbackData = $statement->fetch(PDO::FETCH_ASSOC);
+			var_dump($feedbackData);
+			echo $twigRenderer->renderTemplate('addfeedback.twig', array('id' => $id, 'weeknr' => $weeknr, 'userid' => $userid, 'cursusid' => $cursusid, 'feedbackData' => $feedbackData));
+	
+	}else{
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
 function slcPage($id) {
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
@@ -243,10 +358,6 @@ Controleert of de gebruiker ingelogd is.
 De gebruiker is voor een bepaalde tijd ingelogd (gedefinieerd in de config.php).
 */
 function isLogged($id) {
-	var_dump($_SESSION['id']);
-	
-	$sessieparts = explode('-', $_SESSION['id']);
-	var_dump($sessieparts);
 	$logged = false;
 	$db = Database::getInstance();
 	$sql = "SELECT user_Online FROM User WHERE user_Id = " . $id;
@@ -422,30 +533,12 @@ function updateUserOnlineTime($id) {
 	$statement->execute();
 }
 
-function generateSessionId()
-{
-	$chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,-";
-    srand((double)microtime()*1000000);
-    $i = 0;
-    $pass = '' ;
-    while ($i<=10) 
-    {
-        $num  = rand() % 33;
-        $tmp  = substr($chars, $num, 1);
-        $pass = $pass . $tmp;
-        $i++;
-    }
-	$pass = $pass."-".strtotime(date('H:i:s'));
-    return $pass;
-}
-
 function loginUser() {
 	$db = Database::getInstance();
 	$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
 	$statement->bindParam('username', $_POST['username']);
 	$statement->bindParam('password', $_POST['password']);
 	$statement->execute();
-	$_SESSION['id'] = generateSessionId();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	if($results > 0) {
 		switch($results['rol_Naam']) {

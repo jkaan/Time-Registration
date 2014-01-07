@@ -1,0 +1,28 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+<a href="index.html" data-rel="back">Back</a>
+	<h1>Feedback voor </h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+
+<form data-ajax="false" action="{{ constant('BASE') }}/docent/{{ id }}/overzicht/feedback/{{userid}}-{{ weeknr }}-{{ cursusid }}" method="POST">
+	
+	<!-- Veld voor titel -->
+	<label for="basic">Titel:</label>
+	<input type="text" name="titel" id="basic" data-mini="true" value="Feedback week {{ weeknr }}{% if feedbackData != null %} - Update{% endif %}" readonly />
+
+	<!-- Veld voor feedback tekst -->
+	<label for="basic">Feedback:</label>
+	<textarea cols="40" rows="8" name="feedback" id="feedback">{% if feedbackData != null %}{{ feedbackData.feedback_Text }}{% endif %}</textarea>
+
+	<!-- Submit knop -->
+	<input type="submit" value="Opslaan" data-theme="b">
+</form>
+
+{% endblock content %}
