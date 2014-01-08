@@ -87,6 +87,11 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+				'URL' => '/slc/:id/course/students/:courseId', // Not sure about this URL yet
+				'action' => 'getStudentsOfCourse',
+				),
+			array(
+				'method' => 'get',
 				'URL' => '/slc/:id/student/add',
 				'action' => 'addStudent',
 				),

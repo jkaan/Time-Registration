@@ -1,0 +1,43 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+	<h1>
+		Studenten in cursus: {{ course[0].cursus_Name }}
+	</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+{% if students is empty %} 
+
+So students is empty..
+
+{% endif %}
+<h4>Cursus met Naam: {{ course[0].cursus_Name }} en docent: {{ course[0].user_Name }}</h4>
+<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+	<thead>
+		<tr>
+			<th>Student Naam</th>
+			<th>Student Email</th>
+			<th>Student Code</th>
+			<th>Student Klas</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for student in students %}
+		<tr>
+			<th>{{ student.user_Name }}</th>
+			<td>{{ student.user_Email }}</td>
+			<td>{{ student.user_Code }}</td>
+			<td>{{ student.user_Klas }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<a href="" data-role="button">Voeg student toe</a>
+
+{% endblock content %}

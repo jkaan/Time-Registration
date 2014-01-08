@@ -80,7 +80,26 @@
 		</table>
 		<div data-role="collapsible">
 			<h3>Gebruiker koppelen aan cursus</h3>
-			<p>I'm the collapsible set content for section 2.</p>
+			<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+				<thead>
+					<tr>
+						<th>Cursus ID</th>
+						<th>Cursus Naam</th>
+						<th>Cursus Code</th>
+						<th>Studenten</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for course in courses %}
+					<tr>
+						<th>{{ course.cursus_Id }}</th>
+						<td>{{ course.cursus_Name }}</td>
+						<td>{{ course.cursus_Code }}</td>
+						<td><a href="{{ constant('BASE') }}/slc/{{ id }}/course/students/{{ course.cursus_Id }}">Zie allen</a></td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
 		</div>
 
 	</div>

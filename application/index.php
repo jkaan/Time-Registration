@@ -469,6 +469,44 @@ function removeCourse($id, $courseId) {
 	}
 }
 
+function getStudentsOfCourse($id, $courseId) {
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	if(isLogged($id)) {
+		$db = Database::getInstance();
+
+		// First part, this gets the corresponding course
+		$sqlCourseAndTeacher = "SELECT cursus_Name, cursus_Code, user_Name
+		FROM Cursus_has_User as CU, Cursus as C, User as U
+		WHERE CU.Cursus_Id = C.cursus_Id
+		AND C.User_user_Id = U.user_Id
+		AND C.cursus_Id = :courseId"; 
+		// This doesn't get the right information if there are no students
+		// Probably because it checks for a entry in cursus_has_user which makes the query long and not needed.
+
+		$statement = $db->prepare($sqlCourseAndTeacher);
+		$statement->bindParam('courseId', $courseId);
+		$statement->execute();
+		$course = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+		// Second part, this gets the students that are enrolled in the corresponding course
+		$sqlStudentsOfCourse = "SELECT user_Name, user_Code, user_Email, user_Klas
+		FROM Cursus_has_User as CU, Cursus as C, User as U
+		WHERE CU.Cursus_Id = C.cursus_Id
+		AND CU.User_Id = U.user_Id
+		AND C.cursus_Id = :courseId";
+
+		$statement = $db->prepare($sqlStudentsOfCourse);
+		$statement->bindParam('courseId', $courseId);
+		$statement->execute();
+		$students = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+		echo $twigRenderer->renderTemplate('studentsincourse.twig', array('course' => $course, 'students' => $students));
+	} else {
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
 function addStudent($id) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
