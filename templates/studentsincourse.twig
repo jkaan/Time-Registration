@@ -29,7 +29,7 @@ So students is empty..
 	<tbody>
 		{% for student in students %}
 		<tr>
-			<th>{{ student.user_Name }}</th>
+			<td>{{ student.user_Name }}</td>
 			<td>{{ student.user_Email }}</td>
 			<td>{{ student.user_Code }}</td>
 			<td>{{ student.user_Klas }}</td>
@@ -37,7 +37,18 @@ So students is empty..
 		{% endfor %}
 	</tbody>
 </table>
+<h4>Kies student om toe te voegen</h4>
+<form action="{{ constant('BASE') }}/slc/{{ id }}/course/students/{{ courseId }}/add">
+	<div class="ui-field-contain">
+		<select>
+			<option value="1">The 1st Option</option>
+			<option value="2">The 2nd Option</option>
+			<option value="3">The 3rd Option</option>
+			<option value="4">The 4th Option</option>
+		</select>
+	</div>
+	<input type="submit" value="Voeg toe" />
+</form>
 
-<a href="" data-role="button">Voeg student toe</a>
 
 {% endblock content %}

@@ -22,7 +22,6 @@
 		<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
 			<thead>
 				<tr>
-					<th>Cursus ID</th>
 					<th>Cursus Naam</th>
 					<th>Cursus Code</th>
 					<th>Docent</th>
@@ -33,7 +32,6 @@
 			<tbody>
 				{% for course in courses %}
 				<tr>
-					<th>{{ course.cursus_Id }}</th>
 					<td>{{ course.cursus_Name }}</td>
 					<td>{{ course.cursus_Code }}</td>
 					<td>{{ course.User_user_Id }}</td>
@@ -53,7 +51,6 @@
 		<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
 			<thead>
 				<tr>
-					<th>Student ID</th>
 					<th>Naam</th>
 					<th>Student Code</th>
 					<th>Email</th>
@@ -66,7 +63,6 @@
 			<tbody>
 				{% for student in students %}
 				<tr>
-					<th>{{ student.user_Id }}</th>
 					<td>{{ student.user_Name }}</td>
 					<td>{{ student.user_Code }}</td>
 					<td>{{ student.user_Email }}</td>
@@ -83,7 +79,6 @@
 			<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
 				<thead>
 					<tr>
-						<th>Cursus ID</th>
 						<th>Cursus Naam</th>
 						<th>Cursus Code</th>
 						<th>Studenten</th>
@@ -92,7 +87,6 @@
 				<tbody>
 					{% for course in courses %}
 					<tr>
-						<th>{{ course.cursus_Id }}</th>
 						<td>{{ course.cursus_Name }}</td>
 						<td>{{ course.cursus_Code }}</td>
 						<td><a href="{{ constant('BASE') }}/slc/{{ id }}/course/students/{{ course.cursus_Id }}">Zie allen</a></td>

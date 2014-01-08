@@ -91,6 +91,11 @@ class Application {
 				'action' => 'getStudentsOfCourse',
 				),
 			array(
+				'method' => 'post',
+				'URL' => '/slc/:id/course/students/:courseId/add',
+				'action' => 'addStudentToCourse',
+				),
+			array(
 				'method' => 'get',
 				'URL' => '/slc/:id/student/add',
 				'action' => 'addStudent',

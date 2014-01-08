@@ -501,10 +501,14 @@ function getStudentsOfCourse($id, $courseId) {
 		$statement->execute();
 		$students = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-		echo $twigRenderer->renderTemplate('studentsincourse.twig', array('course' => $course, 'students' => $students));
+		echo $twigRenderer->renderTemplate('studentsincourse.twig', array('course' => $course, 'students' => $students, 'courseId' => $courseId, 'id' => $id));
 	} else {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
+}
+
+function addStudentToCourse($id, $courseId) {
+
 }
 
 function addStudent($id) {
