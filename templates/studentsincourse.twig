@@ -11,44 +11,60 @@
 {% endblock header %}
 
 {% block content %}
-{% if students is empty %} 
 
-So students is empty..
-
-{% endif %}
 <h4>Cursus met Naam: {{ course[0].cursus_Name }} en docent: {{ course[0].user_Name }}</h4>
+
+{% if students %}
+
 <table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
 	<thead>
 		<tr>
 			<th>Student Naam</th>
-			<th>Student Email</th>
-			<th>Student Code</th>
-			<th>Student Klas</th>
+			<th data-priority="1">Student Email</th>
+			<th data-priority="2">Student Code</th>
+			<th data-priority="3">Student Klas</th>
 		</tr>
 	</thead>
 	<tbody>
+
 		{% for student in students %}
+
 		<tr>
 			<td>{{ student.user_Name }}</td>
 			<td>{{ student.user_Email }}</td>
 			<td>{{ student.user_Code }}</td>
 			<td>{{ student.user_Klas }}</td>
 		</tr>
+
 		{% endfor %}
+
 	</tbody>
 </table>
+
+{% else %}
+
+Geen studenten momenteel in deze cursus
+
+{% endif %}
+
+{% if allStudents %}
+
 <h4>Kies student om toe te voegen</h4>
-<form action="{{ constant('BASE') }}/slc/{{ id }}/course/students/{{ courseId }}/add">
+<form data-ajax="false" action="{{ constant('BASE') }}/slc/{{ id }}/course/students/{{ courseId }}/add" method="POST">
 	<div class="ui-field-contain">
-		<select>
-			<option value="1">The 1st Option</option>
-			<option value="2">The 2nd Option</option>
-			<option value="3">The 3rd Option</option>
-			<option value="4">The 4th Option</option>
+		<select name="studentToAdd" id="studentToAdd" class="studentToAdd" required>
+			{% for student in allStudents %}
+			<option value="{{ student.user_Id }}">{{ student.user_Name }}</option>
+			{% endfor %}
 		</select>
+		<input type="submit" value="Voeg toe" />
 	</div>
-	<input type="submit" value="Voeg toe" />
 </form>
 
+{% else %}
+
+<h4>Geen student meer om toe te voegen</h4>
+
+{% endif %}
 
 {% endblock content %}

@@ -229,6 +229,23 @@ function docentOverzicht($id){
 	}
 }
 
+function docentCursusBeheer($id) {
+	if(isLogged($id)) {
+		$db = Database::getInstance();
+
+		$statement = $db->prepare('SELECT *
+			FROM Cursus
+			WHERE User_user_Id = :userID');
+		$statement->bindParam('userID', $id);
+		$statement->execute();
+		$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+		echo $twigRenderer->renderTemplate('docentcursusbeheer.twig', array('courses' => $courses));
+	} else {
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
 function docentOverzichtDetail($id, $userid, $weeknr, $cursusid){
 	$twigRenderer = new TwigRenderer();
 	$db = Database::getInstance();
@@ -303,7 +320,10 @@ function slcPage($id) {
 	$db = Database::getInstance();
 
 	// Gets the courses
-	$statement = $db->prepare('SELECT * FROM Cursus WHERE actief = :actief');
+	$statement = $db->prepare('SELECT cursus_Name, cursus_Code, user_Name
+		FROM Cursus as C, User as U
+		WHERE C.User_user_Id = U.user_Id
+		AND C.actief = :actief');
 	$statement->bindValue('actief', 1);
 	$statement->execute();
 	$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -477,12 +497,9 @@ function getStudentsOfCourse($id, $courseId) {
 
 		// First part, this gets the corresponding course
 		$sqlCourseAndTeacher = "SELECT cursus_Name, cursus_Code, user_Name
-		FROM Cursus_has_User as CU, Cursus as C, User as U
-		WHERE CU.Cursus_Id = C.cursus_Id
-		AND C.User_user_Id = U.user_Id
-		AND C.cursus_Id = :courseId"; 
-		// This doesn't get the right information if there are no students
-		// Probably because it checks for a entry in cursus_has_user which makes the query long and not needed.
+		FROM Cursus as C, User as U
+		WHERE C.User_user_Id = U.user_Id
+		AND C.cursus_Id = :courseId";
 
 		$statement = $db->prepare($sqlCourseAndTeacher);
 		$statement->bindParam('courseId', $courseId);
@@ -501,14 +518,36 @@ function getStudentsOfCourse($id, $courseId) {
 		$statement->execute();
 		$students = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-		echo $twigRenderer->renderTemplate('studentsincourse.twig', array('course' => $course, 'students' => $students, 'courseId' => $courseId, 'id' => $id));
+		// Third part, this gets all of the students whichc
+		$sqlAllStudents = "SELECT * FROM User as U WHERE NOT EXISTS (SELECT User_Id FROM Cursus_has_User WHERE U.user_Id = User_Id AND Cursus_Id = :courseId )";
+
+		$statement = $db->prepare($sqlAllStudents);
+		$statement->bindParam('courseId', $courseId);
+		$statement->execute();
+		$allStudents = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+		echo $twigRenderer->renderTemplate('studentsincourse.twig', array('course' => $course, 'students' => $students, 'courseId' => $courseId, 'id' => $id, 'allStudents' => $allStudents));
 	} else {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
 }
 
 function addStudentToCourse($id, $courseId) {
+	if(isLogged($id)) {
+		$app = \Slim\Slim::getInstance();
 
+		$db = Database::getInstance();
+
+		$sql = "INSERT INTO Cursus_has_User (Cursus_Id, User_Id) VALUES (:courseId, :userId)";
+
+		$statement = $db->prepare($sql);
+		$statement->bindParam('courseId', $courseId);
+		$statement->bindParam('userId', $_POST['studentToAdd']);
+
+		if($statement->execute()) {
+			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
+		}
+	}
 }
 
 function addStudent($id) {

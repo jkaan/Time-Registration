@@ -172,6 +172,11 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+				'URL' => '/docent/:id/cursus',
+				'action' => 'docentCursusBeheer',
+				),
+			array(
+				'method' => 'get',
 				'URL' => '/docent/:id/overzicht/details/:userid-:weeknr-:cursusid',
 				'action' => 'docentOverzichtDetail',
 				),
