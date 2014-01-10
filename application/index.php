@@ -117,18 +117,18 @@ function studentOverzicht($id){
 			$startandenddate = getStartAndEndDate($weeknr, $parts[1]);
 			$db = Database::getInstance();
 			$statement = $db->prepare("SELECT 
-											uren_Id, 
-											SUM(uren_Studielast) as studielast, 
-											(SELECT cursus_Name FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus, 
-											(SELECT cursus_Id FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus_Id
-										FROM 
-											Uren as u 
-										WHERE 
-											uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."' 
-										AND 
-											User_user_Id = " . $id . " 
-										GROUP BY 
-											cursus"  );
+				uren_Id, 
+				SUM(uren_Studielast) as studielast, 
+				(SELECT cursus_Name FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus, 
+				(SELECT cursus_Id FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus_Id
+				FROM 
+				Uren as u 
+				WHERE 
+				uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."' 
+				AND 
+				User_user_Id = " . $id . " 
+				GROUP BY 
+				cursus"  );
 			$statement->execute();
 			$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
 			$array = array();
@@ -154,32 +154,32 @@ function studentOverzichtDetail($id, $weeknr, $jaar, $cursusid){
 	$db = Database::getInstance();
 	$result = getUserDetails($id);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
-			$startandenddate = getStartAndEndDate($weeknr, $jaar);	
-			$statement = $db->prepare("SELECT
-											(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,
-											(SELECT cursus_Name FROM Cursus WHERE cursus_Id = '".$cursusid."') as cursus,
-											Onderdeel_onderdeel_Id AS onderdeel_Id,
-											SUM(uren_Studielast) as studielast										
-										FROM
-											Uren
-										WHERE
-											uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."' 
-										AND 
-											User_user_Id = " . $id . "
-										AND
-											Onderdeel_onderdeel_Id IN (SELECT onderdeel_Id FROM Onderdeel WHERE Cursus_cursus_Id = '".$cursusid."')
-										GROUP BY Onderdeel_onderdeel_Id"  
-									);
-			$statement->execute();
-			$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
-			$array = array();
-			$cursus = '';
-			foreach($urenoverzichtData as $uren )
-			{
-				$studielast_in_uren = min_naar_uren($uren['studielast']);
-				$cursus = $uren['cursus'];
-				$array[] = array('onderdeel_Id' => $uren['onderdeel_Id'], 'onderdeel' => $uren['onderdeel'], 'studielast' => $studielast_in_uren);
-			}
+		$startandenddate = getStartAndEndDate($weeknr, $jaar);	
+		$statement = $db->prepare("SELECT
+			(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,
+			(SELECT cursus_Name FROM Cursus WHERE cursus_Id = '".$cursusid."') as cursus,
+			Onderdeel_onderdeel_Id AS onderdeel_Id,
+			SUM(uren_Studielast) as studielast										
+			FROM
+			Uren
+			WHERE
+			uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."' 
+			AND 
+			User_user_Id = " . $id . "
+			AND
+			Onderdeel_onderdeel_Id IN (SELECT onderdeel_Id FROM Onderdeel WHERE Cursus_cursus_Id = '".$cursusid."')
+			GROUP BY Onderdeel_onderdeel_Id"  
+			);
+		$statement->execute();
+		$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
+		$array = array();
+		$cursus = '';
+		foreach($urenoverzichtData as $uren )
+		{
+			$studielast_in_uren = min_naar_uren($uren['studielast']);
+			$cursus = $uren['cursus'];
+			$array[] = array('onderdeel_Id' => $uren['onderdeel_Id'], 'onderdeel' => $uren['onderdeel'], 'studielast' => $studielast_in_uren);
+		}
 		echo $twigRenderer->renderTemplate('urenoverzichtdetail_student.twig', array('id' => $id, 'onderdeeloverzichtarray' => $array,'jaar' => $jaar ,'weeknr' => $weeknr, 'cursus_Id' => $cursusid, 'cursus_Name' => $cursus));
 	}else {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
@@ -193,19 +193,19 @@ function studentOverzichtDetailOnderdeel($id, $weeknr, $jaar, $onderdeelid){
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
 		$startandenddate = getStartAndEndDate($weeknr, $jaar);	
 		$statement = $db->prepare("SELECT
-										(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,										
-										uren_Studielast as studielast,
-										uren_Date AS datum
-									FROM
-										Uren
-									WHERE
-										uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."' 
-									AND 
-										User_user_Id = " . $id . "
-									AND
-										Onderdeel_onderdeel_Id = '".$onderdeelid."'
-									GROUP BY uren_Date"  
-								);
+			(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,										
+			uren_Studielast as studielast,
+			uren_Date AS datum
+			FROM
+			Uren
+			WHERE
+			uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."' 
+			AND 
+			User_user_Id = " . $id . "
+			AND
+			Onderdeel_onderdeel_Id = '".$onderdeelid."'
+			GROUP BY uren_Date"  
+			);
 		$statement->execute();
 		$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
 		$array = array();
@@ -291,19 +291,19 @@ function docentOverzicht($id){
 			$db = Database::getInstance();
 			
 			$statement = $db->prepare("SELECT
-										User_user_Id as user_Id,
-										(SELECT user_Name FROM User WHERE Uren.User_user_Id = user_Id) as user_Name, 
-										SUM(uren_Studielast) as studielast										
-										FROM
-										Uren
-										WHERE
-										Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursus_Id."'))
-										AND
-										User_user_Id in (SELECT user_Id FROM User WHERE User_user_Id = user_Id AND Rol_rol_Id = 1)
-										AND
-										uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
-										GROUP BY User_user_Id"  
-									);
+				User_user_Id as user_Id,
+				(SELECT user_Name FROM User WHERE Uren.User_user_Id = user_Id) as user_Name, 
+				SUM(uren_Studielast) as studielast										
+				FROM
+				Uren
+				WHERE
+				Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursus_Id."'))
+				AND
+				User_user_Id in (SELECT user_Id FROM User WHERE User_user_Id = user_Id AND Rol_rol_Id = 1)
+				AND
+				uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
+				GROUP BY User_user_Id"  
+				);
 			$statement->execute();
 			$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
 			$array = array();
@@ -339,38 +339,48 @@ function docentCursusBeheer($id) {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
 }
+<<<<<<< HEAD
 
 function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 
+=======
+function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
+>>>>>>> a92c82b323d9cf3e0edbba33fae99c21dce8b078
 	$twigRenderer = new TwigRenderer();
 	$db = Database::getInstance();
-		$result = getUserDetails($id);
-		if((isLogged($id))) {
-			$startandenddate = getStartAndEndDate($weeknr, $jaar);	
-			$statement = $db->prepare("SELECT
-											(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,
-											(SELECT onderdeel_Norm FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel_Norm,
-											(SELECT user_Name FROM User WHERE user_Id = '".$userid."') AS student,
-											(SELECT cursus_Name FROM Cursus WHERE cursus_Id = '".$cursusid."') as cursus,
-											SUM(uren_Studielast) as studielast
-										FROM
-											Uren
-										WHERE
-											Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursusid."'))
-										AND
-											User_user_Id = '".$userid."'
-										AND
-											uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
-										GROUP BY Onderdeel_onderdeel_Id"										
-									);
-			$statement->execute();
-			$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
-			$totaalPerOnderdeel = totaalTotDatum($userid, $startandenddate[1], $cursusid);
-			$count = 0;
-			$student = '';
-			$cursus = '';
-			foreach($urenoverzichtData as $uren )
+	$result = getUserDetails($id);
+	if((isLogged($id))) {
+		$startandenddate = getStartAndEndDate($weeknr, $jaar);	
+		$statement = $db->prepare("SELECT
+			(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,
+			(SELECT onderdeel_Norm FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel_Norm,
+			(SELECT user_Name FROM User WHERE user_Id = '".$userid."') AS student,
+			(SELECT cursus_Name FROM Cursus WHERE cursus_Id = '".$cursusid."') as cursus,
+			SUM(uren_Studielast) as studielast
+			FROM
+			Uren
+			WHERE
+			Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursusid."'))
+			AND
+			User_user_Id = '".$userid."'
+			AND
+			uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
+			GROUP BY Onderdeel_onderdeel_Id"										
+			);
+		$statement->execute();
+		$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
+		$totaalPerOnderdeel = totaalTotDatum($userid, $startandenddate[1], $cursusid);
+		$count = 0;
+		$student = '';
+		$cursus = '';
+		foreach($urenoverzichtData as $uren )
+		{
+			$onderdeel_norm = $uren['onderdeel_Norm'];
+			$berekening = (($onderdeel_norm / 100) * $totaalPerOnderdeel[$count]['totaalOnderdeel']);
+
+			if($berekening > 100)
 			{
+<<<<<<< HEAD
 				$onderdeel_norm = $uren['onderdeel_Norm'];
 				$berekening = ($totaalPerOnderdeel[$count]['totaalOnderdeel'] / $onderdeel_norm) * 100;
 				if($berekening > 100)
@@ -393,9 +403,28 @@ function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 									'berekening' => $berekening
 								);
 				$count++;
+=======
+				$berekening = $berekening - 100;
+				$berekening = "<font color=\"red\">".$berekening."%</font> boven";
 			}
+			else{
+				$berekening = "<font color=\"green\">".$berekening."%</font> onder";
+>>>>>>> a92c82b323d9cf3e0edbba33fae99c21dce8b078
+			}
+			$studielast_in_uren = min_naar_uren($uren['studielast']);
+			$student = $uren['student'];
+			$cursus = $uren['cursus'];
+			$array[] = array(
+				'onderdeel' => $uren['onderdeel'], 
+				'studielast' => $studielast_in_uren, 
+				'onderdeel_Norm' => min_naar_uren($uren['onderdeel_Norm']), 
+				'totaalPerOnderdeel' => min_naar_uren($totaalPerOnderdeel[$count]['totaalOnderdeel']),
+				'berekening' => $berekening
+				);
+			$count++;
+		}
 		echo $twigRenderer->renderTemplate('urenoverzichtdetail_docent.twig', array('id' => $id, 'onderdeeloverzichtarray' => $array, 'student' => $student, 'weeknr' => $weeknr, 'cursus_Name' => $cursus));
-		}else{
+	}else{
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
 }
@@ -403,22 +432,22 @@ function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 function totaalTotDatum($userid, $lastdate, $cursusid){
 	$db = Database::getInstance();
 	$statement = $db->prepare("SELECT 
-								SUM(uren_Studielast) AS totaalOnderdeel
-							FROM 
-								Uren 
-							WHERE 
-								uren_Date between ".START_SEMESTER." and '".$lastdate."' 
-							AND 
-								Onderdeel_onderdeel_Id IN (SELECT 
-															onderdeel_Id 
-														FROM 
-															Onderdeel 
-														WHERE 
-															Cursus_cursus_Id = '".$cursusid."' 
-														)
-							GROUP BY
-								Onderdeel_onderdeel_Id
-								");
+		SUM(uren_Studielast) AS totaalOnderdeel
+		FROM 
+		Uren 
+		WHERE 
+		uren_Date between ".START_SEMESTER." and '".$lastdate."' 
+		AND 
+		Onderdeel_onderdeel_Id IN (SELECT 
+			onderdeel_Id 
+			FROM 
+			Onderdeel 
+			WHERE 
+			Cursus_cursus_Id = '".$cursusid."' 
+			)
+	GROUP BY
+	Onderdeel_onderdeel_Id
+	");
 	$statement->execute();
 	return $statement->fetchAll(PDO::FETCH_ASSOC);;
 }
@@ -450,11 +479,11 @@ function docentFeedback($id, $userid, $weeknr, $cursusid){
 				$statement->execute();			
 			}
 		}
-			$sql = "SELECT feedback_Id, feedback_titel, feedback_Text FROM Feedback WHERE User_user_ID = '".$userid."' AND feedback_wknr = '".$weeknr."'";
-			$statement = $db->prepare($sql);
-			$statement->execute();
-			$feedbackData = $statement->fetch(PDO::FETCH_ASSOC);
-			echo $twigRenderer->renderTemplate('addfeedback.twig', array('id' => $id, 'weeknr' => $weeknr, 'userid' => $userid, 'cursusid' => $cursusid, 'feedbackData' => $feedbackData));	
+		$sql = "SELECT feedback_Id, feedback_titel, feedback_Text FROM Feedback WHERE User_user_ID = '".$userid."' AND feedback_wknr = '".$weeknr."'";
+		$statement = $db->prepare($sql);
+		$statement->execute();
+		$feedbackData = $statement->fetch(PDO::FETCH_ASSOC);
+		echo $twigRenderer->renderTemplate('addfeedback.twig', array('id' => $id, 'weeknr' => $weeknr, 'userid' => $userid, 'cursusid' => $cursusid, 'feedbackData' => $feedbackData));	
 	}else{
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
@@ -474,7 +503,8 @@ function slcPage($id) {
 	$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 	// Gets all the students
-	$statement = $db->prepare('SELECT * FROM User');
+	$statement = $db->prepare('SELECT * FROM User WHERE actief = :actief');
+	$statement->bindValue('actief', 1);
 	$statement->execute();
 	$students = $statement->fetchAll(PDO::FETCH_ASSOC);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 3)) {
@@ -748,6 +778,37 @@ function editStudent($id, $studentId) {
 			$statement->execute();
 			$student = $statement->fetchAll(PDO::FETCH_ASSOC);
 			echo $twigRenderer->renderTemplate('editstudent.twig', array('studentId' => $studentId, 'id' => $id, 'student' => $student[0]));
+		} else {
+			echo $twigRenderer->renderTemplate('noaccess.twig');
+		}
+	}
+}
+
+function removeStudent($id, $studentId) {
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	if(!empty($_POST)) {
+		$db = Database::getInstance();
+		$sql = "UPDATE User SET actief = :actief WHERE user_Id = :studentId";
+		$statement = $db->prepare($sql);
+		$statement->bindParam('studentId', $studentId);
+		$statement->bindValue('actief', 0);
+
+		if($statement->execute()) {
+			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
+		} else {
+			print_r($statement->errorInfo());
+		}
+	} else {
+		if(isLogged($id)) {
+			$db = Database::getInstance();
+			$sql = "SELECT * FROM User WHERE user_Id = :studentId";
+			$statement = $db->prepare($sql);
+			$statement->bindParam('studentId', $studentId);
+			$statement->execute();
+			$results = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+			echo $twigRenderer->renderTemplate('removestudent.twig', array('student' => $results[0], 'id' => $id, 'studentId' => $studentId));
 		} else {
 			echo $twigRenderer->renderTemplate('noaccess.twig');
 		}
