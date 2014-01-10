@@ -5,7 +5,9 @@
 <div data-role="header">
 	<a href="index.html" data-rel="back">Back</a>
 	<h1>Uren {% if weeknr != null %} voor week {{ weeknr }} {% endif %}</h1>
-	<a href="#" class="print" rel="urenoverzicht_table">Print</a>
+	{% if urenoverzichtarray != null %}
+		<a href="#" class="print" rel="urenoverzicht_table" onclick="printOverzicht()">Print</a>
+	{% endif %}
 </div>
 
 {% endblock header %}

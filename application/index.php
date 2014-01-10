@@ -7,7 +7,7 @@ require('classes/TwigRenderer.class.php');
 require_once('configvariables.php');
 require_once('config.php');
 
-$app = new \Slim\Slim();
+$app = new \Slim\Slim(array( 'debug' => true ));
 
 $application = new Application();
 
@@ -323,7 +323,6 @@ function docentOverzicht($id){
 	}
 }
 
-<<<<<<< HEAD
 function docentCursusBeheer($id) {
 	if(isLogged($id)) {
 		$db = Database::getInstance();
@@ -341,10 +340,8 @@ function docentCursusBeheer($id) {
 	}
 }
 
-function docentOverzichtDetail($id, $userid, $weeknr, $cursusid){
-=======
 function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
->>>>>>> b0441d8b19203ff499f4a8afc2eec1f4456d2e81
+
 	$twigRenderer = new TwigRenderer();
 	$db = Database::getInstance();
 		$result = getUserDetails($id);
@@ -375,14 +372,14 @@ function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 			foreach($urenoverzichtData as $uren )
 			{
 				$onderdeel_norm = $uren['onderdeel_Norm'];
-				$berekening = (($onderdeel_norm / 100) * $totaalPerOnderdeel[$count]['totaalOnderdeel']);
-				
+				$berekening = ($totaalPerOnderdeel[$count]['totaalOnderdeel'] / $onderdeel_norm) * 100;
 				if($berekening > 100)
 				{
 					$berekening = $berekening - 100;
 					$berekening = "<font color=\"red\">".$berekening."%</font> boven";
 				}
 				else{
+					$berekening = 100 - $berekening;
 					$berekening = "<font color=\"green\">".$berekening."%</font> onder";
 				}
 				$studielast_in_uren = min_naar_uren($uren['studielast']);
@@ -605,7 +602,9 @@ function editCourse($id, $courseId) {
 		}
 	}
 }
+function removeStudent($id, $studentId){
 
+}
 function removeCourse($id, $courseId) {
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {
@@ -636,8 +635,6 @@ function removeCourse($id, $courseId) {
 	}
 }
 
-<<<<<<< HEAD
-=======
 function getStudentsOfCourse($id, $courseId) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
@@ -699,7 +696,6 @@ function addStudentToCourse($id, $courseId) {
 	}
 }
 
->>>>>>> c4e2e7a4aefc505cf949c4a585d2fc3fb33f27ad
 function addStudent($id) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();

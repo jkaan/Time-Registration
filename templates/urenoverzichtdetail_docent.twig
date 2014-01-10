@@ -5,7 +5,7 @@
 <div data-role="header">
 	<a href="index.html" data-rel="back">Back</a>
 	<h1>Uren per onderdeel van de Cursus {{ cursus_Name }} - {{ student }} - Week {{ weeknr }}</h1>
-	<a href="#" class="print" rel="urenoverzicht_perOnderdeel">Print</a>
+	<a href="#" class="print" rel="urenoverzicht_perOnderdeel" onclick="printOverzicht()">Print</a>
 </div>
 
 {% endblock header %}
@@ -24,7 +24,7 @@
 			<tr>
 				<td>{{ data.onderdeel }}</td>
 				<td>{{ data.studielast }}</td>
-				<td>{{ data.totaalPerOnderdeel }} | {{ data.berekening | raw}} norm.</td>
+				<td>{{ data.totaalPerOnderdeel }} | {{ data.berekening | raw}} norm. {{ data.onderdeel_Norm }} </td>
 			</tr>
 			{% endfor %}				
 		</tbody>
