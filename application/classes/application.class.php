@@ -87,6 +87,16 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+				'URL' => '/slc/:id/course/students/:courseId', // Not sure about this URL yet
+				'action' => 'getStudentsOfCourse',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/slc/:id/course/students/:courseId/add',
+				'action' => 'addStudentToCourse',
+				),
+			array(
+				'method' => 'get',
 				'URL' => '/slc/:id/student/add',
 				'action' => 'addStudent',
 				),
@@ -104,6 +114,16 @@ class Application {
 				'method' => 'post',
 				'URL' => '/slc/:id/student/edit/:studentId',
 				'action' => 'editStudent',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/slc/:id/student/remove/:studentId',
+				'action' => 'removeStudent',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/slc/:id/student/remove/:studentId',
+				'action' => 'removeStudent',
 				),
 			array(
 				'method' => 'get',
