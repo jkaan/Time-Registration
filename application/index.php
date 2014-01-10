@@ -339,13 +339,7 @@ function docentCursusBeheer($id) {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
 }
-<<<<<<< HEAD
-
 function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
-
-=======
-function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
->>>>>>> a92c82b323d9cf3e0edbba33fae99c21dce8b078
 	$twigRenderer = new TwigRenderer();
 	$db = Database::getInstance();
 	$result = getUserDetails($id);
@@ -380,7 +374,6 @@ function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 
 			if($berekening > 100)
 			{
-<<<<<<< HEAD
 				$onderdeel_norm = $uren['onderdeel_Norm'];
 				$berekening = ($totaalPerOnderdeel[$count]['totaalOnderdeel'] / $onderdeel_norm) * 100;
 				if($berekening > 100)
@@ -403,13 +396,11 @@ function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 									'berekening' => $berekening
 								);
 				$count++;
-=======
 				$berekening = $berekening - 100;
 				$berekening = "<font color=\"red\">".$berekening."%</font> boven";
 			}
 			else{
 				$berekening = "<font color=\"green\">".$berekening."%</font> onder";
->>>>>>> a92c82b323d9cf3e0edbba33fae99c21dce8b078
 			}
 			$studielast_in_uren = min_naar_uren($uren['studielast']);
 			$student = $uren['student'];
@@ -632,9 +623,7 @@ function editCourse($id, $courseId) {
 		}
 	}
 }
-function removeStudent($id, $studentId){
 
-}
 function removeCourse($id, $courseId) {
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {
