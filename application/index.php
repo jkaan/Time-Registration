@@ -291,19 +291,19 @@ function docentOverzicht($id){
 			$db = Database::getInstance();
 			
 			$statement = $db->prepare("SELECT
-				User_user_Id as user_Id,
-				(SELECT user_Name FROM User WHERE Uren.User_user_Id = user_Id) as user_Name, 
-				SUM(uren_Studielast) as studielast										
-				FROM
-				Uren
-				WHERE
-				Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursus_Id."'))
-				AND
-				User_user_Id in (SELECT user_Id FROM User WHERE User_user_Id = user_Id AND Rol_rol_Id = 1)
-				AND
-				uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
-				GROUP BY User_user_Id"  
-				);
+										User_user_Id as user_Id,
+										(SELECT user_Name FROM User WHERE Uren.User_user_Id = user_Id) as user_Name, 
+										SUM(uren_Studielast) as studielast										
+										FROM
+										Uren
+										WHERE
+										Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursus_Id."'))
+										AND
+										User_user_Id in (SELECT user_Id FROM User WHERE User_user_Id = user_Id AND Rol_rol_Id = 1)
+										AND
+										uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
+										GROUP BY User_user_Id"  
+									);
 			$statement->execute();
 			$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
 			$array = array();
@@ -326,7 +326,6 @@ function docentOverzicht($id){
 function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 	$twigRenderer = new TwigRenderer();
 	$db = Database::getInstance();
-<<<<<<< HEAD
 		$result = getUserDetails($id);
 		if((isLogged($id))) {
 			$startandenddate = getStartAndEndDate($weeknr, $jaar);	
@@ -381,32 +380,6 @@ function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 		}else{
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
-=======
-	$startandenddate = getStartAndEndDate($weeknr, 2013);	
-	$statement = $db->prepare("SELECT
-		(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,
-		SUM(uren_Studielast) as studielast										
-		FROM
-		Uren
-		WHERE
-		Onderdeel_onderdeel_Id in (SELECT onderdeel_Id FROM Onderdeel WHERE Onderdeel_onderdeel_Id = onderdeel_Id AND Cursus_cursus_Id IN (SELECT cursus_Id FROM Cursus WHERE cursus_Id = Cursus_cursus_Id AND cursus_Id = '".$cursusid."'))
-		AND
-		User_user_Id = '".$userid."'
-		AND
-		uren_Date between '".$startandenddate[0]."' and '".$startandenddate[1]."'
-		GROUP BY Onderdeel_onderdeel_Id"  
-		);
-	$statement->execute();
-	$urenoverzichtData = $statement->fetchAll(PDO::FETCH_ASSOC);
-	var_dump($urenoverzichtData);
-	$array = array();
-	foreach($urenoverzichtData as $uren )
-	{
-		$studielast_in_uren = min_naar_uren($uren['studielast']);
-		$array[] = array('onderdeel' => $uren['onderdeel'], 'studielast' => $studielast_in_uren);
-	}
-	echo $twigRenderer->renderTemplate('urenoverzichtdetail_docent.twig', array('id' => $id, 'onderdeeloverzichtarray' => $array));
->>>>>>> 911c8d5c6c6b8e4486f64c7d20c1191c490d7617
 }
 
 function totaalTotDatum($userid, $lastdate, $cursusid){
@@ -459,21 +432,11 @@ function docentFeedback($id, $userid, $weeknr, $cursusid){
 				$statement->execute();			
 			}
 		}
-<<<<<<< HEAD
 			$sql = "SELECT feedback_Id, feedback_titel, feedback_Text FROM Feedback WHERE User_user_ID = '".$userid."' AND feedback_wknr = '".$weeknr."'";
 			$statement = $db->prepare($sql);
 			$statement->execute();
 			$feedbackData = $statement->fetch(PDO::FETCH_ASSOC);
 			echo $twigRenderer->renderTemplate('addfeedback.twig', array('id' => $id, 'weeknr' => $weeknr, 'userid' => $userid, 'cursusid' => $cursusid, 'feedbackData' => $feedbackData));	
-=======
-		$sql = "SELECT feedback_Id, feedback_titel, feedback_Text FROM Feedback WHERE User_user_ID = '".$userid."' AND feedback_wknr = '".$weeknr."'";
-		$statement = $db->prepare($sql);
-		$statement->execute();
-		$feedbackData = $statement->fetch(PDO::FETCH_ASSOC);
-		var_dump($feedbackData);
-		echo $twigRenderer->renderTemplate('addfeedback.twig', array('id' => $id, 'weeknr' => $weeknr, 'userid' => $userid, 'cursusid' => $cursusid, 'feedbackData' => $feedbackData));
-
->>>>>>> 911c8d5c6c6b8e4486f64c7d20c1191c490d7617
 	}else{
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
@@ -483,7 +446,6 @@ function slcPage($id) {
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
 	$db = Database::getInstance();
-
 	// Gets the courses
 	$statement = $db->prepare('SELECT * FROM Cursus WHERE actief = :actief');
 	$statement->bindValue('actief', 1);
@@ -491,8 +453,7 @@ function slcPage($id) {
 	$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 	// Gets all the students
-	$statement = $db->prepare('SELECT * FROM User WHERE actief = :actief');
-	$statement->bindValue('actief', 1);
+	$statement = $db->prepare('SELECT * FROM User');
 	$statement->execute();
 	$students = $statement->fetchAll(PDO::FETCH_ASSOC);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 3)) {
@@ -579,6 +540,8 @@ function addCourse($id) {
 		$statement->bindParam('user_id', $id);
 		
 		if($statement->execute()) {
+			$app->flash('message', 'test');
+			session_start();
 			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
 		}
 	} else {
@@ -591,7 +554,6 @@ function addCourse($id) {
 }
 
 function editCourse($id, $courseId) {
-	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {
 		$db = Database::getInstance();
@@ -621,7 +583,6 @@ function editCourse($id, $courseId) {
 }
 
 function removeCourse($id, $courseId) {
-	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {
 		$db = Database::getInstance();
@@ -649,48 +610,6 @@ function removeCourse($id, $courseId) {
 			echo $twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
-}
-
-function getStudentsOfCourse($id, $courseId) {
-	$app = \Slim\Slim::getInstance();
-	$twigRenderer = new TwigRenderer();
-	if(isLogged($id)) {
-		$db = Database::getInstance();
-
-		// First part, this gets the corresponding course
-		$sqlCourseAndTeacher = "SELECT cursus_Name, cursus_Code, user_Name
-		FROM Cursus_has_User as CU, Cursus as C, User as U
-		WHERE CU.Cursus_Id = C.cursus_Id
-		AND C.User_user_Id = U.user_Id
-		AND C.cursus_Id = :courseId"; 
-		// This doesn't get the right information if there are no students
-		// Probably because it checks for a entry in cursus_has_user which makes the query long and not needed.
-
-		$statement = $db->prepare($sqlCourseAndTeacher);
-		$statement->bindParam('courseId', $courseId);
-		$statement->execute();
-		$course = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-		// Second part, this gets the students that are enrolled in the corresponding course
-		$sqlStudentsOfCourse = "SELECT user_Name, user_Code, user_Email, user_Klas
-		FROM Cursus_has_User as CU, Cursus as C, User as U
-		WHERE CU.Cursus_Id = C.cursus_Id
-		AND CU.User_Id = U.user_Id
-		AND C.cursus_Id = :courseId";
-
-		$statement = $db->prepare($sqlStudentsOfCourse);
-		$statement->bindParam('courseId', $courseId);
-		$statement->execute();
-		$students = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-		echo $twigRenderer->renderTemplate('studentsincourse.twig', array('course' => $course, 'students' => $students, 'courseId' => $courseId, 'id' => $id));
-	} else {
-		echo $twigRenderer->renderTemplate('noaccess.twig');
-	}
-}
-
-function addStudentToCourse($id, $courseId) {
-
 }
 
 function addStudent($id) {
@@ -751,37 +670,6 @@ function editStudent($id, $studentId) {
 	}
 }
 
-function removeStudent($id, $studentId) {
-	$app = \Slim\Slim::getInstance();
-	$twigRenderer = new TwigRenderer();
-	if(!empty($_POST)) {
-		$db = Database::getInstance();
-		$sql = "UPDATE User SET actief = :actief WHERE user_Id = :studentId";
-		$statement = $db->prepare($sql);
-		echo $studentId;
-		$statement->bindParam('studentId', $studentId);
-		$statement->bindValue('actief', 0);
-
-		if($statement->execute()) {
-			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
-		} else {
-			print_r($statement->errorInfo());
-		} 
-	} else {
-		if(isLogged($id)) {
-			$db = Database::getInstance();
-			$sql = "SELECT * FROM User WHERE user_Id = :studentId";
-			$statement = $db->prepare($sql);
-			$statement->bindParam('studentId', $studentId);
-			$statement->execute();
-			$results = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-			echo $twigRenderer->renderTemplate('removestudent.twig', array('student' => $results[0], 'id' => $id, 'studentId' => $studentId));
-		} else {
-			echo $twigRenderer->renderTemplate('noaccess.twig');
-		}
-	}
-}
 function updateUserOnlineTime($id) {
 	$db = Database::getInstance();
 	$date = date('Y-m-d G:i:s');
