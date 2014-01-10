@@ -1,0 +1,33 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+	<a href="index.html" data-rel="back">Back</a>
+	<h1>Uren per week van het onderdeel {{ onderdeel }} Week {{ weeknr }}</h1>
+	<a href="#" class="print" rel="urenoverzicht_weekOnderdeel">Print</a>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+	<table data-role="table" id="urenoverzicht_weekOnderdeel" data-mode="columntoggle" class="ui-responsive table-stroke">
+		<thead>
+			<tr>
+				<th>Datum</th>
+				<th>Onderdeel</th>
+				<th>Totaal uren</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for data in onderdeeloverzichtarray %}
+			<tr>
+				<td>{{ data.dag }}, {{ data.datum }}</td>
+				<td>{{ data.onderdeel }}</td>
+				<td>{{ data.studielast }}</td>
+			</tr>
+			{% endfor %}				
+		</tbody>
+	</table>
+
+		{% endblock content %}

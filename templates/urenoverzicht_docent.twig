@@ -4,7 +4,10 @@
 
 <div data-role="header">
 	<a href="index.html" data-rel="back">Back</a>
-	<h1>Uren</h1>
+	<h1>Uren per student{% if weeknr != null %} voor week {{ weeknr }} {% endif %}</h1>
+	{% if urenoverzichtarray != null %}
+		<a href="#" class="print" rel="urenoverzicht_table">Print</a>
+	{% endif %}
 </div>
 
 {% endblock header %}
@@ -32,7 +35,7 @@ $(document).ready(function() {
 	</select>
 </form>
 {% if urenoverzichtarray != null %}
-		<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+		<table data-role="table" id="urenoverzicht_table" data-mode="columntoggle" class="ui-responsive table-stroke">
 			<thead>
 				<tr>
 					<th>Student</th>
@@ -45,7 +48,7 @@ $(document).ready(function() {
 				<tr>
 					<td>{{ data.user_Name }}</td>
 					<td>{{ data.studielast }}</td>
-					<td><a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht/details/{{data.user_Id}}-{{ weeknr }}-{{ cursus_Id }}">Details</a> | <a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht/feedback/{{data.user_Id}}-{{ weeknr }}-{{ cursus_Id }}">Feedback</a> </td>
+					<td><a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht/details/{{data.user_Id}}-{{ weeknr }}-{{ jaar }}-{{ cursus_Id }}">Details</a> | <a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht/feedback/{{data.user_Id}}-{{ weeknr }}-{{ cursus_Id }}">Feedback</a> </td>
 				</tr>
 				{% endfor %}				
 			</tbody>

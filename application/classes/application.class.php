@@ -172,12 +172,16 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+<<<<<<< HEAD
 				'URL' => '/docent/:id/cursus',
 				'action' => 'docentCursusBeheer',
 				),
 			array(
 				'method' => 'get',
 				'URL' => '/docent/:id/overzicht/details/:userid-:weeknr-:cursusid',
+=======
+				'URL' => '/docent/:id/overzicht/details/:userid-:weeknr-:jaar-:cursusid',
+>>>>>>> b0441d8b19203ff499f4a8afc2eec1f4456d2e81
 				'action' => 'docentOverzichtDetail',
 				),
 			array(
@@ -189,6 +193,21 @@ class Application {
 				'method' => 'post',
 				'URL' => '/docent/:id/overzicht/feedback/:userid-:weeknr-:cursusid',
 				'action' => 'docentFeedback',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/:id/logout',
+				'action' => 'logOut',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/student/:id/overzicht/details/:weeknr-:jaar-:cursusid',
+				'action' => 'studentOverzichtDetail',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/student/:id/overzicht/details/:weeknr-:jaar-:onderdeelid/onderdeel',
+				'action' => 'studentOverzichtDetailOnderdeel',
 				)
 			);
 }

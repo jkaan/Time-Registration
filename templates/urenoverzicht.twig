@@ -4,7 +4,8 @@
 
 <div data-role="header">
 	<a href="index.html" data-rel="back">Back</a>
-	<h1>Uren</h1>
+	<h1>Uren {% if weeknr != null %} voor week {{ weeknr }} {% endif %}</h1>
+	<a href="#" class="print" rel="urenoverzicht_table">Print</a>
 </div>
 
 {% endblock header %}
@@ -15,7 +16,8 @@ $(document).ready(function() {
 	$('select').change(function( event ) {
 		$("#test").submit();
 	});
-
+	$("table tr:nth-last-child(2) td").css("border-bottom", "1px solid");
+	$("table tr:last-child td").css("border-bottom", "none");
 });
 </script>
 <form data-ajax="false" id="test" action="{{ constant('BASE') }}/student/{{ id }}/overzicht" method="POST">
@@ -32,36 +34,26 @@ $(document).ready(function() {
 	</select>
 </form>
 {% if urenoverzichtarray != null %}
-		<!--<table data-role="table" id="movie-table" data-mode="reflow" class="ui-responsive table-stroke">
-		  <thead>
-			<tr>
-			  <th data-priority="1">Cursus:</th>
-			  <th data-priority="2">Week:</th>
-			  <th data-priority="persist">Totaal</th>
-			</tr>
-		  </thead>
-		  <tbody>
-			<tr>
-				<td>SOP</td>
-				<td>1 (1-1-2014, 7-1-2014)</td>
-				<td>5</td>
-			</tr>
-		  </tbody>
-		</table>-->
-		<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+		<table data-role="table" id="urenoverzicht_table" data-mode="columntoggle" class="ui-responsive table-stroke">
 			<thead>
 				<tr>
 					<th>Cursus</th>
 					<th>Totaal uren</th>
+					<th>Opties</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for data in urenoverzichtarray %}
-				<tr>
+				<tr class="row">
 					<td>{{ data.cursus }}</td>
 					<td>{{ data.studielast }}</td>
+					<td ><a href="{{ constant('BASE') }}/student/{{ id }}/overzicht/details/{{ weeknr }}-{{ jaar }}-{{ data.cursus_Id }}">Details</a></td>
 				</tr>
-				{% endfor %}				
+				{% endfor %}
+				<tr>	
+					<td></td>
+					<td colspan="3">{{ totaal }}</td>
+				</tr>
 			</tbody>
 		</table>
 		{% endif %}

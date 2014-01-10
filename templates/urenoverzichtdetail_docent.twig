@@ -4,18 +4,19 @@
 
 <div data-role="header">
 	<a href="index.html" data-rel="back">Back</a>
-	<h1>Uren</h1>
+	<h1>Uren per onderdeel van de Cursus {{ cursus_Name }} - {{ student }} - Week {{ weeknr }}</h1>
+	<a href="#" class="print" rel="urenoverzicht_perOnderdeel">Print</a>
 </div>
 
 {% endblock header %}
 
 {% block content %}
-	<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+	<table data-role="table" id="urenoverzicht_perOnderdeel" data-mode="columntoggle" class="ui-responsive table-stroke">
 		<thead>
 			<tr>
 				<th>Onderdeel</th>
-				<th>Totaal uren</th>
-				<th>Prognose</th>
+				<th>Totaal uren deze week</th>
+				<th>Totale uren per onderdeel t/m  deze week.</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -23,7 +24,7 @@
 			<tr>
 				<td>{{ data.onderdeel }}</td>
 				<td>{{ data.studielast }}</td>
-				<td></td>
+				<td>{{ data.totaalPerOnderdeel }} | {{ data.berekening | raw}} norm.</td>
 			</tr>
 			{% endfor %}				
 		</tbody>
