@@ -172,16 +172,12 @@ class Application {
 				),
 			array(
 				'method' => 'get',
-<<<<<<< HEAD
 				'URL' => '/docent/:id/cursus',
 				'action' => 'docentCursusBeheer',
 				),
 			array(
 				'method' => 'get',
-				'URL' => '/docent/:id/overzicht/details/:userid-:weeknr-:cursusid',
-=======
 				'URL' => '/docent/:id/overzicht/details/:userid-:weeknr-:jaar-:cursusid',
->>>>>>> b0441d8b19203ff499f4a8afc2eec1f4456d2e81
 				'action' => 'docentOverzichtDetail',
 				),
 			array(
