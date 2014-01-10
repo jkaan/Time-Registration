@@ -414,9 +414,9 @@ function totaalTotDatum($userid, $lastdate, $cursusid){
 			WHERE 
 			Cursus_cursus_Id = '".$cursusid."' 
 			)
-GROUP BY
-Onderdeel_onderdeel_Id
-");
+	GROUP BY
+	Onderdeel_onderdeel_Id
+	");
 	$statement->execute();
 	return $statement->fetchAll(PDO::FETCH_ASSOC);;
 }
@@ -472,7 +472,8 @@ function slcPage($id) {
 	$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 	// Gets all the students
-	$statement = $db->prepare('SELECT * FROM User');
+	$statement = $db->prepare('SELECT * FROM User WHERE actief = :actief');
+	$statement->bindValue('actief', 1);
 	$statement->execute();
 	$students = $statement->fetchAll(PDO::FETCH_ASSOC);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 3)) {
@@ -692,7 +693,6 @@ function addStudentToCourse($id, $courseId) {
 	}
 }
 
->>>>>>> c4e2e7a4aefc505cf949c4a585d2fc3fb33f27ad
 function addStudent($id) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
@@ -745,6 +745,37 @@ function editStudent($id, $studentId) {
 			$statement->execute();
 			$student = $statement->fetchAll(PDO::FETCH_ASSOC);
 			echo $twigRenderer->renderTemplate('editstudent.twig', array('studentId' => $studentId, 'id' => $id, 'student' => $student[0]));
+		} else {
+			echo $twigRenderer->renderTemplate('noaccess.twig');
+		}
+	}
+}
+
+function removeStudent($id, $studentId) {
+	$app = \Slim\Slim::getInstance();
+	$twigRenderer = new TwigRenderer();
+	if(!empty($_POST)) {
+		$db = Database::getInstance();
+		$sql = "UPDATE User SET actief = :actief WHERE user_Id = :studentId";
+		$statement = $db->prepare($sql);
+		$statement->bindParam('studentId', $studentId);
+		$statement->bindValue('actief', 0);
+
+		if($statement->execute()) {
+			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
+		} else {
+			print_r($statement->errorInfo());
+		}
+	} else {
+		if(isLogged($id)) {
+			$db = Database::getInstance();
+			$sql = "SELECT * FROM User WHERE user_Id = :studentId";
+			$statement = $db->prepare($sql);
+			$statement->bindParam('studentId', $studentId);
+			$statement->execute();
+			$results = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+			echo $twigRenderer->renderTemplate('removestudent.twig', array('student' => $results[0], 'id' => $id, 'studentId' => $studentId));
 		} else {
 			echo $twigRenderer->renderTemplate('noaccess.twig');
 		}
