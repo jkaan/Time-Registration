@@ -1,5 +1,7 @@
 <?php
 
+namespace Application\TemplateRenderer;
+
 require_once('../vendor/autoload.php');
 
 class TwigRenderer {
@@ -11,8 +13,8 @@ class TwigRenderer {
 	}
 
 	public function renderTemplate($page, Array $array = array()) {
-		$loader = new Twig_Loader_Filesystem('../templates');
-		$twig = new Twig_Environment($loader, array(
+		$loader = new \Twig_Loader_Filesystem('../templates');
+		$twig = new \Twig_Environment($loader, array(
 			'cache', '../templates/cache',
 			));
 		return $twig->render($page, $array);

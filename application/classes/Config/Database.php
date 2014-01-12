@@ -1,5 +1,7 @@
 <?php
 
+namespace Application\Config;
+
 class Database {
 
 	private static $instance = null;
@@ -14,7 +16,7 @@ class Database {
 
 	public static function getInstance() {
 		if(!isset($instance)) {
-			$instance = new PDO('mysql:dbname=sql420872;host=sql4.freemysqlhosting.net', 'sql420872', 'zG5*xE3%');
+			$instance = new \PDO('mysql:dbname=sql420872;host=sql4.freemysqlhosting.net', 'sql420872', 'zG5*xE3%');
 		}
 		return $instance;
 	}
