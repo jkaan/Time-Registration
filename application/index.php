@@ -1,11 +1,11 @@
 <?php
-
+require_once('configvariables.php');
+require_once('config.php');
 require('../vendor/autoload.php');
 require('classes/database.class.php');
 require('classes/application.class.php');
 require('classes/TwigRenderer.class.php');
-require_once('configvariables.php');
-require_once('config.php');
+
 
 $app = new \Slim\Slim(array( 'debug' => true ));
 
@@ -13,10 +13,11 @@ $application = new Application();
 
 $routes = $application->getRoutes();
 
+
 foreach($routes as $route) {
 	$app->$route['method']($route['URL'], $route['action']);
 }
-
+$db = Database::getInstance(DBNAME, DBHOST, DBUSER, DBPASS);
 function startPage() {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
@@ -33,9 +34,9 @@ function studentProfiel($id){
 			if($_POST['wachtwoord1'] == $_POST['wachtwoord2'])
 			{
 				$newpass = $_POST['wachtwoord2'];
-				$db = Database::getInstance();
+				
 				$sql = "UPDATE User SET user_Pass = :pass WHERE user_Id =" .$id;
-				$statement = $db->prepare($sql);
+				$statement = $GLOBALS['db']->prepare($sql);
 				$statement->bindParam('pass', $newpass);
 				$statement->execute();
 			}else{
@@ -55,8 +56,8 @@ function studentFeedback($id) {
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
-		$db = Database::getInstance();
-		$statement = $db->prepare("SELECT feedback_Id, feedback_wknr, feedback_Titel, Cursus_cursus_Id, (SELECT user_Name FROM User WHERE Docent_Id = user_Id) as docent FROM Feedback WHERE User_user_Id = " . $id);
+		
+		$statement = $GLOBALS['db']->prepare("SELECT feedback_Id, feedback_wknr, feedback_Titel, Cursus_cursus_Id, (SELECT user_Name FROM User WHERE Docent_Id = user_Id) as docent FROM Feedback WHERE User_user_Id = " . $id);
 		$statement->execute();
 		$feedbackData = $statement->fetchAll(PDO::FETCH_ASSOC);
 		echo $twigRenderer->renderTemplate('feedback.twig', array('name' => $result['user_Name'], 'data' => $feedbackData));
@@ -72,8 +73,8 @@ function studentFeedbackItem($id, $itemId) {
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
-		$db = Database::getInstance();
-		$statement = $db->prepare("SELECT feedback_wknr, feedback_Titel, feedback_Text, Cursus_cursus_Id, (SELECT user_Name FROM User WHERE Docent_Id = user_Id) as docent FROM Feedback WHERE User_user_Id = " . $id . " AND feedback_Id = " . $itemId );
+		
+		$statement = $GLOBALS['db']->prepare("SELECT feedback_wknr, feedback_Titel, feedback_Text, Cursus_cursus_Id, (SELECT user_Name FROM User WHERE Docent_Id = user_Id) as docent FROM Feedback WHERE User_user_Id = " . $id . " AND feedback_Id = " . $itemId );
 		$statement->execute();
 		$feedbackItemData = $statement->fetchAll(PDO::FETCH_ASSOC);
 		echo $twigRenderer->renderTemplate('feedbackItem.twig', array('name' => $result['user_Name'], 'data' => $feedbackItemData));
@@ -115,8 +116,8 @@ function studentOverzicht($id){
 			$parts = explode("-", $_POST['week']);
 			$weeknr = $parts[0];
 			$startandenddate = getStartAndEndDate($weeknr, $parts[1]);
-			$db = Database::getInstance();
-			$statement = $db->prepare("SELECT 
+			
+			$statement = $GLOBALS['db']->prepare("SELECT 
 				uren_Id, 
 				SUM(uren_Studielast) as studielast, 
 				(SELECT cursus_Name FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus, 
@@ -151,11 +152,11 @@ function studentOverzicht($id){
 
 function studentOverzichtDetail($id, $weeknr, $jaar, $cursusid){
 	$twigRenderer = new TwigRenderer();
-	$db = Database::getInstance();
+	
 	$result = getUserDetails($id);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
 		$startandenddate = getStartAndEndDate($weeknr, $jaar);	
-		$statement = $db->prepare("SELECT
+		$statement = $GLOBALS['db']->prepare("SELECT
 			(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,
 			(SELECT cursus_Name FROM Cursus WHERE cursus_Id = '".$cursusid."') as cursus,
 			Onderdeel_onderdeel_Id AS onderdeel_Id,
@@ -188,11 +189,11 @@ function studentOverzichtDetail($id, $weeknr, $jaar, $cursusid){
 
 function studentOverzichtDetailOnderdeel($id, $weeknr, $jaar, $onderdeelid){
 	$twigRenderer = new TwigRenderer();
-	$db = Database::getInstance();
+	
 	$result = getUserDetails($id);
 	if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
 		$startandenddate = getStartAndEndDate($weeknr, $jaar);	
-		$statement = $db->prepare("SELECT
+		$statement = $GLOBALS['db']->prepare("SELECT
 			(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,										
 			uren_Studielast as studielast,
 			uren_Date AS datum
@@ -288,9 +289,9 @@ function docentOverzicht($id){
 			$parts = explode("-", $_POST['week']);
 			$weeknr = $parts[0];
 			$startandenddate = getStartAndEndDate($weeknr, $parts[1]);
-			$db = Database::getInstance();
 			
-			$statement = $db->prepare("SELECT
+			
+			$statement = $GLOBALS['db']->prepare("SELECT
 				User_user_Id as user_Id,
 				(SELECT user_Name FROM User WHERE Uren.User_user_Id = user_Id) as user_Name, 
 				SUM(uren_Studielast) as studielast										
@@ -325,9 +326,9 @@ function docentOverzicht($id){
 
 function docentCursusBeheer($id) {
 	if(isLogged($id)) {
-		$db = Database::getInstance();
+		
 
-		$statement = $db->prepare('SELECT *
+		$statement = $GLOBALS['db']->prepare('SELECT *
 			FROM Cursus
 			WHERE User_user_Id = :userID');
 		$statement->bindParam('userID', $id);
@@ -341,11 +342,11 @@ function docentCursusBeheer($id) {
 }
 function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 	$twigRenderer = new TwigRenderer();
-	$db = Database::getInstance();
+	
 	$result = getUserDetails($id);
 	if((isLogged($id))) {
 		$startandenddate = getStartAndEndDate($weeknr, $jaar);	
-		$statement = $db->prepare("SELECT
+		$statement = $GLOBALS['db']->prepare("SELECT
 			(SELECT onderdeel_Name FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel,
 			(SELECT onderdeel_Norm FROM Onderdeel WHERE onderdeel_Id = Onderdeel_onderdeel_Id) AS onderdeel_Norm,
 			(SELECT user_Name FROM User WHERE user_Id = '".$userid."') AS student,
@@ -421,8 +422,8 @@ function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 }
 
 function totaalTotDatum($userid, $lastdate, $cursusid){
-	$db = Database::getInstance();
-	$statement = $db->prepare("SELECT 
+	
+	$statement = $GLOBALS['db']->prepare("SELECT 
 		SUM(uren_Studielast) AS totaalOnderdeel
 		FROM 
 		Uren 
@@ -444,14 +445,14 @@ function totaalTotDatum($userid, $lastdate, $cursusid){
 }
 function docentFeedback($id, $userid, $weeknr, $cursusid){
 	$twigRenderer = new TwigRenderer();
-	$db = Database::getInstance();
+	
 	if((isLogged($id))) {
 		if(!empty($_POST)){
 			$pieces = explode("- ", $_POST['titel']);
 			if($pieces['1'] == 'Update')
 			{
 				$sql = "UPDATE Feedback SET feedback_Text = :feedback, feedbackUpdate_Date = NOW() WHERE User_user_Id = :user_id AND Docent_Id = :docent_id AND feedback_wknr = :wknr AND Cursus_cursus_Id = :cursus_id";
-				$statement = $db->prepare($sql);			
+				$statement = $GLOBALS['db']->prepare($sql);			
 				$statement->bindParam('user_id', $userid);
 				$statement->bindParam('docent_id', $id);
 				$statement->bindParam('wknr', $weeknr);
@@ -460,7 +461,7 @@ function docentFeedback($id, $userid, $weeknr, $cursusid){
 				$statement->execute();	
 			}else{
 				$sql = "INSERT INTO Feedback (feedback_wknr, feedback_Titel, feedback_Text, User_user_Id, Docent_Id, Cursus_cursus_Id, feedback_Date) VALUES (:wknr, :titel, :feedback, :user_id, :docent_id, :cursus_id, NOW())";
-				$statement = $db->prepare($sql);	
+				$statement = $GLOBALS['db']->prepare($sql);	
 				$statement->bindParam('wknr', $weeknr);
 				$statement->bindParam('titel', $_POST['titel']);
 				$statement->bindParam('feedback', $_POST['feedback']);
@@ -471,7 +472,7 @@ function docentFeedback($id, $userid, $weeknr, $cursusid){
 			}
 		}
 		$sql = "SELECT feedback_Id, feedback_titel, feedback_Text FROM Feedback WHERE User_user_ID = '".$userid."' AND feedback_wknr = '".$weeknr."'";
-		$statement = $db->prepare($sql);
+		$statement = $GLOBALS['db']->prepare($sql);
 		$statement->execute();
 		$feedbackData = $statement->fetch(PDO::FETCH_ASSOC);
 		echo $twigRenderer->renderTemplate('addfeedback.twig', array('id' => $id, 'weeknr' => $weeknr, 'userid' => $userid, 'cursusid' => $cursusid, 'feedbackData' => $feedbackData));	
@@ -483,9 +484,9 @@ function docentFeedback($id, $userid, $weeknr, $cursusid){
 function slcPage($id) {
 	$twigRenderer = new TwigRenderer();
 	$result = getUserDetails($id);
-	$db = Database::getInstance();
+	
 	// Gets the courses
-	$statement = $db->prepare('SELECT cursus_Name, cursus_Code, user_Name
+	$statement = $GLOBALS['db']->prepare('SELECT cursus_Name, cursus_Code, user_Name
 		FROM Cursus as C, User as U
 		WHERE C.User_user_Id = U.user_Id
 		AND C.actief = :actief');
@@ -494,7 +495,7 @@ function slcPage($id) {
 	$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 	// Gets all the students
-	$statement = $db->prepare('SELECT * FROM User WHERE actief = :actief');
+	$statement = $GLOBALS['db']->prepare('SELECT * FROM User WHERE actief = :actief');
 	$statement->bindValue('actief', 1);
 	$statement->execute();
 	$students = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -507,11 +508,11 @@ function slcPage($id) {
 
 function urenPage($id) {
 	$twigRenderer = new TwigRenderer();
-	$db = Database::getInstance();
+	
 	if(isLogged($id)){
 		if(!empty($_POST)){
 			$sql = "INSERT INTO Uren (Onderdeel_onderdeel_Id, uren_Date, uren_Studielast, User_user_Id, uren_Created) VALUES (:onderdeel, :datum, :studielast, :user_id, NOW())";
-			$statement = $db->prepare($sql);	
+			$statement = $GLOBALS['db']->prepare($sql);	
 			$statement->bindParam('datum', $_POST['date']);
 			$statement->bindParam('onderdeel', $_POST['onderdeel']);
 			$statement->bindParam('studielast', $_POST['studielast']);
@@ -519,7 +520,7 @@ function urenPage($id) {
 			$statement->execute();
 			
 		}			
-		$statement = $db->prepare("SELECT cursus_Id, cursus_Name FROM Cursus WHERE actief <> 0");
+		$statement = $GLOBALS['db']->prepare("SELECT cursus_Id, cursus_Name FROM Cursus WHERE actief <> 0");
 		$statement->execute();
 		$coursearray = $statement->fetchALL(PDO::FETCH_ASSOC);
 		//var_dump($coursearray);
@@ -534,8 +535,8 @@ function urenPage($id) {
 
 
 function getUserDetails($id) {
-	$db = Database::getInstance();
-	$statement = $db->prepare("SELECT user_Name, user_Code, user_email, user_Klas, Rol_rol_Id FROM User, Rol WHERE user_Id = " . $id);
+	
+	$statement = $GLOBALS['db']->prepare("SELECT user_Name, user_Code, user_email, user_Klas, Rol_rol_Id FROM User, Rol WHERE user_Id = " . $id);
 	$statement->execute();
 	return $statement->fetch(PDO::FETCH_ASSOC);
 }
@@ -545,9 +546,9 @@ De gebruiker is voor een bepaalde tijd ingelogd (gedefinieerd in de config.php).
 */
 function isLogged($id) {
 	$logged = false;
-	$db = Database::getInstance();
+	
 	$sql = "SELECT user_Online FROM User WHERE user_Id = " . $id;
-	$statement = $db->prepare($sql);
+	$statement = $GLOBALS['db']->prepare($sql);
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	$time = strtotime($results['user_Online']) + AUTH_TIME; // Add 1 hour
@@ -559,10 +560,10 @@ function isLogged($id) {
 }
 
 function addStudielast($id) {
-	$db = Database::getInstance();
+	
 
 	$sql = "INSERT INTO Uren (onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (0, :datum, :studielast, :user_id)";
-	$statement = $db->prepare($sql);	
+	$statement = $GLOBALS['db']->prepare($sql);	
 	$statement->bindParam('datum', $_POST['date']);
 	$statement->bindParam('studielast', $_POST['studielast']);
 	$statement->bindParam('user_id', $id);
@@ -573,9 +574,9 @@ function addCourse($id) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)){
-		$db = Database::getInstance();
+		
 		$sql = "INSERT INTO Cursus (cursus_Name, cursus_Code, actief, User_user_Id) VALUES (:cursus_name, :cursus_code, :actief, :user_id)";
-		$statement = $db->prepare($sql);
+		$statement = $GLOBALS['db']->prepare($sql);
 		$statement->bindParam('cursus_name', $_POST['coursename']);
 		$statement->bindParam('cursus_code', $_POST['coursecode']);
 		$statement->bindValue('actief', 1);
@@ -598,9 +599,9 @@ function addCourse($id) {
 function editCourse($id, $courseId) {
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {
-		$db = Database::getInstance();
+		
 		$sql = "UPDATE Cursus SET cursus_Name = :courseName, cursus_Code = :courseCode WHERE cursus_Id = :cursusId";
-		$statement = $db->prepare($sql);
+		$statement = $GLOBALS['db']->prepare($sql);
 		$statement->bindParam('courseName', $_POST['courseName']);
 		$statement->bindParam('courseCode', $_POST['courseCode']);
 		$statement->bindParam('cursusId', $courseId);
@@ -610,9 +611,9 @@ function editCourse($id, $courseId) {
 		}
 	} else {
 		if(isLogged($id)) {
-			$db = Database::getInstance();
+			
 			$sql = "SELECT * FROM Cursus WHERE cursus_Id = :cursusID";
-			$statement = $db->prepare($sql);
+			$statement = $GLOBALS['db']->prepare($sql);
 			$statement->bindParam('cursusID', $courseId);
 			$statement->execute();
 			$results = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -627,9 +628,9 @@ function editCourse($id, $courseId) {
 function removeCourse($id, $courseId) {
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {
-		$db = Database::getInstance();
+		
 		$sql = "UPDATE Cursus SET actief = :actief WHERE cursus_Id = :cursusId";
-		$statement = $db->prepare($sql);
+		$statement = $GLOBALS['db']->prepare($sql);
 		$statement->bindParam('cursusId', $courseId);
 		$statement->bindValue('actief', 0);
 
@@ -640,9 +641,9 @@ function removeCourse($id, $courseId) {
 		}
 	} else {
 		if(isLogged($id)) {
-			$db = Database::getInstance();
+			
 			$sql = "SELECT * FROM Cursus WHERE cursus_Id = :cursusID";
-			$statement = $db->prepare($sql);
+			$statement = $GLOBALS['db']->prepare($sql);
 			$statement->bindParam('cursusID', $courseId);
 			$statement->execute();
 			$results = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -658,7 +659,7 @@ function getStudentsOfCourse($id, $courseId) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	if(isLogged($id)) {
-		$db = Database::getInstance();
+		
 
 		// First part, this gets the corresponding course
 		$sqlCourseAndTeacher = "SELECT cursus_Name, cursus_Code, user_Name
@@ -666,7 +667,7 @@ function getStudentsOfCourse($id, $courseId) {
 		WHERE C.User_user_Id = U.user_Id
 		AND C.cursus_Id = :courseId";
 
-		$statement = $db->prepare($sqlCourseAndTeacher);
+		$statement = $GLOBALS['db']->prepare($sqlCourseAndTeacher);
 		$statement->bindParam('courseId', $courseId);
 		$statement->execute();
 		$course = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -678,7 +679,7 @@ function getStudentsOfCourse($id, $courseId) {
 		AND CU.User_Id = U.user_Id
 		AND C.cursus_Id = :courseId";
 
-		$statement = $db->prepare($sqlStudentsOfCourse);
+		$statement = $GLOBALS['db']->prepare($sqlStudentsOfCourse);
 		$statement->bindParam('courseId', $courseId);
 		$statement->execute();
 		$students = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -686,7 +687,7 @@ function getStudentsOfCourse($id, $courseId) {
 		// Third part, this gets all of the students whichc
 		$sqlAllStudents = "SELECT * FROM User as U WHERE NOT EXISTS (SELECT User_Id FROM Cursus_has_User WHERE U.user_Id = User_Id AND Cursus_Id = :courseId )";
 
-		$statement = $db->prepare($sqlAllStudents);
+		$statement = $GLOBALS['db']->prepare($sqlAllStudents);
 		$statement->bindParam('courseId', $courseId);
 		$statement->execute();
 		$allStudents = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -701,11 +702,11 @@ function addStudentToCourse($id, $courseId) {
 	if(isLogged($id)) {
 		$app = \Slim\Slim::getInstance();
 
-		$db = Database::getInstance();
+		
 
 		$sql = "INSERT INTO Cursus_has_User (Cursus_Id, User_Id) VALUES (:courseId, :userId)";
 
-		$statement = $db->prepare($sql);
+		$statement = $GLOBALS['db']->prepare($sql);
 		$statement->bindParam('courseId', $courseId);
 		$statement->bindParam('userId', $_POST['studentToAdd']);
 
@@ -719,10 +720,10 @@ function addStudent($id) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {	
-		$db = Database::getInstance();
+		
 		$sql = "INSERT INTO User (user_Name, user_Code, user_Email, user_Pass, user_Klas, Rol_rol_Id) 
 		VALUES (:user_name, :user_code, :user_email, :user_pass, :user_klas, 1)"; // 1 is hardcoded because a student always has a role of 1
-		$statement = $db->prepare($sql);
+		$statement = $GLOBALS['db']->prepare($sql);
 		$statement->bindParam('user_name', $_POST['studentname']);
 		$statement->bindParam('user_code', $_POST['studentcode']);
 		$statement->bindParam('user_email', $_POST['studentemail']);
@@ -745,9 +746,9 @@ function editStudent($id, $studentId) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {
-		$db = Database::getInstance();
+		
 		$sql = "UPDATE User SET user_Name = :userName, user_Code = :userCode, user_Email = :userEmail, user_Pass = :userPass, user_Klas = :userKlas WHERE user_Id = :userID";
-		$statement = $db->prepare($sql);
+		$statement = $GLOBALS['db']->prepare($sql);
 		$statement->bindParam('userName', $_POST['studentname']);
 		$statement->bindParam('userCode', $_POST['studentcode']);
 		$statement->bindParam('userEmail', $_POST['studentemail']);
@@ -760,9 +761,9 @@ function editStudent($id, $studentId) {
 		}
 	} else {
 		if(isLogged($id)) {
-			$db = Database::getInstance();
+			
 			$sql = "SELECT * FROM User WHERE user_Id = :userId";
-			$statement = $db->prepare($sql);
+			$statement = $GLOBALS['db']->prepare($sql);
 			$statement->bindParam('userId', $studentId);
 			$statement->execute();
 			$student = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -777,9 +778,9 @@ function removeStudent($id, $studentId) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
 	if(!empty($_POST)) {
-		$db = Database::getInstance();
+		
 		$sql = "UPDATE User SET actief = :actief WHERE user_Id = :studentId";
-		$statement = $db->prepare($sql);
+		$statement = $GLOBALS['db']->prepare($sql);
 		$statement->bindParam('studentId', $studentId);
 		$statement->bindValue('actief', 0);
 
@@ -790,9 +791,9 @@ function removeStudent($id, $studentId) {
 		}
 	} else {
 		if(isLogged($id)) {
-			$db = Database::getInstance();
+			
 			$sql = "SELECT * FROM User WHERE user_Id = :studentId";
-			$statement = $db->prepare($sql);
+			$statement = $GLOBALS['db']->prepare($sql);
 			$statement->bindParam('studentId', $studentId);
 			$statement->execute();
 			$results = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -805,15 +806,15 @@ function removeStudent($id, $studentId) {
 }
 
 function updateUserOnlineTime($id) {
-	$db = Database::getInstance();
+	
 	$date = date('Y-m-d G:i:s');
-	$statement = $db->prepare("UPDATE User SET user_Online = '".$date."' WHERE user_Id= " . $id);
+	$statement = $GLOBALS['db']->prepare("UPDATE User SET user_Online = '".$date."' WHERE user_Id= " . $id);
 	$statement->execute();
 }
 
 function loginUser() {
-	$db = Database::getInstance();
-	$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
+	$db = Database::getInstance(DBNAME, DBHOST, DBUSER, DBPASS);
+	$statement = $GLOBALS['db']->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
 	$statement->bindParam('username', $_POST['username']);
 	$statement->bindParam('password', $_POST['password']);
 	$statement->execute();
@@ -841,10 +842,10 @@ function loginUser() {
 function logOut($id){
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
-	$db = Database::getInstance();
+	
 	if(isLogged($id)){
 		$date = date('Y-m-d G:i:s');
-		$statement = $db->prepare("UPDATE User SET user_Online = null WHERE user_Id= " . $id);
+		$statement = $GLOBALS['db']->prepare("UPDATE User SET user_Online = null WHERE user_Id= " . $id);
 		$statement->execute();
 		$app->redirect(BASE . '/login');
 	}else{
