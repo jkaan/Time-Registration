@@ -172,6 +172,36 @@ class Application {
 				),
 			array(
 				'method' => 'get',
+				'URL' => '/docent/:id/cursus/:cursusId/onderdelen',
+				'action' => 'cursusOnderdelen',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/docent/:id/cursus/:cursusId/onderdelen/add',
+				'action' => 'addOnderdeelToCursus',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/docent/:id/cursus/:cursusId/onderdelen/:onderdeelId/edit',
+				'action' => 'editOnderdeelFromCursus',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/docent/:id/cursus/:cursusId/onderdelen/:onderdeelId/edit',
+				'action' => 'editOnderdeelFromCursus',
+				),
+			array(
+				'method' => 'get',
+				'URL' => '/docent/:id/cursus/:cursusId/onderdelen/:onderdeelId/remove',
+				'action' => 'removeOnderdeelFromCursus',
+				),
+			array(
+				'method' => 'post',
+				'URL' => '/docent/:id/cursus/:cursusId/onderdelen/:onderdeelId/remove',
+				'action' => 'removeOnderdeelFromCursus',
+				),
+			array(
+				'method' => 'get',
 				'URL' => '/docent/:id/overzicht/details/:userid-:weeknr-:jaar-:cursusid',
 				'action' => 'docentOverzichtDetail',
 				),

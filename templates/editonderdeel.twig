@@ -1,0 +1,29 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+	<h1>
+		Wijzigen onderdeel met ID: {{ onderdeelId }}
+	</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+
+<form data-ajax="false" action="{{ constant('BASE') }}/docent/{{ id }}/cursus/{{ cursusId }}/onderdelen/{{ onderdeelId }}/edit" method="POST">
+	
+	<!-- Veld voor Onderdeel Naam -->
+	<label for="basic">Onderdeel Naam:</label>
+	<input type="text" name="onderdeelNaam" id="basic" data-mini="true" value="{{ onderdeel[0].onderdeel_Name }}" />
+
+	<!-- Veld voor Onderdeel Norm -->
+	<label for="basic">Onderdeel Norm:</label>
+	<input type="number" name="onderdeelNorm" id="basic" data-mini="true" value="{{ onderdeel[0].onderdeel_Norm }}" />
+
+	<!-- Submit knop -->
+	<input type="submit" value="Opslaan" data-theme="b">
+</form>
+
+{% endblock content %}

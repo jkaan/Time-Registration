@@ -1,0 +1,58 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+	<h1>
+		Onderdelen in cursus: {{ cursus[0].cursus_Name }}
+	</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+
+<h4>Cursus met Naam: {{ cursus[0].cursus_Name }}</h4>
+
+{% if onderdelen %}
+
+<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+	<thead>
+		<tr>
+			<th>Naam</th>
+			<th data-priority="1">Norm</th>
+			<th data-priority="2">Wijzigen</th>
+			<th data-priority="2">Verwijderen</th>
+		</tr>
+	</thead>
+	<tbody>
+
+		{% for onderdeel in onderdelen %}
+
+		<tr>
+			<td>{{ onderdeel.onderdeel_Name }}</td>
+			<td>{{ onderdeel.onderdeel_Norm }}</td>
+			<td><a href="{{ constant('BASE') }}/docent/{{ id }}/cursus/{{ cursusId }}/onderdelen/{{ onderdeel.onderdeel_Id }}/edit" data-role="button">&#10004;</a></td>
+			<td><a href="{{ constant('BASE') }}/docent/{{ id }}/cursus/{{ cursusId }}/onderdelen/{{ onderdeel.onderdeel_Id }}/remove" data-role="button">&#10004;</a></td>
+		</tr>
+
+		{% endfor %}
+
+	</tbody>
+</table>
+
+{% else %}
+
+Geen onderdelen momenteel in deze cursus
+
+{% endif %}
+
+
+<h4>Onderdeel toevoegen</h4>
+<form data-ajax="false" action="{{ constant('BASE') }}/docent/{{ id }}/cursus/{{ cursusId }}/onderdelen/add" method="POST">
+	<input type="text" name="onderdeelNaam" id="onderdeelNaam" placeholder="Naam Onderdeel" />
+	<input type="number" name="onderdeelNorm" id="onderdeelNorm" placeholder="Norm Onderdeel" />
+	<input type="submit" value="Voeg toe" />
+</form>
+
+{% endblock content %}
