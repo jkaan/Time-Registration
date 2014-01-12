@@ -1,0 +1,22 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+	<h1>Verwijder onderdeel met ID: {{ onderdeelId }}
+	</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+
+<form data-ajax="false" action="{{ constant('BASE') }}/docent/{{ id }}/cursus/{{ cursusId }}/onderdelen/{{ onderdeelId }}/remove" method="POST">
+	<p>
+		Zeker dat je onderdeel {{ onderdeel.onderdeel_Name }} wilt verwijderen?
+	</p>
+	<input id="onderdeelId" type="hidden" name="onderdeelId" value="{{ onderdeelId }}">
+	<input type="submit" value="Verwijderen" data-theme="b">
+</form>
+
+{% endblock content %}

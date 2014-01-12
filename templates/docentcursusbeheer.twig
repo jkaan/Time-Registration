@@ -15,8 +15,7 @@
 		<tr>
 			<th>Cursus Naam</th>
 			<th data-priority="1">Cursus Code</th>
-			<th data-priority="3">Wijzigen</th>
-			<th data-priority="4">Verwijderen</th>
+			<th data-priority="2">Onderdelen</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -24,9 +23,7 @@
 		<tr>
 			<td>{{ course.cursus_Name }}</td>
 			<td>{{ course.cursus_Code }}</td>
-			<td>{{ course.user_Name|capitalize }}</td>
-			<td><a href="{{ constant('BASE') }}/slc/{{ id }}/course/edit/{{ course.cursus_Id }}" data-role="button">&#10004;</a></td>
-			<td><a href="{{ constant('BASE') }}/slc/{{ id }}/course/remove/{{ course.cursus_Id }}" data-role="button">&#10004;</a></td>
+			<td><a href="{{ constant('BASE') }}/docent/{{ id }}/cursus/{{ course.cursus_Id }}/onderdelen" data-role="button">&#10004;</a></td>
 		</tr>
 		{% endfor %}
 	</tbody>

@@ -324,6 +324,7 @@ function docentOverzicht($id){
 }
 
 function docentCursusBeheer($id) {
+	$twigRenderer = new TwigRenderer();
 	if(isLogged($id)) {
 		$db = Database::getInstance();
 
@@ -334,11 +335,117 @@ function docentCursusBeheer($id) {
 		$statement->execute();
 		$courses = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-		echo $twigRenderer->renderTemplate('docentcursusbeheer.twig', array('courses' => $courses));
+		echo $twigRenderer->renderTemplate('docentcursusbeheer.twig', array('courses' => $courses, 'id' => $id));
 	} else {
 		echo $twigRenderer->renderTemplate('noaccess.twig');
 	}
 }
+
+function cursusOnderdelen($id, $cursusId) {
+	$twigRenderer = new TwigRenderer();
+
+	if(isLogged($id)) {
+		$db = Database::getInstance();
+
+		// First part, gets the corresponding course
+		$statement = $db->prepare('SELECT *
+			FROM Cursus
+			WHERE cursus_Id = :cursusId');
+		$statement->bindParam('cursusId', $cursusId);
+		$statement->execute();
+		$cursus = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+		// Second part, gets all assignments for the corresponding course
+		$statement = $db->prepare('SELECT *
+			FROM Onderdeel
+			WHERE Cursus_cursus_Id = :cursusId');
+		$statement->bindParam('cursusId', $cursusId);
+		$statement->execute();
+		$onderdelen = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+		echo $twigRenderer->renderTemplate('onderdelenincursus.twig', array('cursus' => $cursus, 'onderdelen' => $onderdelen, 'id' => $id, 'cursusId' => $cursusId));
+	} else {
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
+function addOnderdeelToCursus($id, $cursusId) {
+	$app = \Slim\Slim::getInstance();
+
+	if(isLogged($id)) {
+		$db = Database::getInstance();
+
+		$statement = $db->prepare('INSERT INTO Onderdeel (onderdeel_Name, onderdeel_Norm, Cursus_cursus_Id) VALUES (:onderdeelNaam, :onderdeelNorm, :cursusId)');
+		$statement->bindParam('onderdeelNaam', $_POST['onderdeelNaam']);
+		$statement->bindParam('onderdeelNorm', $_POST['onderdeelNorm']);
+		$statement->bindParam('cursusId', $cursusId);
+
+		if($statement->execute()) {
+			$app->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
+		}
+	}
+}
+
+function editOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
+	if(isLogged($id)) {
+		if(empty($_POST)) {
+			$twigRenderer = new TwigRenderer();
+			$db = Database::getInstance();
+
+			$statement = $db->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
+			$statement->bindParam('onderdeelId', $onderdeelId);
+			$statement->execute();
+			$onderdeel = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+			echo $twigRenderer->renderTemplate('editonderdeel.twig', array('id' => $id, 'cursusId' => $cursusId, 'onderdeelId' => $onderdeelId, 'onderdeel' => $onderdeel));
+		} else {
+			$db = Database::getInstance();
+
+			$statement = $db->prepare('UPDATE Onderdeel SET onderdeel_Name = :onderdeelNaam, onderdeel_Norm = :onderdeelNorm WHERE onderdeel_Id = :onderdeelId');
+			$statement->bindParam('onderdeelNaam', $_POST['onderdeelNaam']);
+			$statement->bindParam('onderdeelNorm', $_POST['onderdeelNorm']);
+			$statement->bindParam('onderdeelId', $onderdeelId);
+
+			if($statement->execute()) {
+				$app = \Slim\Slim::getInstance();
+				$app->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
+			}
+		}
+	} else {
+		$twigRenderer = new TwigRenderer();
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
+function removeOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
+	if(isLogged($id)) {
+		if(empty($_POST)) {
+			$twigRenderer = new TwigRenderer();
+			$db = Database::getInstance();
+
+			$statement = $db->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
+			$statement->bindParam('onderdeelId', $onderdeelId);
+			$statement->execute();
+			$onderdeel = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+			echo $twigRenderer->renderTemplate('removeonderdeel.twig', array('id' => $id, 'cursusId' => $cursusId, 'onderdeelId' => $onderdeelId, 'onderdeel' => $onderdeel));
+		} else {
+			$db = Database::getInstance();
+
+			$statement = $db->prepare('DELETE FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
+			$statement->bindParam('onderdeelId', $onderdeelId);
+
+			if($statement->execute()) {
+				$app = \Slim\Slim::getInstance();
+				$app->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
+			}
+		}
+	} else {
+		$twigRenderer = new TwigRenderer();
+		echo $twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
 function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 	$twigRenderer = new TwigRenderer();
 	$db = Database::getInstance();
@@ -389,12 +496,12 @@ function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 				$student = $uren['student'];
 				$cursus = $uren['cursus'];
 				$array[] = array(
-									'onderdeel' => $uren['onderdeel'], 
-									'studielast' => $studielast_in_uren, 
-									'onderdeel_Norm' => min_naar_uren($uren['onderdeel_Norm']), 
-									'totaalPerOnderdeel' => min_naar_uren($totaalPerOnderdeel[$count]['totaalOnderdeel']),
-									'berekening' => $berekening
-								);
+					'onderdeel' => $uren['onderdeel'], 
+					'studielast' => $studielast_in_uren, 
+					'onderdeel_Norm' => min_naar_uren($uren['onderdeel_Norm']), 
+					'totaalPerOnderdeel' => min_naar_uren($totaalPerOnderdeel[$count]['totaalOnderdeel']),
+					'berekening' => $berekening
+					);
 				$count++;
 				$berekening = $berekening - 100;
 				$berekening = "<font color=\"red\">".$berekening."%</font> boven";
@@ -582,8 +689,6 @@ function addCourse($id) {
 		$statement->bindParam('user_id', $id);
 		
 		if($statement->execute()) {
-			$app->flash('message', 'test');
-			session_start();
 			$app->redirect('/urenregistratie/application/index.php/slc/' . $id);
 		}
 	} else {
@@ -683,7 +788,7 @@ function getStudentsOfCourse($id, $courseId) {
 		$statement->execute();
 		$students = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-		// Third part, this gets all of the students whichc
+		// Third part, this gets all of the students which exist but are not already enrolled in the corresponding course
 		$sqlAllStudents = "SELECT * FROM User as U WHERE NOT EXISTS (SELECT User_Id FROM Cursus_has_User WHERE U.user_Id = User_Id AND Cursus_Id = :courseId )";
 
 		$statement = $db->prepare($sqlAllStudents);
