@@ -11,23 +11,23 @@
 
 {% block content %}
 <script>
-		function test(value)
-		{
-			$.ajax({
-				url: 'http://localhost/sop/urenregistratie/application/selectOnderdeel.php',
-				type: 'POST',
-				data: {cursus_id: value},
-				dataType:'json',
-				success: function(data){
-					console.log(data);
-					for(var i in data){
-						 $("#onderdeel").append($("<option></option>").attr("value", data[i]['onderdeel_Id']).text(data[i]['onderdeel_Name']));
-					}
-					
+	function test(value)
+	{
+		$.ajax({
+			url: 'http://localhost/sop/urenregistratie/application/selectOnderdeel.php',
+			type: 'POST',
+			data: {cursus_id: value},
+			dataType:'json',
+			success: function(data){
+				console.log(data);
+				for(var i in data){
+					 $("#onderdeel").append($("<option></option>").attr("value", data[i]['onderdeel_Id']).text(data[i]['onderdeel_Name']));
 				}
-			});
-		}
-</script>
+				
+			}
+		});
+	}
+</script>		
 <form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren/add" method="POST">
 	<!-- Veld voor het cursus -->
 	<label for="select-choice-0" class="select">Cursus:</label>
