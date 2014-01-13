@@ -58,7 +58,6 @@ function generateWeeknumbersFromDate($weeknr)
 	}
 	return $array;
 }
-<<<<<<< HEAD
 
 function loginPage() {
 	$app = \Slim\Slim::getInstance();
@@ -452,10 +451,6 @@ function urenPage($id) {
 	}
 }
 
-
-
-=======
->>>>>>> f94824e491fd45ba97fc8048da4d3149f36f002c
 function getUserDetails($id) {
 
 	$db = Database::getInstance();
@@ -484,7 +479,6 @@ function isLogged($id) {
 	return $logged;
 }
 
-<<<<<<< HEAD
 function addCourse($id) {
 	$app = \Slim\Slim::getInstance();
 	$twigRenderer = new TwigRenderer();
@@ -717,9 +711,6 @@ function removeStudent($id, $studentId) {
 		}
 	}
 }
-
-=======
->>>>>>> f94824e491fd45ba97fc8048da4d3149f36f002c
 function updateUserOnlineTime($id) {
 	$db = Database::getInstance();
 	

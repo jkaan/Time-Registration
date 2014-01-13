@@ -31,8 +31,7 @@ class SLCPartManager {
 		$courses = $statement->fetchAll(\PDO::FETCH_ASSOC);
 
 		// Gets all the students
-		$statement = $this->db->prepare('SELECT * FROM User WHERE actief = :actief');
-		$statement->bindValue('actief', 1);
+		$statement = $this->db->prepare('SELECT * FROM User');
 		$statement->execute();
 		$students = $statement->fetchAll(\PDO::FETCH_ASSOC);
 		if((isLogged($id)) && ($result['Rol_rol_Id'] == 3)) {
@@ -208,17 +207,22 @@ class SLCPartManager {
 
 public function editStudent($id, $studentId) {
 	if(!empty($_POST)) {
-		$sql = "UPDATE User SET user_Name = :userName, user_Code = :userCode, user_Email = :userEmail, user_Pass = :userPass, user_Klas = :userKlas WHERE user_Id = :userID";
+		if(!empty($_POST['actief'])){
+			$actief = 1;
+		}else{
+			$actief = 0;
+		}
+		$sql = "UPDATE User SET user_Name = :userName, user_Code = :userCode, user_Email = :userEmail, user_Pass = :userPass, user_Klas = :userKlas, actief = :userActief WHERE user_Id = :userID";
 		$statement = $this->db->prepare($sql);
 		$statement->bindParam('userName', $_POST['studentname']);
 		$statement->bindParam('userCode', $_POST['studentcode']);
 		$statement->bindParam('userEmail', $_POST['studentemail']);
 		$statement->bindParam('userPass', $_POST['studentpassword']);
 		$statement->bindParam('userKlas', $_POST['studentklas']);
+		$statement->bindParam('userActief', $actief);
 		$statement->bindParam('userID', $studentId);
-
 		if($statement->execute()) {
-			$this->slim->redirect('/urenregistratie/application/index.php/slc/' . $id);
+			$this->slim->redirect('/urenregistratie/application/slc/' . $id);
 		}
 	} else {
 		if(isLogged($id)) {

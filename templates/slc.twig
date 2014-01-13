@@ -56,6 +56,7 @@
 					<th data-priority="2">Email</th>
 					<th data-priority="3">Klas</th>
 					<th data-priority="4">Rol</th>
+					<th data-priority="4">Actief</th>
 					<th data-priority="5">Wijzigen</th>
 					<th data-priority="6">Verwijderen</th>
 				</tr>
@@ -68,6 +69,7 @@
 					<td>{{ student.user_Email }}</td>
 					<td>{{ student.user_Klas }}</td>
 					<td>{{ student.Rol_rol_Id }}</td>
+					<td>{% if student.actief == '1' %}Ja {% else %} Nee{% endif %}</td>
 					<td><a href="{{ constant('BASE') }}/slc/{{ id }}/student/edit/{{ student.user_Id }}" data-role="button">&#10004;</a></td>
 					<td><a href="{{ constant('BASE') }}/slc/{{ id }}/student/remove/{{ student.user_Id }}" data-role="button">&#10004;</a></td>
 				</tr>
