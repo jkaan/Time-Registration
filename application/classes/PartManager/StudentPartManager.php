@@ -2,6 +2,9 @@
 
 namespace Application\PartManager;
 
+use Application\TemplateRenderer\TwigRenderer;
+use Application\Config\Database;
+
 class StudentPartManager {
 
 	public function studentPage($id) {
