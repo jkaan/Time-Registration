@@ -349,7 +349,7 @@ function cursusOnderdelen($id, $cursusId) {
 		$db = Database::getInstance();
 
 		// First part, gets the corresponding course
-		$statement = $db->prepare('SELECT *
+		$statement = $GLOBALS['db']->prepare('SELECT *
 			FROM Cursus
 			WHERE cursus_Id = :cursusId');
 		$statement->bindParam('cursusId', $cursusId);
@@ -357,7 +357,7 @@ function cursusOnderdelen($id, $cursusId) {
 		$cursus = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 		// Second part, gets all assignments for the corresponding course
-		$statement = $db->prepare('SELECT *
+		$statement = $GLOBALS['db']->prepare('SELECT *
 			FROM Onderdeel
 			WHERE Cursus_cursus_Id = :cursusId');
 		$statement->bindParam('cursusId', $cursusId);
@@ -376,7 +376,7 @@ function addOnderdeelToCursus($id, $cursusId) {
 	if(isLogged($id)) {
 		$db = Database::getInstance();
 
-		$statement = $db->prepare('INSERT INTO Onderdeel (onderdeel_Name, onderdeel_Norm, Cursus_cursus_Id) VALUES (:onderdeelNaam, :onderdeelNorm, :cursusId)');
+		$statement = $GLOBALS['db']->prepare('INSERT INTO Onderdeel (onderdeel_Name, onderdeel_Norm, Cursus_cursus_Id) VALUES (:onderdeelNaam, :onderdeelNorm, :cursusId)');
 		$statement->bindParam('onderdeelNaam', $_POST['onderdeelNaam']);
 		$statement->bindParam('onderdeelNorm', $_POST['onderdeelNorm']);
 		$statement->bindParam('cursusId', $cursusId);
@@ -393,7 +393,7 @@ function editOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
 			$twigRenderer = new TwigRenderer();
 			$db = Database::getInstance();
 
-			$statement = $db->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
+			$statement = $GLOBALS['db']->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 			$statement->bindParam('onderdeelId', $onderdeelId);
 			$statement->execute();
 			$onderdeel = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -402,7 +402,7 @@ function editOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
 		} else {
 			$db = Database::getInstance();
 
-			$statement = $db->prepare('UPDATE Onderdeel SET onderdeel_Name = :onderdeelNaam, onderdeel_Norm = :onderdeelNorm WHERE onderdeel_Id = :onderdeelId');
+			$statement = $GLOBALS['db']->prepare('UPDATE Onderdeel SET onderdeel_Name = :onderdeelNaam, onderdeel_Norm = :onderdeelNorm WHERE onderdeel_Id = :onderdeelId');
 			$statement->bindParam('onderdeelNaam', $_POST['onderdeelNaam']);
 			$statement->bindParam('onderdeelNorm', $_POST['onderdeelNorm']);
 			$statement->bindParam('onderdeelId', $onderdeelId);
@@ -424,7 +424,7 @@ function removeOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
 			$twigRenderer = new TwigRenderer();
 			$db = Database::getInstance();
 
-			$statement = $db->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
+			$statement = $GLOBALS['db']->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 			$statement->bindParam('onderdeelId', $onderdeelId);
 			$statement->execute();
 			$onderdeel = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -433,7 +433,7 @@ function removeOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
 		} else {
 			$db = Database::getInstance();
 
-			$statement = $db->prepare('DELETE FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
+			$statement = $GLOBALS['db']->prepare('DELETE FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 			$statement->bindParam('onderdeelId', $onderdeelId);
 
 			if($statement->execute()) {
@@ -593,7 +593,7 @@ function slcPage($id) {
 	$result = getUserDetails($id);
 	
 	// Gets the courses
-	$statement = $GLOBALS['db']->prepare('SELECT cursus_Name, cursus_Code, user_Name
+	$statement = $GLOBALS['db']->prepare('SELECT cursus_Id, cursus_Name, cursus_Code, user_Name
 		FROM Cursus as C, User as U
 		WHERE C.User_user_Id = U.user_Id
 		AND C.actief = :actief');
@@ -627,7 +627,7 @@ function urenPage($id) {
 			$statement->execute();
 			
 		}			
-		$statement = $GLOBALS['db']->prepare("SELECT cursus_Id, cursus_Name FROM Cursus WHERE actief <> 0");
+		$statement = $GLOBALS['db']->prepare("SELECT cursus_Id, cursus_Name FROM Cursus WHERE actief <> 0 AND cursus_Id IN (SELECT Cursus_Id FROM Cursus_has_User WHERE User_Id = '".$id."')");
 		$statement->execute();
 		$coursearray = $statement->fetchALL(PDO::FETCH_ASSOC);
 		//var_dump($coursearray);
@@ -664,17 +664,6 @@ function isLogged($id) {
 		$logged = true;
 	}
 	return $logged;
-}
-
-function addStudielast($id) {
-	
-
-	$sql = "INSERT INTO Uren (onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (0, :datum, :studielast, :user_id)";
-	$statement = $GLOBALS['db']->prepare($sql);	
-	$statement->bindParam('datum', $_POST['date']);
-	$statement->bindParam('studielast', $_POST['studielast']);
-	$statement->bindParam('user_id', $id);
-	$statement->execute();
 }
 
 function addCourse($id) {
