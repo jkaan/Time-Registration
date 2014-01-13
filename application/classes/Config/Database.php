@@ -15,11 +15,16 @@ class Database {
 	public static function getInstance() {
 		if(!isset($instance)) {
 			if(defined('DBHOST')) {
-				$instance = new \PDO("mysql:host=" . DBHOST . ";dbname=" . DBNAME, DBUSER, DBPASS);
+				try {
+					$instance = new \PDO("mysql:host=" . DBHOST . ";dbname=" . DBNAME, DBUSER, DBPASS, array(
+						\PDO::ATTR_PERSISTENT => true
+						));
+				} catch (PDOException $e) {
+					print "Error: " . $e->getMessage();
+					die();
+				}
 			}
+			return $instance;
 		}
-		return $instance;
 	}
-
-
 }

@@ -6,8 +6,9 @@ require_once('config.php');
 
 use Application\Application;
 use Application\Config\Database;
+use Slim\Slim;
 
-$app = new \Slim\Slim(array('debug' => true));
+$app = new Slim(array('debug' => true));
 
 $application = new Application();
 
@@ -18,8 +19,6 @@ foreach($routes as $route) {
 	$class = new $route['class'];
 	$app->$route['method']($route['URL'], array($class, $route['action']));
 }
-
-
 
 // verkrijg de eerste - en laatste dag van de gegeven week. 
 function getStartAndEndDate($week, $year)

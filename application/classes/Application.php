@@ -4,30 +4,34 @@ namespace Application;
 
 use Application\TemplateRenderer\TwigRenderer;
 use Application\Config\Database;
+use Slim\Slim;
 
 class Application {
 	private $slim;
+	private $twigRenderer;
+	private $db;
 	private $routes;
 
 	public function __construct() {
+		$this->slim = Slim::getInstance();
+		$this->twigRenderer = new TwigRenderer();
+		$this->db = Database::getInstance();
 		$this->setRoutes();
 	}
 
 	public function startPage() {
-		$app = \Slim\Slim::getInstance();
-		$twigRenderer = new TwigRenderer();
-		echo $twigRenderer->renderTemplate('index.twig', array('page' => 'Start Page'));
+	
+		echo $this->twigRenderer->renderTemplate('index.twig', array('page' => 'Start Page'));
 	}
 
 	public function loginPage() {
-		$app = \Slim\Slim::getInstance();
-		$twigRenderer = new TwigRenderer();
-		echo $twigRenderer->renderTemplate('login.twig', array('page' => 'Start Page'));
+	
+		echo $this->twigRenderer->renderTemplate('login.twig', array('page' => 'Start Page'));
 	}
 
 	public function loginUser() {
-		$db = Database::getInstance();
-		$statement = $db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
+		
+		$statement = $this->db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
 		$statement->bindParam('username', $_POST['username']);
 		$statement->bindParam('password', $_POST['password']);
 		$statement->execute();
@@ -36,33 +40,32 @@ class Application {
 			switch($results['rol_Naam']) {
 				case 'student':
 				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/student/' . $results['user_Id']);
+	
+				$this->slim->redirect(BASE . '/student/' . $results['user_Id']);
 				break;
 				case 'docent':
 				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/docent/' . $results['user_Id']);
+	
+				$this->slim->redirect(BASE . '/docent/' . $results['user_Id']);
 				break;
 				case 'slc':
 				updateUserOnlineTime($results['user_Id']);
-				$app = \Slim\Slim::getInstance();
-				$app->redirect(BASE . '/slc/' . $results['user_Id']);
+	
+				$this->slim->redirect(BASE . '/slc/' . $results['user_Id']);
 			}
 		}
 	}
 
 	public function logOut($id){
-		$app = \Slim\Slim::getInstance();
-		$twigRenderer = new TwigRenderer();
-		$db = Database::getInstance();
+	
+		
 		if(isLogged($id)){
 			$date = date('Y-m-d G:i:s');
-			$statement = $db->prepare("UPDATE User SET user_Online = null WHERE user_Id= " . $id);
+			$statement = $this->db->prepare("UPDATE User SET user_Online = null WHERE user_Id= " . $id);
 			$statement->execute();
-			$app->redirect(BASE . '/login');
+			$this->slim->redirect(BASE . '/login');
 		}else{
-			echo $twigRenderer->renderTemplate('noaccess.twig');
+			echo $this->twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
 
