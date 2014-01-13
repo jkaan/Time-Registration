@@ -1,24 +1,26 @@
 [
     {
         "name": "slim/slim",
-        "version": "2.3.4",
-        "version_normalized": "2.3.4.0",
+        "version": "2.4.0",
+        "version_normalized": "2.4.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/codeguy/Slim.git",
-            "reference": "fc8e18e6d1a5599a09ea0c45bf6ecd9ac843799b"
+            "reference": "ff7d7148848fa4f45712984d7b91ac3cbced586b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/codeguy/Slim/zipball/fc8e18e6d1a5599a09ea0c45bf6ecd9ac843799b",
-            "reference": "fc8e18e6d1a5599a09ea0c45bf6ecd9ac843799b",
+            "url": "https://api.github.com/repos/codeguy/Slim/zipball/ff7d7148848fa4f45712984d7b91ac3cbced586b",
+            "reference": "ff7d7148848fa4f45712984d7b91ac3cbced586b",
             "shasum": ""
         },
         "require": {
-            "ext-mcrypt": "*",
             "php": ">=5.3.0"
         },
-        "time": "2013-10-26 16:43:40",
+        "suggest": {
+            "ext-mcrypt": "Required for HTTP cookie encryption"
+        },
+        "time": "2013-11-29 20:33:36",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -47,27 +49,27 @@
     },
     {
         "name": "twig/twig",
-        "version": "v1.14.1",
-        "version_normalized": "1.14.1.0",
+        "version": "v1.15.0",
+        "version_normalized": "1.15.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/fabpot/Twig.git",
-            "reference": "8873d7593ad7c120004f177c0fd01459b383c9cb"
+            "reference": "85e4ff98000157ff753d934b9f13659a953f5666"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/fabpot/Twig/zipball/8873d7593ad7c120004f177c0fd01459b383c9cb",
-            "reference": "8873d7593ad7c120004f177c0fd01459b383c9cb",
+            "url": "https://api.github.com/repos/fabpot/Twig/zipball/85e4ff98000157ff753d934b9f13659a953f5666",
+            "reference": "85e4ff98000157ff753d934b9f13659a953f5666",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2.4"
         },
-        "time": "2013-10-15 19:17:38",
+        "time": "2013-12-06 07:47:10",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.14-dev"
+                "dev-master": "1.15-dev"
             }
         },
         "installation-source": "dist",

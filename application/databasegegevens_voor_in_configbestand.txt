@@ -1,7 +1,0 @@
-DEFINE('DBHOST', 'sql4.freemysqlhosting.net');
-	
-DEFINE('DBNAME', 'sql420872');
-	
-DEFINE('DBUSER', 'sql420872');
-	
-DEFINE('DBPASS', 'zG5*xE3%');
