@@ -19,7 +19,7 @@ foreach($routes as $route) {
 	$app->$route['method']($route['URL'], array($class, $route['action']));
 }
 
-$db = Database::getInstance();
+
 
 // verkrijg de eerste - en laatste dag van de gegeven week. 
 function getStartAndEndDate($week, $year)
@@ -60,8 +60,10 @@ function generateWeeknumbersFromDate($weeknr)
 	return $array;
 }
 function getUserDetails($id) {
+
+	$db = Database::getInstance();
 	
-	$statement = $GLOBALS['db']->prepare("SELECT user_Name, user_Code, user_email, user_Klas, Rol_rol_Id FROM User, Rol WHERE user_Id = " . $id);
+	$statement = $db->prepare("SELECT user_Name, user_Code, user_email, user_Klas, Rol_rol_Id FROM User, Rol WHERE user_Id = " . $id);
 	$statement->execute();
 	return $statement->fetch(PDO::FETCH_ASSOC);
 }
@@ -70,10 +72,11 @@ Controleert of de gebruiker ingelogd is.
 De gebruiker is voor een bepaalde tijd ingelogd (gedefinieerd in de config.php).
 */
 function isLogged($id) {
+	$db = Database::getInstance();
 	$logged = false;
 	
 	$sql = "SELECT user_Online FROM User WHERE user_Id = " . $id;
-	$statement = $GLOBALS['db']->prepare($sql);
+	$statement = $db->prepare($sql);
 	$statement->execute();
 	$results = $statement->fetch(PDO::FETCH_ASSOC);
 	$time = strtotime($results['user_Online']) + AUTH_TIME; // Add 1 hour
@@ -85,9 +88,10 @@ function isLogged($id) {
 }
 
 function updateUserOnlineTime($id) {
+	$db = Database::getInstance();
 	
 	$date = date('Y-m-d G:i:s');
-	$statement = $GLOBALS['db']->prepare("UPDATE User SET user_Online = '".$date."' WHERE user_Id= " . $id);
+	$statement = $db->prepare("UPDATE User SET user_Online = '".$date."' WHERE user_Id= " . $id);
 	$statement->execute();
 }
 
