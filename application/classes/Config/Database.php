@@ -19,6 +19,11 @@ class Database {
 					$instance = new \PDO("mysql:host=" . DBHOST . ";dbname=" . DBNAME, DBUSER, DBPASS, array(
 						\PDO::ATTR_PERSISTENT => true
 						));
+					if(!$instance){
+						$statement = $instance->prepare("CREATE DATABASE IF NOT EXISTS ". DBNAME);
+						$statement->execute();
+					}
+
 				} catch (PDOException $e) {
 					print "Error: " . $e->getMessage();
 					die();

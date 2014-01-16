@@ -31,7 +31,7 @@ class Application {
 
 	public function loginUser() {
 		
-		$statement = $this->db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id");
+		$statement = $this->db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id AND actief <> 0 ");
 		$statement->bindParam('username', $_POST['username']);
 		$statement->bindParam('password', $_POST['password']);
 		$statement->execute();
@@ -53,6 +53,8 @@ class Application {
 	
 				$this->slim->redirect(BASE . '/slc/' . $results['user_Id']);
 			}
+		}else{
+			echo $this->twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
 
@@ -76,7 +78,13 @@ class Application {
 				'method' => 'get',
 				'URL' => '/',
 				'action' => 'startPage',
-				),
+				),				
+			array(
+				'class' => 'Application\\Installation\\Install',
+				'method' => 'get',
+				'URL' => '/install',
+				'action' => 'installDatabase',
+				),		
 			array(
 				'class' => 'Application\\PartManager\\StudentPartManager',
 				'method' => 'get',
