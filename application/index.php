@@ -15,7 +15,6 @@ $application = new Application();
 
 $routes = $application->getRoutes();
 
-
 foreach($routes as $route) {
 	$class = new $route['class'];
 	$app->$route['method']($route['URL'], array($class, $route['action']));

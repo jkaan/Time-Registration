@@ -1,4 +1,5 @@
-<?php 
+<?php
+ 
 function getStartAndEndDate($week, $year)
 {
 
@@ -11,7 +12,7 @@ function getStartAndEndDate($week, $year)
 	return $return;
 }
 
-function min_naar_uren($minuten){ 
+function min_naar_uren($minuten) { 
 	return sprintf("%d:%02d", floor($minuten / 60), (abs($minuten) % 60));
 }
 
