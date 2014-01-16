@@ -27,7 +27,8 @@ class StudentPartManager {
 			echo $this->twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
-
+	
+	public function installDatabase(){ echo 'hoi';}
 	public function addStudielast($id) {
 		
 

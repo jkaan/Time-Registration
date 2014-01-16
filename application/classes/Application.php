@@ -78,7 +78,13 @@ class Application {
 				'method' => 'get',
 				'URL' => '/',
 				'action' => 'startPage',
-				),
+				),				
+			array(
+				'class' => 'Application\\Installation\\Install',
+				'method' => 'get',
+				'URL' => '/install',
+				'action' => 'installDatabase',
+				),		
 			array(
 				'class' => 'Application\\PartManager\\StudentPartManager',
 				'method' => 'get',
