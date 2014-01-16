@@ -1,0 +1,59 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+	<a href="index.html" data-rel="back">Back</a>
+	<h1>Urenoverzicht {% if student_Name != null %} van {{ student_Name }} {% endif %}</h1>
+	{% if urenoverzichtarray != null %}
+		<a href="#" class="print" rel="urenoverzicht_table" onclick="printOverzicht()">Print</a>
+	{% endif %}
+</div>
+
+{% endblock header %}
+
+{% block content %}
+<script>
+$(document).ready(function() {
+	$('select').change(function( event ) {
+		$("#test").submit();
+	});
+
+});
+</script>
+<form data-ajax="false" id="test" action="{{ constant('BASE') }}/slc/{{ id }}/overzicht" method="POST">
+	<label for="select-choice-0" class="select">Week:</label>
+	<select onchange="this.form.submit()" name="student_Id" id="select-choice-0">
+		<option value="Standaard">Selecteer student</option>
+		{% for student in students %}
+		{{students }}
+		{% if student.user_Name == student_Name %}					
+		<option value="{{ student.user_Id }}" selected>{{ student.user_Name }}</option>
+		{% else %}
+		<option value="{{ student.user_Id }}">{{ student.user_Name }}</option>
+		{% endif %}
+		{% endfor %}
+	</select>
+</form>
+{% if urenoverzichtarray != null %}
+		<table data-role="table" id="urenoverzicht_table" data-mode="columntoggle" class="ui-responsive table-stroke">
+			<thead>
+				<tr>
+					<th>Cursus</th>
+					<th>Totaal uren</th>
+					<th>Opties</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for data in urenoverzichtarray %}
+				<tr>
+					<td>{{ data.cursus }}</td>
+					<td>{{ data.studielast }} | {{ data.berekening | raw}} norm. ({{ data.onderdeel_Norm }}) </td>
+					<td><a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht/details/{{data.user_Id}}-{{ weeknr }}-{{ jaar }}-{{ cursus_Id }}">Details</a></td>
+				</tr>
+				{% endfor %}				
+			</tbody>
+		</table>
+		{% endif %}
+
+		{% endblock content %}

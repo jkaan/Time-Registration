@@ -215,43 +215,21 @@ class DocentPartManager {
 				);
 			$statement->execute();
 			$urenoverzichtData = $statement->fetchAll(\PDO::FETCH_ASSOC);
-			$totaalPerOnderdeel = totaalTotDatum($userid, $startandenddate[1], $cursusid);
+			$totaalPerOnderdeel = $this->totaalTotDatum($userid, $startandenddate[1], $cursusid);
 			$count = 0;
 			$student = '';
 			$cursus = '';
 			foreach($urenoverzichtData as $uren )
 			{
 				$onderdeel_norm = $uren['onderdeel_Norm'];
-				$berekening = (($onderdeel_norm / 100) * $totaalPerOnderdeel[$count]['totaalOnderdeel']);
-
+				$berekening = ($totaalPerOnderdeel[$count]['totaalOnderdeel'] / $onderdeel_norm) * 100;
 				if($berekening > 100)
 				{
-					$onderdeel_norm = $uren['onderdeel_Norm'];
-					$berekening = ($totaalPerOnderdeel[$count]['totaalOnderdeel'] / $onderdeel_norm) * 100;
-					if($berekening > 100)
-					{
-						$berekening = $berekening - 100;
-						$berekening = "<font color=\"red\">".$berekening."%</font> boven";
-					}
-					else{
-						$berekening = 100 - $berekening;
-						$berekening = "<font color=\"green\">".$berekening."%</font> onder";
-					}
-					$studielast_in_uren = min_naar_uren($uren['studielast']);
-					$student = $uren['student'];
-					$cursus = $uren['cursus'];
-					$array[] = array(
-						'onderdeel' => $uren['onderdeel'], 
-						'studielast' => $studielast_in_uren, 
-						'onderdeel_Norm' => min_naar_uren($uren['onderdeel_Norm']), 
-						'totaalPerOnderdeel' => min_naar_uren($totaalPerOnderdeel[$count]['totaalOnderdeel']),
-						'berekening' => $berekening
-						);
-					$count++;
 					$berekening = $berekening - 100;
 					$berekening = "<font color=\"red\">".$berekening."%</font> boven";
 				}
 				else{
+					$berekening = 100 - $berekening;
 					$berekening = "<font color=\"green\">".$berekening."%</font> onder";
 				}
 				$studielast_in_uren = min_naar_uren($uren['studielast']);
