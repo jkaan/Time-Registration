@@ -14,7 +14,8 @@
 
 	<a href="{{ constant('BASE') }}/docent/{{ id }}/cursus" data-role="button">Cursus beheer</a>
 	
-	<a href="nolink" data-role="button">Gebruikersbeheer</a>
+	<a href="{{ constant('BASE') }}/docent/{{ id }}/gebruikers" data-role="button">Gebruikersbeheer</a>
+	
 	<a href="{{ constant('BASE') }}/{{ id }}/logout" data-role="button">Uitloggen</a>
 
 	{% endblock content %}

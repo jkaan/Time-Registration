@@ -318,6 +318,12 @@ class Application {
 				'action' => 'docentFeedback',
 				),
 			array(
+				'class' => 'Application\\PartManager\\DocentPartManager',
+				'method' => 'get',
+				'URL' => '/docent/:id/gebruikers',
+				'action' => 'gebruikersOverzicht',
+				),
+			array(
 				'class' => 'Application\\Application',
 				'method' => 'get',
 				'URL' => '/:id/logout',

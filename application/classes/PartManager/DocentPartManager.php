@@ -40,7 +40,7 @@ class DocentPartManager {
 				$parts = explode("-", $_POST['week']);
 				$weeknr = $parts[0];
 				$startandenddate = getStartAndEndDate($weeknr, $parts[1]);
-	
+
 				
 				$statement = $this->db->prepare("SELECT
 					User_user_Id as user_Id,
@@ -136,8 +136,8 @@ class DocentPartManager {
 	public function editOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
 		if(isLogged($id)) {
 			if(empty($_POST)) {
-	
-	
+
+
 
 				$statement = $this->db->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 				$statement->bindParam('onderdeelId', $onderdeelId);
@@ -146,7 +146,7 @@ class DocentPartManager {
 
 				echo $this->twigRenderer->renderTemplate('editonderdeel.twig', array('id' => $id, 'cursusId' => $cursusId, 'onderdeelId' => $onderdeelId, 'onderdeel' => $onderdeel));
 			} else {
-	
+
 
 				$statement = $this->db->prepare('UPDATE Onderdeel SET onderdeel_Name = :onderdeelNaam, onderdeel_Norm = :onderdeelNorm WHERE onderdeel_Id = :onderdeelId');
 				$statement->bindParam('onderdeelNaam', $_POST['onderdeelNaam']);
@@ -154,7 +154,7 @@ class DocentPartManager {
 				$statement->bindParam('onderdeelId', $onderdeelId);
 
 				if($statement->execute()) {
-		
+
 					$this->slim->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
 				}
 			}
@@ -167,8 +167,8 @@ class DocentPartManager {
 	public function removeOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
 		if(isLogged($id)) {
 			if(empty($_POST)) {
-	
-	
+
+
 
 				$statement = $this->db->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 				$statement->bindParam('onderdeelId', $onderdeelId);
@@ -177,13 +177,13 @@ class DocentPartManager {
 
 				echo $this->twigRenderer->renderTemplate('removeonderdeel.twig', array('id' => $id, 'cursusId' => $cursusId, 'onderdeelId' => $onderdeelId, 'onderdeel' => $onderdeel));
 			} else {
-	
+
 
 				$statement = $this->db->prepare('DELETE FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 				$statement->bindParam('onderdeelId', $onderdeelId);
 
 				if($statement->execute()) {
-		
+
 					$this->slim->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
 				}
 			}
@@ -293,6 +293,7 @@ class DocentPartManager {
 		$statement->execute();
 		return $statement->fetchAll(\PDO::FETCH_ASSOC);;
 	}
+
 	public function docentFeedback($id, $userid, $weeknr, $cursusid){
 		if((isLogged($id))) {
 			if(!empty($_POST)){
@@ -327,6 +328,10 @@ class DocentPartManager {
 		}else{
 			echo $this->twigRenderer->renderTemplate('noaccess.twig');
 		}
+	}
+
+	public function gebruikersOverzicht() {
+		
 	}
 
 }
