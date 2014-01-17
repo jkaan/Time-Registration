@@ -1,4 +1,9 @@
 <?php
+
+
+use Application\Config\Database;
+
+$db = Database::getInstance();
  
 function getStartAndEndDate($week, $year)
 {

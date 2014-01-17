@@ -1,15 +1,14 @@
 <?php
 
 require('../vendor/autoload.php');
-require_once('configvariables.php');
-require_once('config.php');
-require_once('helpfunctions.php');
 
 use Application\Application;
 use Application\Config\Database;
 use Slim\Slim;
 
 $app = new Slim(array('debug' => true));
+
+error_reporting(0);
 
 $application = new Application();
 
