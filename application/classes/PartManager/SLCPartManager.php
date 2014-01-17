@@ -265,4 +265,61 @@ public function removeStudent($id, $studentId) {
 	}
 }
 
+public function slcOverzicht($id) {
+	if((isLogged($id))) {
+		$totaaluren = 0;
+		$array = null;
+		if(!empty($_POST)){
+			
+			$statement = $this->db->prepare("SELECT 
+												uren_Id, 
+												SUM(uren_Studielast) as studielast, 
+												(SELECT user_Name FROM User WHERE u.User_user_Id = user_Id) AS user_Name,
+												(SELECT cursus_Name FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus, 
+												(SELECT cursus_Id FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus_Id,
+												(SELECT SUM(onderdeel_Norm) FROM Onderdeel WHERE Cursus_cursus_Id = o.Cursus_cursus_Id) AS totaleNorm
+											FROM 
+												Uren as u,
+												Onderdeel as o
+											WHERE
+												User_user_Id = " . $_POST['student_Id'] . " 
+											AND
+												u.Onderdeel_onderdeel_Id = o.Onderdeel_Id
+											GROUP BY 
+												cursus"  );
+			$statement->execute();
+			$urenoverzichtData = $statement->fetchAll(\PDO::FETCH_ASSOC);
+			$array = array();
+			$count = 0;
+			foreach($urenoverzichtData as $uren )
+			{
+				$onderdeel_norm = $uren['totaleNorm'];
+				$berekening = ($uren['studielast'] / $onderdeel_norm) * 100;
+				if($berekening > 100)
+				{
+					$berekening = $berekening - 100;
+					$berekening = "<font color=\"red\">".$berekening."%</font> boven";
+				}
+				else{
+					$berekening = 100 - $berekening;
+					$berekening = "<font color=\"green\">".$berekening."%</font> onder";
+				}
+				$totaaluren += $uren['studielast'];
+				$studielast_in_uren = min_naar_uren($uren['studielast']);
+				$array[] = array('uren_Id' => $uren['uren_Id'], 'studielast' => $studielast_in_uren, 'cursus_Id' => $uren['cursus_Id'], 'cursus' => $uren['cursus'], 'onderdeel_Norm' => min_naar_uren($uren['totaleNorm']), 'berekening' => $berekening);
+				$count++;
+			}
+		}
+		$urenoverzichtData = null;
+		$sql = "SELECT * FROM User WHERE actief <> 0 AND Rol_rol_Id = 1";
+		$statement = $this->db->prepare($sql);
+		$statement->execute();
+		$students = $statement->fetchAll(\PDO::FETCH_ASSOC);
+		echo $this->twigRenderer->renderTemplate('urenoverzicht_slc.twig', array('id' => $id, 'students' => $students, 'student_Name' => $urenoverzichtData[0]['user_Name'], 'urenoverzichtarray' => $array ));
+	}	
+	else {
+		echo $this->twigRenderer->renderTemplate('noaccess.twig');
+	}
+}
+
 }

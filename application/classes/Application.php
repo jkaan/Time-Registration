@@ -190,6 +190,18 @@ class Application {
 			array(
 				'class' => 'Application\\PartManager\\SLCPartManager',
 				'method' => 'get',
+				'URL' => '/slc/:id/overzicht',
+				'action' => 'slcOverzicht',
+				),
+			array(
+				'class' => 'Application\\PartManager\\SLCPartManager',
+				'method' => 'post',
+				'URL' => '/slc/:id/overzicht',
+				'action' => 'slcOverzicht',
+				),
+			array(
+				'class' => 'Application\\PartManager\\SLCPartManager',
+				'method' => 'get',
 				'URL' => '/slc/:id/student/edit/:studentId',
 				'action' => 'editStudent',
 				),
