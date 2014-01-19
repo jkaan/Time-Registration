@@ -20,12 +20,12 @@ class Application {
 	}
 
 	public function startPage() {
-	
+		
 		echo $this->twigRenderer->renderTemplate('index.twig', array('page' => 'Start Page'));
 	}
 
 	public function loginPage() {
-	
+		
 		echo $this->twigRenderer->renderTemplate('login.twig', array('page' => 'Start Page'));
 	}
 
@@ -40,17 +40,17 @@ class Application {
 			switch($results['rol_Naam']) {
 				case 'student':
 				updateUserOnlineTime($results['user_Id']);
-	
+				
 				$this->slim->redirect(BASE . '/student/' . $results['user_Id']);
 				break;
 				case 'docent':
 				updateUserOnlineTime($results['user_Id']);
-	
+				
 				$this->slim->redirect(BASE . '/docent/' . $results['user_Id']);
 				break;
 				case 'slc':
 				updateUserOnlineTime($results['user_Id']);
-	
+				
 				$this->slim->redirect(BASE . '/slc/' . $results['user_Id']);
 			}
 		}else{
@@ -59,7 +59,7 @@ class Application {
 	}
 
 	public function logOut($id){
-	
+		
 		
 		if(isLogged($id)){
 			$date = date('Y-m-d G:i:s');
@@ -342,6 +342,12 @@ class Application {
 				'method' => 'get',
 				'URL' => '/docent/:id/gebruikers',
 				'action' => 'gebruikersOverzicht',
+				),
+			array(
+				'class' => 'Application\\PartManager\\DocentPartManager',
+				'method' => 'get',
+				'URL' => '/docent/:id/gebruikers/:gebruikerId',
+				'action' => 'profielVanStudent',
 				),
 			array(
 				'class' => 'Application\\Application',

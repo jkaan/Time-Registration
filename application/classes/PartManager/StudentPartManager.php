@@ -28,7 +28,10 @@ class StudentPartManager {
 		}
 	}
 	
-	public function installDatabase(){ echo 'hoi';}
+	public function installDatabase() {
+		echo 'hoi';
+	}
+	
 	public function addStudielast($id) {
 		
 

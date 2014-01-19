@@ -308,8 +308,35 @@ class DocentPartManager {
 		}
 	}
 
-	public function gebruikersOverzicht() {
-		
+	public function gebruikersOverzicht($id) {
+		if(isLogged($id)) {
+			$sql = "SELECT User.user_Name, User.user_Id
+			FROM Cursus, Cursus_has_User, User 
+			WHERE Cursus_has_User.User_Id = User.user_Id
+			AND Cursus.cursus_Id = Cursus_has_User.Cursus_Id
+			AND User_user_Id = :docentId";
+			$statement = $this->db->prepare($sql);
+			$statement->bindParam('docentId', $id);
+			$statement->execute();
+			$studenten = $statement->fetchAll(\PDO::FETCH_ASSOC);
+			echo $this->twigRenderer->renderTemplate('gebruikersoverzicht.twig', array('id' => $id, 'studenten' => $studenten));
+		} else {
+			echo $this->twigRenderer->renderTemplate('noaccess.twig');
+		}
+	}
+
+	public function profielVanStudent($id, $gebruikerId) {
+		if(isLogged($id)) {
+			$sql = "SELECT * FROM User WHERE user_Id = :userId";
+			$statement = $this->db->prepare($sql);
+			$statement->bindParam('userId', $gebruikerId);
+			$statement->execute();
+			$student = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+			echo $this->twigRenderer->renderTemplate('profielstudent.twig', array('id' => $id, 'gebruikerId' => $gebruikerId, 'student' => $student));
+		} else {
+			echo $this->twigRenderer->renderTemplate('noaccess.twig');
+		}
 	}
 
 }

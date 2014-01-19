@@ -6,7 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    $baseDir . '/application/config.php',
-    $baseDir . '/application/configvariables.php',
-    $baseDir . '/application/helpfunctions.php',
+    $baseDir . '/application/includes/config.php',
+    $baseDir . '/application/includes/configvariables.php',
+    $baseDir . '/application/includes/helpfunctions.php',
 );

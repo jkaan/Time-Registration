@@ -1,0 +1,33 @@
+{% extends "layouts/base.twig" %}
+
+{% block header %}
+
+<div data-role="header">
+	<a href="index.html" data-rel="back">Back</a>
+	<h1>Profiel van student: {{ student[0].user_Name|capitalize }}</h1>
+</div>
+
+{% endblock header %}
+
+{% block content %}
+
+<h4>Profiel van student: {{ student[0].user_Name|capitalize }}</h4>
+
+<table data-role="table" id="table-column-toggle" data-mode="columntoggle" class="ui-responsive table-stroke">
+	<tbody>
+		<tr>
+			<td><b>Student Naam:</b> {{ student[0].user_Name|capitalize }}</td>
+		</tr>
+		<tr>
+			<td><b>Student Code:</b> {{ student[0].user_Code }}</td>
+		</tr>
+		<tr>
+			<td><b>Student Email:</b> {{ student[0].user_Email }}</td>
+		</tr>
+		<tr>
+			<td><b>Student Klas:</b> {{ student[0].user_Klas }}</td>
+		</tr>
+	</tbody>
+</table>
+
+{% endblock content %}

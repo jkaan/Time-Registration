@@ -1,16 +1,31 @@
-{% extends "layouts/base.twig" %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+	<link rel="stylesheet" href="http://localhost/sop/urenregistratie/templates/layouts/customcss.css" />
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+	<script src="http://localhost/sop/urenregistratie/templates/js/printThis.js"></script>
+	
+	<script type='text/javascript'>
 
-{% block header %}
-
+	function printOverzicht() 
+	{
+		var idName = $(".print").attr('rel');
+		$("#"+idName).printThis();
+	}
+	</script>
+</head>
+<body>
+	
 <div data-role="header">
 <a href="index.html" data-rel="back">Back</a>
 <h1>Uren</h1>
 </div>
 
-{% endblock header %}
 
-{% block content %}
-<script>
+	<script>
 	function test(value)
 	{
 		$.ajax({
@@ -28,15 +43,18 @@
 		});
 	}
 </script>		
-<form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren/add" method="POST">
+<form data-ajax="false" action="http://localhost/urenregistratie/application/index.php/student/1/uren/add" method="POST">
 	<!-- Veld voor het cursus -->
 	<label for="select-choice-0" class="select">Cursus:</label>
 	<select name="cursus" id="cursus" onChange="test(this.value)">
 		<option>Selecteer je cursus</option>
-		{% for course in courses %}
-			<option value="{{ course.cursus_Id }}">{{ course.cursus_Name }}</option>
-		{% endfor %}
-	</select>
+					<option value="1">SOP</option>
+					<option value="2">test</option>
+					<option value="17">test</option>
+					<option value="38">slc1234</option>
+					<option value="39">JoeyCursus</option>
+					<option value="40">TestJoey</option>
+			</select>
 	
 	<!--Veld voor het onderdeel -->
 	<label for="select-choice-0" class="select">Onderdeel:</label>
@@ -56,4 +74,5 @@
 	<input type="submit" value="Opslaan" data-theme="b">
 </form>
 
-{% endblock content %}
+</body>
+</html>
