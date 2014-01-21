@@ -33,6 +33,14 @@
 	<!-- Veld voor Student Klas -->
 	<label for="basic">Student Klas:</label>
 	<input type="text" name="studentklas" id="basic" data-mini="true" value="{{ student.user_Klas }}" />
+
+	<!-- Veld voor Student Rol -->
+	<label for="rol">Rol:</label>
+	<select name="rol" id="rol">
+		{% for rol in rollen %}
+		<option value="{{ rol.rol_Id }}">{{ rol.rol_Naam }}</option>
+		{% endfor %}
+	</select>
 	
 	<!-- Veld voor Student Actief	-->
 	<label><input type="checkbox" name="actief" {% if student.actief == '1' %} checked {% endif %}/>Actief </label>

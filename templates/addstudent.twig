@@ -30,6 +30,14 @@
 	<label for="basic">Student Klas:</label>
 	<input type="text" name="studentklas" id="basic" data-mini="true" />
 
+	<!-- Veld voor Student Rol -->
+	<label for="rol">Rol:</label>
+	<select name="rol" id="rol">
+		{% for rol in rollen %}
+		<option value="{{ rol.rol_Id }}">{{ rol.rol_Naam }}</option>
+		{% endfor %}
+	</select>
+
 	<!-- Submit knop -->
 	<input type="submit" value="Opslaan" data-theme="b">
 </form>
