@@ -50,14 +50,21 @@ class SLCPartManager {
 			$statement->bindParam('cursus_name', $_POST['coursename']);
 			$statement->bindParam('cursus_code', $_POST['coursecode']);
 			$statement->bindValue('actief', 1);
-			$statement->bindParam('user_id', $id);
+			$statement->bindParam('user_id', $_POST['docent']);
 			
 			if($statement->execute()) {
 				$this->slim->redirect('/urenregistratie/application/index.php/slc/' . $id);
 			}
 		} else {
 			if(isLogged($id)){
-				echo $this->twigRenderer->renderTemplate('addcourse.twig', array('id' => $id)); 
+				$sql = "SELECT user_Name, user_Id
+				FROM User
+				WHERE Rol_rol_Id = :rolId";
+				$statement = $this->db->prepare($sql);
+				$statement->bindValue('rolId', 2);
+				$statement->execute();
+				$teachers = $statement->fetchAll(\PDO::FETCH_ASSOC);
+				echo $this->twigRenderer->renderTemplate('addcourse.twig', array('id' => $id, 'teachers' => $teachers)); 
 			} else {
 				echo $this->twigRenderer->renderTemplate('noaccess.twig'); 
 			}
@@ -272,21 +279,21 @@ public function slcOverzicht($id) {
 		if(!empty($_POST)){
 			
 			$statement = $this->db->prepare("SELECT 
-												uren_Id, 
-												SUM(uren_Studielast) as studielast, 
-												(SELECT user_Name FROM User WHERE u.User_user_Id = user_Id) AS user_Name,
-												(SELECT cursus_Name FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus, 
-												(SELECT cursus_Id FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus_Id,
-												(SELECT SUM(onderdeel_Norm) FROM Onderdeel WHERE Cursus_cursus_Id = o.Cursus_cursus_Id) AS totaleNorm
-											FROM 
-												Uren as u,
-												Onderdeel as o
-											WHERE
-												User_user_Id = " . $_POST['student_Id'] . " 
-											AND
-												u.Onderdeel_onderdeel_Id = o.Onderdeel_Id
-											GROUP BY 
-												cursus"  );
+				uren_Id, 
+				SUM(uren_Studielast) as studielast, 
+				(SELECT user_Name FROM User WHERE u.User_user_Id = user_Id) AS user_Name,
+				(SELECT cursus_Name FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus, 
+				(SELECT cursus_Id FROM Cursus WHERE cursus_Id IN(SELECT Cursus_cursus_Id FROM Onderdeel WHERE onderdeel_Id = u.Onderdeel_onderdeel_Id)) as cursus_Id,
+				(SELECT SUM(onderdeel_Norm) FROM Onderdeel WHERE Cursus_cursus_Id = o.Cursus_cursus_Id) AS totaleNorm
+				FROM 
+				Uren as u,
+				Onderdeel as o
+				WHERE
+				User_user_Id = " . $_POST['student_Id'] . " 
+				AND
+				u.Onderdeel_onderdeel_Id = o.Onderdeel_Id
+				GROUP BY 
+				cursus"  );
 			$statement->execute();
 			$urenoverzichtData = $statement->fetchAll(\PDO::FETCH_ASSOC);
 			$array = array();

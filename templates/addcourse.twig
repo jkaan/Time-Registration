@@ -20,7 +20,15 @@
 
 	<!-- Veld voor coursecode -->
 	<label for="basic">Cursuscode:</label>
-	<input type="text" name="coursecode" id="basic" data-mini="true" />		
+	<input type="text" name="coursecode" id="basic" data-mini="true" />	
+
+	<!-- Veld voor docent -->
+	<label for="docent">Docent:</label>	
+	<select name="docent" id="docent" data-mini="true">
+		{% for teacher in teachers %}
+		<option value="{{ teacher.user_Id }}">{{ teacher.user_Name }}</option>
+		{% endfor %}
+	</select>
 
 	<!-- Submit knop -->
 	<input type="submit" value="Opslaan" data-theme="b">

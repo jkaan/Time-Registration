@@ -1,6 +1,5 @@
 <?php
 
-
 use Application\Config\Database;
 
 $db = Database::getInstance();

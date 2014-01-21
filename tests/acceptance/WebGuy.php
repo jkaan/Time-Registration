@@ -7,6 +7,7 @@
 use \Codeception\Maybe;
 use Codeception\Module\PhpBrowser;
 use Codeception\Module\WebHelper;
+use Codeception\Module\REST;
 
 /**
  * Inherited methods
@@ -220,12 +221,11 @@ class WebGuy extends \Codeception\AbstractGuy
      * Documentation taken from corresponding module.
      * ----------------------------------------------
      *
-     * Checks that response code is equal to value provided.
+     * Checks response code equals to provided value.
      *
      * @param $code
-     * @return mixed
     * Conditional Assertion: Test won't be stopped on fail
-     * @see Codeception\Module\PhpBrowser::seeResponseCodeIs()
+     * @see Codeception\Module\REST::seeResponseCodeIs()
      * @return \Codeception\Maybe
      */
     public function canSeeResponseCodeIs($code) {
@@ -241,11 +241,10 @@ class WebGuy extends \Codeception\AbstractGuy
      * Documentation taken from corresponding module.
      * ----------------------------------------------
      *
-     * Checks that response code is equal to value provided.
+     * Checks response code equals to provided value.
      *
      * @param $code
-     * @return mixed
-     * @see Codeception\Module\PhpBrowser::seeResponseCodeIs()
+     * @see Codeception\Module\REST::seeResponseCodeIs()
      * @return \Codeception\Maybe
      */
     public function seeResponseCodeIs($code) {
@@ -267,7 +266,7 @@ class WebGuy extends \Codeception\AbstractGuy
      *
      * @param $username
      * @param $password
-     * @see Codeception\Module\PhpBrowser::amHttpAuthenticated()
+     * @see Codeception\Module\REST::amHttpAuthenticated()
      * @return \Codeception\Maybe
      */
     public function amHttpAuthenticated($username, $password) {
@@ -2051,6 +2050,864 @@ class WebGuy extends \Codeception\AbstractGuy
      */
     public function getName() {
         $this->scenario->addStep(new \Codeception\Step\Action('getName', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sets HTTP header
+     *
+     * @param $name
+     * @param $value
+     * @see Codeception\Module\REST::haveHttpHeader()
+     * @return \Codeception\Maybe
+     */
+    public function haveHttpHeader($name, $value) {
+        $this->scenario->addStep(new \Codeception\Step\Action('haveHttpHeader', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks over the given HTTP header and (optionally)
+     * its value, asserting that are there
+     *
+     * @param $name
+     * @param $value
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::seeHttpHeader()
+     * @return \Codeception\Maybe
+     */
+    public function canSeeHttpHeader($name, $value = null) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('seeHttpHeader', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks over the given HTTP header and (optionally)
+     * its value, asserting that are there
+     *
+     * @param $name
+     * @param $value
+     * @see Codeception\Module\REST::seeHttpHeader()
+     * @return \Codeception\Maybe
+     */
+    public function seeHttpHeader($name, $value = null) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('seeHttpHeader', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks over the given HTTP header and (optionally)
+     * its value, asserting that are not there
+     *
+     * @param $name
+     * @param $value
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::dontSeeHttpHeader()
+     * @return \Codeception\Maybe
+     */
+    public function cantSeeHttpHeader($name, $value = null) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('dontSeeHttpHeader', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks over the given HTTP header and (optionally)
+     * its value, asserting that are not there
+     *
+     * @param $name
+     * @param $value
+     * @see Codeception\Module\REST::dontSeeHttpHeader()
+     * @return \Codeception\Maybe
+     */
+    public function dontSeeHttpHeader($name, $value = null) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('dontSeeHttpHeader', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks that http response header is received only once.
+     * HTTP RFC2616 allows multiple response headers with the same name.
+     * You can check that you didn't accidentally sent the same header twice.
+     *
+     * ``` php
+     * <?php
+     * $I->seeHttpHeaderOnce('Cache-Control');
+     * ?>>
+     * ```
+     *
+     * @param $name
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::seeHttpHeaderOnce()
+     * @return \Codeception\Maybe
+     */
+    public function canSeeHttpHeaderOnce($name) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('seeHttpHeaderOnce', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks that http response header is received only once.
+     * HTTP RFC2616 allows multiple response headers with the same name.
+     * You can check that you didn't accidentally sent the same header twice.
+     *
+     * ``` php
+     * <?php
+     * $I->seeHttpHeaderOnce('Cache-Control');
+     * ?>>
+     * ```
+     *
+     * @param $name
+     * @see Codeception\Module\REST::seeHttpHeaderOnce()
+     * @return \Codeception\Maybe
+     */
+    public function seeHttpHeaderOnce($name) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('seeHttpHeaderOnce', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Returns the value of the specified header name
+     *
+     * @param $name
+     * @param Boolean $first  Whether to return the first value or all header values
+     *
+     * @return string|array The first header value if $first is true, an array of values otherwise
+     * @see Codeception\Module\REST::grabHttpHeader()
+     * @return \Codeception\Maybe
+     */
+    public function grabHttpHeader($name, $first = null) {
+        $this->scenario->addStep(new \Codeception\Step\Action('grabHttpHeader', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Adds Digest authentication via username/password.
+	 *
+	 * @param $username
+	 * @param $password
+     * @see Codeception\Module\REST::amDigestAuthenticated()
+     * @return \Codeception\Maybe
+     */
+    public function amDigestAuthenticated($username, $password) {
+        $this->scenario->addStep(new \Codeception\Step\Condition('amDigestAuthenticated', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends a POST request to given uri.
+     *
+     * Parameters and files (as array of filenames) can be provided.
+     *
+     * @param $url
+     * @param array $params
+     * @param array $files
+     * @see Codeception\Module\REST::sendPOST()
+     * @return \Codeception\Maybe
+     */
+    public function sendPOST($url, $params = null, $files = null) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendPOST', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends a HEAD request to given uri.
+     *
+     * @param $url
+     * @param array $params
+     * @see Codeception\Module\REST::sendHEAD()
+     * @return \Codeception\Maybe
+     */
+    public function sendHEAD($url, $params = null) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendHEAD', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends an OPTIONS request to given uri.
+     *
+     * @param $url
+     * @param array $params
+     * @see Codeception\Module\REST::sendOPTIONS()
+     * @return \Codeception\Maybe
+     */
+    public function sendOPTIONS($url, $params = null) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendOPTIONS', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends a GET request to given uri.
+     *
+     * @param $url
+     * @param array $params
+     * @see Codeception\Module\REST::sendGET()
+     * @return \Codeception\Maybe
+     */
+    public function sendGET($url, $params = null) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendGET', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends PUT request to given uri.
+     *
+     * @param $url
+     * @param array $params
+     * @param array $files
+     * @see Codeception\Module\REST::sendPUT()
+     * @return \Codeception\Maybe
+     */
+    public function sendPUT($url, $params = null, $files = null) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendPUT', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends PATCH request to given uri.
+     *
+     * @param       $url
+     * @param array $params
+     * @param array $files
+     * @see Codeception\Module\REST::sendPATCH()
+     * @return \Codeception\Maybe
+     */
+    public function sendPATCH($url, $params = null, $files = null) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendPATCH', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends DELETE request to given uri.
+     *
+     * @param $url
+     * @param array $params
+     * @param array $files
+     * @see Codeception\Module\REST::sendDELETE()
+     * @return \Codeception\Maybe
+     */
+    public function sendDELETE($url, $params = null, $files = null) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendDELETE', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends LINK request to given uri.
+     *
+     * @param       $url
+     * @param array $linkEntries (entry is array with keys "uri" and "link-param")
+     *
+     * @link http://tools.ietf.org/html/rfc2068#section-19.6.2.4
+     *
+     * @author samva.ua@gmail.com
+     * @see Codeception\Module\REST::sendLINK()
+     * @return \Codeception\Maybe
+     */
+    public function sendLINK($url, $linkEntries) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendLINK', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Sends UNLINK request to given uri.
+     *
+     * @param       $url
+     * @param array $linkEntries (entry is array with keys "uri" and "link-param")
+     *
+     * @link http://tools.ietf.org/html/rfc2068#section-19.6.2.4
+     *
+     * @author samva.ua@gmail.com
+     * @see Codeception\Module\REST::sendUNLINK()
+     * @return \Codeception\Maybe
+     */
+    public function sendUNLINK($url, $linkEntries) {
+        $this->scenario->addStep(new \Codeception\Step\Action('sendUNLINK', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether last response was valid JSON.
+     * This is done with json_last_error function.
+     *
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::seeResponseIsJson()
+     * @return \Codeception\Maybe
+     */
+    public function canSeeResponseIsJson() {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('seeResponseIsJson', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether last response was valid JSON.
+     * This is done with json_last_error function.
+     *
+     * @see Codeception\Module\REST::seeResponseIsJson()
+     * @return \Codeception\Maybe
+     */
+    public function seeResponseIsJson() {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('seeResponseIsJson', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether last response was valid XML.
+     * This is done with libxml_get_last_error function.
+     *
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::seeResponseIsXml()
+     * @return \Codeception\Maybe
+     */
+    public function canSeeResponseIsXml() {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('seeResponseIsXml', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether last response was valid XML.
+     * This is done with libxml_get_last_error function.
+     *
+     * @see Codeception\Module\REST::seeResponseIsXml()
+     * @return \Codeception\Maybe
+     */
+    public function seeResponseIsXml() {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('seeResponseIsXml', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether the last response contains text.
+     *
+     * @param $text
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::seeResponseContains()
+     * @return \Codeception\Maybe
+     */
+    public function canSeeResponseContains($text) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('seeResponseContains', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether the last response contains text.
+     *
+     * @param $text
+     * @see Codeception\Module\REST::seeResponseContains()
+     * @return \Codeception\Maybe
+     */
+    public function seeResponseContains($text) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('seeResponseContains', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether last response do not contain text.
+     *
+     * @param $text
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::dontSeeResponseContains()
+     * @return \Codeception\Maybe
+     */
+    public function cantSeeResponseContains($text) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('dontSeeResponseContains', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether last response do not contain text.
+     *
+     * @param $text
+     * @see Codeception\Module\REST::dontSeeResponseContains()
+     * @return \Codeception\Maybe
+     */
+    public function dontSeeResponseContains($text) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('dontSeeResponseContains', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether the last JSON response contains provided array.
+     * The response is converted to array with json_decode($response, true)
+     * Thus, JSON is represented by associative array.
+     * This method matches that response array contains provided array.
+     *
+     * Examples:
+     *
+     * ``` php
+     * <?php
+     * // response: {name: john, email: john@gmail.com}
+     * $I->seeResponseContainsJson(array('name' => 'john'));
+     *
+     * // response {user: john, profile: { email: john@gmail.com }}
+     * $I->seeResponseContainsJson(array('email' => 'john@gmail.com'));
+     *
+     * ?>
+     * ```
+     *
+     * This method recursively checks if one array can be found inside of another.
+     *
+     * @param array $json
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::seeResponseContainsJson()
+     * @return \Codeception\Maybe
+     */
+    public function canSeeResponseContainsJson($json = null) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('seeResponseContainsJson', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks whether the last JSON response contains provided array.
+     * The response is converted to array with json_decode($response, true)
+     * Thus, JSON is represented by associative array.
+     * This method matches that response array contains provided array.
+     *
+     * Examples:
+     *
+     * ``` php
+     * <?php
+     * // response: {name: john, email: john@gmail.com}
+     * $I->seeResponseContainsJson(array('name' => 'john'));
+     *
+     * // response {user: john, profile: { email: john@gmail.com }}
+     * $I->seeResponseContainsJson(array('email' => 'john@gmail.com'));
+     *
+     * ?>
+     * ```
+     *
+     * This method recursively checks if one array can be found inside of another.
+     *
+     * @param array $json
+     * @see Codeception\Module\REST::seeResponseContainsJson()
+     * @return \Codeception\Maybe
+     */
+    public function seeResponseContainsJson($json = null) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('seeResponseContainsJson', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Returns current response so that it can be used in next scenario steps.
+     *
+     * Example:
+     *
+     * ``` php
+     * <?php
+     * $user_id = $I->grabResponse();
+     * $I->sendPUT('/user', array('id' => $user_id, 'name' => 'davert'));
+     * ?>
+     * ```
+     *
+     * @version 1.1
+     * @return string
+     * @see Codeception\Module\REST::grabResponse()
+     * @return \Codeception\Maybe
+     */
+    public function grabResponse() {
+        $this->scenario->addStep(new \Codeception\Step\Action('grabResponse', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Returns data from the current JSON response using specified path
+     * so that it can be used in next scenario steps
+     *
+     * Example:
+     *
+     * ``` php
+     * <?php
+     * $user_id = $I->grabDataFromJsonResponse('user.user_id');
+     * $I->sendPUT('/user', array('id' => $user_id, 'name' => 'davert'));
+     * ?>
+     * ```
+     *
+     * @param string $path
+     *
+     * @since 1.1.2
+     * @return string
+     *
+     * @author tiger.seo@gmail.com
+     * @see Codeception\Module\REST::grabDataFromJsonResponse()
+     * @return \Codeception\Maybe
+     */
+    public function grabDataFromJsonResponse($path) {
+        $this->scenario->addStep(new \Codeception\Step\Action('grabDataFromJsonResponse', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Opposite to seeResponseContainsJson
+     *
+     * @param array $json
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::dontSeeResponseContainsJson()
+     * @return \Codeception\Maybe
+     */
+    public function cantSeeResponseContainsJson($json = null) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('dontSeeResponseContainsJson', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Opposite to seeResponseContainsJson
+     *
+     * @param array $json
+     * @see Codeception\Module\REST::dontSeeResponseContainsJson()
+     * @return \Codeception\Maybe
+     */
+    public function dontSeeResponseContainsJson($json = null) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('dontSeeResponseContainsJson', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks if response is exactly the same as provided.
+     *
+     * @param $response
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::seeResponseEquals()
+     * @return \Codeception\Maybe
+     */
+    public function canSeeResponseEquals($response) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('seeResponseEquals', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks if response is exactly the same as provided.
+     *
+     * @param $response
+     * @see Codeception\Module\REST::seeResponseEquals()
+     * @return \Codeception\Maybe
+     */
+    public function seeResponseEquals($response) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('seeResponseEquals', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+
+ 
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks that response code is not equal to provided value.
+     *
+     * @param $code
+    * Conditional Assertion: Test won't be stopped on fail
+     * @see Codeception\Module\REST::dontSeeResponseCodeIs()
+     * @return \Codeception\Maybe
+     */
+    public function cantSeeResponseCodeIs($code) {
+        $this->scenario->addStep(new \Codeception\Step\ConditionalAssertion('dontSeeResponseCodeIs', func_get_args()));
+        if ($this->scenario->running()) {
+            $result = $this->scenario->runStep();
+            return new Maybe($result);
+        }
+        return new Maybe();
+    }
+    /**
+     * This method is generated.
+     * Documentation taken from corresponding module.
+     * ----------------------------------------------
+     *
+     * Checks that response code is not equal to provided value.
+     *
+     * @param $code
+     * @see Codeception\Module\REST::dontSeeResponseCodeIs()
+     * @return \Codeception\Maybe
+     */
+    public function dontSeeResponseCodeIs($code) {
+        $this->scenario->addStep(new \Codeception\Step\Assertion('dontSeeResponseCodeIs', func_get_args()));
         if ($this->scenario->running()) {
             $result = $this->scenario->runStep();
             return new Maybe($result);

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+	<link rel="stylesheet" href="http://localhost/sop/urenregistratie/templates/layouts/customcss.css" />
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+	<script src="http://localhost/sop/urenregistratie/templates/js/printThis.js"></script>
+	
+	<script type='text/javascript'>
+
+	function printOverzicht() 
+	{
+		var idName = $(".print").attr('rel');
+		$("#"+idName).printThis();
+	}
+	</script>
+</head>
+<body>
+	
+<div data-role="header">
+	<h1>
+		Wijzigen onderdeel met ID: 10
+	</h1>
+</div>
+
+
+	
+<form data-ajax="false" action="http://localhost/urenregistratie/application/index.php/docent/2/cursus/2/onderdelen/10/edit" method="POST">
+	
+	<!-- Veld voor Onderdeel Naam -->
+	<label for="basic">Onderdeel Naam:</label>
+	<input type="text" name="onderdeelNaam" id="basic" data-mini="true" value="Test" />
+
+	<!-- Veld voor Onderdeel Norm -->
+	<label for="basic">Onderdeel Norm:</label>
+	<input type="number" name="onderdeelNorm" id="basic" data-mini="true" value="100" />
+
+	<!-- Submit knop -->
+	<input type="submit" value="Opslaan" data-theme="b">
+</form>
+
+</body>
+</html>

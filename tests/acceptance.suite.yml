@@ -13,6 +13,9 @@ modules:
     enabled:
         - PhpBrowser
         - WebHelper
+        - REST
     config:
         PhpBrowser:
+            url: 'http://localhost/urenregistratie/application/index.php'
+        REST:
             url: 'http://localhost/urenregistratie/application/index.php'

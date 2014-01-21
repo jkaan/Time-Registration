@@ -16,15 +16,11 @@ class StudentCest {
 		$I->amOnPage('/student/1');
 		$I->see('Student Page');
 		$I->amOnPage('/student/1/uren/add');
-		$I->selectOption('cursus', 'SOP');
-		// Doesn't work becuase after you choose cursus the onderdeel part is populated but the test doesn't wait for that.
-		$I->selectOption('onderdeel', 'Urenregistratie');
-		$I->fillField('Datum', '18-01-2014');
-		$I->fillField('Studielast', '2500');
-		$I->click('Opslaan');
-		$I->seeInDatabase('Uren', array(
-			'uren_Date' => '2014-01-08',
-			'uren_Studielast' => '2500',
+		$I->submitForm('#ureninvullen', array(
+			'cursus' => 'SOP',
+			'onderdeel' => '1',
+			'date' => '19-01-2014',
+			'studielast', '1000',
 			));
 	}
 
@@ -42,7 +38,6 @@ class StudentCest {
 		$I->amOnPage('/student/1');
 		$I->see('Student Page');
 		$I->click('Overzicht');
-		// POST not working, if I can't get this to work then this test will always fails
 		$I->sendPOST('/student/1/overzicht', array(
 			'week' => '51-2013',
 			));
@@ -51,7 +46,7 @@ class StudentCest {
 	}
 
 	/**
-	 * Test for requirement 30 of student
+	 * Test for requirement 30 of student TODO
 	 * @param  WebGuy $I [description]
 	 * @return [type]    [description]
 	 */

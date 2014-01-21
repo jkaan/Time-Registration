@@ -8,7 +8,7 @@ use Slim\Slim;
 
 $app = new Slim(array('debug' => true));
 
-error_reporting(0);
+error_reporting(-1);
 
 $application = new Application();
 

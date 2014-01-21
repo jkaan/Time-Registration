@@ -28,7 +28,7 @@
 		});
 	}
 </script>		
-<form data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren/add" method="POST">
+<form id="ureninvullen" data-ajax="false" action="{{ constant('BASE') }}/student/{{ id }}/uren/add" method="POST">
 	<!-- Veld voor het cursus -->
 	<label for="select-choice-0" class="select">Cursus:</label>
 	<select name="cursus" id="cursus" onChange="test(this.value)">
