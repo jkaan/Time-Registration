@@ -1,4 +1,15 @@
 <?php
+
+/**
+ * This file contains all of the variables that are used by the application
+ *
+ * Time a user stays logged in (1 hour)
+ * The date when a semester starts (7th September)
+ * The school year (2013-2014)
+ *
+ * Database information and credentials
+ */
+
 if(!defined('AUTH_TIME')) {
 	DEFINE('AUTH_TIME', 3600);
 }

@@ -6,20 +6,34 @@ use Application\TemplateRenderer\TwigRenderer;
 use Application\Config\Database;
 use Slim\Slim;
 
+/**
+ * This class handles all the requests and responses for the SLC part of the application
+ *
+ * @author  Joey Kaan & Trinco Ingels
+ * @version  1.0.0
+ */
 class SLCPartManager {
 
 	private $slim;
 	private $twigRenderer;
 	private $db;
 
+	/**
+	 * Initializes this class
+	 * Sets the connection to the database, the template renderer and slim instance for routing
+	 */
 	public function __construct() {
 		$this->slim = Slim::getInstance();
 		$this->twigRenderer = new TwigRenderer();
 		$this->db = Database::getInstance();
 	}
 
+	/**
+	 * Responsible for rendering the start page when you login with a SLC account
+	 * @param  Integer $id Id of the SLC
+	 * @return Template of the SLC
+	 */
 	public function slcPage($id) {
-
 		$result = getUserDetails($id);
 		// Gets the courses
 		$statement = $this->db->prepare('SELECT cursus_Name, cursus_Code, user_Name
@@ -41,9 +55,13 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template that enables a SLC to add a course
+	 * Also responsible for actually adding the course to the database
+	 * @param Integer $id Id of the SLC
+	 * @return Template that enables a SLC to add a course
+	 */
 	public function addCourse($id) {
-
-
 		if(!empty($_POST)){
 			$sql = "INSERT INTO Cursus (cursus_Name, cursus_Code, actief, User_user_Id) VALUES (:cursus_name, :cursus_code, :actief, :user_id)";
 			$statement = $this->db->prepare($sql);
@@ -71,6 +89,13 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template that enables a SLC to edit a course
+	 * Also responsible for actually updating the course in the database
+	 * @param Integer $id Id of the SLC
+	 * @param Integer $courseId Id of the course
+	 * @return Template that enables a SLC to edit a course
+	 */
 	public function editCourse($id, $courseId) {
 
 		if(!empty($_POST)) {
@@ -99,6 +124,13 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template that enables a SLC to remove a course
+	 * Also responsible for actually removing the course in the database
+	 * @param Integer $id Id of the SLC
+	 * @param Integer $courseId Id of the course
+	 * @return Template that enables a SLC to remove a course
+	 */
 	public function removeCourse($id, $courseId) {
 
 		if(!empty($_POST)) {
@@ -128,11 +160,14 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template that shows all of the students enrolled in a specific course
+	 * @param  Integer $id       Id of the SLC
+	 * @param  Integer $courseId Id of the course
+	 * @return Template that shows all of the students enrolled in the specific course
+	 */
 	public function getStudentsOfCourse($id, $courseId) {
-
-
 		if(isLogged($id)) {
-
 			// First part, this gets the corresponding course
 			$sqlCourseAndTeacher = "SELECT cursus_Name, cursus_Code, user_Name
 			FROM Cursus as C, User as U
@@ -170,6 +205,11 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Responsible for adding a student to a specific course
+	 * @param Integer $id       Id of the SLC
+	 * @param Integer $courseId Id of the course
+	 */
 	public function addStudentToCourse($id, $courseId) {
 		if(isLogged($id)) {
 			$sql = "INSERT INTO Cursus_has_User (Cursus_Id, User_Id) VALUES (:courseId, :userId)";
@@ -184,6 +224,12 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template that enables an SLC to add a student to the system
+	 * Also responsible for actually adding the 
+	 * @param Integer $id Id of the SLC
+	 * @return Template that allows an SLC to add a student to the system
+	 */
 	public function addStudent($id) {
 		if(!empty($_POST)) {	
 			$sql = "INSERT INTO User (user_Name, user_Code, user_Email, user_Pass, user_Klas, Rol_rol_Id, actief) 
@@ -213,6 +259,13 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template that allows a SLC to edit a student in the system
+	 * Also responsible for actually updating the student in the database
+	 * @param  Integer $id        Id of the SLC
+	 * @param  Integer $studentId Id of the student
+	 * @return Template that allows a SLC to edit a student
+	 */
 	public function editStudent($id, $studentId) {
 		if(!empty($_POST)) {
 			if(!empty($_POST['actief'])){
@@ -252,6 +305,14 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template that allows a SLC to remove a student in the system
+	 * Also responsible for actually removing the student in the database
+	 * This method doesn't actually remove the student from the database, just sets it as inactive
+	 * @param  Integer $id        Id of the SLC
+	 * @param  Integer $studentId Id of the student
+	 * @return Template that allows a SLC to remove a student
+	 */
 	public function removeStudent($id, $studentId) {
 		if(!empty($_POST)) {
 			$sql = "UPDATE User SET actief = :actief WHERE user_Id = :studentId";
@@ -279,6 +340,11 @@ class SLCPartManager {
 		}
 	}
 
+	/**
+	 * Renders the total view where a SLC can see all of the student's hours.
+	 * @param  Integer $id Id of the SLC
+	 * @return Template that contains all student's hours
+	 */
 	public function slcOverzicht($id) {
 		if((isLogged($id))) {
 			$totaaluren = 0;

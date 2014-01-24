@@ -4,6 +4,13 @@ namespace Application\TemplateRenderer;
 
 require_once('../vendor/autoload.php');
 
+/**
+ * This class is responsible for rendering a template
+ * This class uses the Twig Templating Engine to render the template correctly
+ *
+ * @author Joey Kaan
+ * @version 1.0.0
+ */
 class TwigRenderer {
 
 	private $loader;
