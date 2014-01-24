@@ -14,7 +14,7 @@
 	function test(value)
 	{
 		$.ajax({
-			url: 'http://localhost/urenregistratie/application/selectOnderdeel.php',
+			url: '{{ constant('BASE') }}/selectOnderdeel.php',
 			type: 'POST',
 			data: {cursus_id: value},
 			dataType:'json',

@@ -159,7 +159,7 @@ class DocentPartManager {
 			$statement->bindParam('cursusId', $cursusId);
 
 			if($statement->execute()) {
-				$this->slim->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
+				$this->slim->redirect(BASE . '/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
 			}
 		}
 	}
@@ -188,7 +188,7 @@ class DocentPartManager {
 
 				if($statement->execute()) {
 
-					$this->slim->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
+					$this->slim->redirect(BASE . '/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
 				}
 			}
 		} else {
@@ -218,7 +218,7 @@ class DocentPartManager {
 				$statement->bindParam('onderdeelId', $onderdeelId);
 
 				if($statement->execute()) {
-					$this->slim->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
+					$this->slim->redirect(BASE . '/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
 				}
 			}
 		} else {
