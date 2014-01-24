@@ -26,7 +26,8 @@ class Install {
 		$this->createOnderdeelTable();
 		$this->createRolTable();
 		$this->createUrenTable();
-		$this->insertDefaultUser();		
+		$this->insertDefaultRol();	
+		$this->insertDefaultUser();			
 	}
 	
 	public function createUserTable(){
@@ -44,7 +45,9 @@ class Install {
 		  KEY `fk_User_Rol1_idx` (`Rol_rol_Id`)
 		) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0;";
 		$statement = $this->db->prepare($sql);
-		$statement->execute();	
+		if(!$statement->execute()){
+			echo 'Fout tijdens het maken van tabel User';
+		}		
 	}
 	
 	public function createCursusTable() {
@@ -58,7 +61,9 @@ class Install {
 				  KEY `fk_Cursus_User1_idx` (`User_user_Id`)
 				) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;";
 		$statement = $this->db->prepare($sql);
-		$statement->execute();	
+		if(!$statement->execute()){
+			echo 'Fout tijdens het maken van tabel Cursus';
+		}		
 	}
 	
 	public function createCursusHasUserTable() {
@@ -69,7 +74,9 @@ class Install {
 				  KEY `Cursus_Id` (`Cursus_Id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Deze tabel koppelt de studenten(users) aan de cursussen';";
 		$statement = $this->db->prepare($sql);
-		$statement->execute();
+				if(!$statement->execute()){
+			echo 'Fout tijdens het maken van tabel CursusHasUser';
+		}	
 	}
 	
 	public function createFeedbackTable() {
@@ -89,7 +96,9 @@ class Install {
 			  KEY `Docent_Id` (`Docent_Id`)
 			) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;";
 		$statement = $this->db->prepare($sql);
-		$statement->execute();
+		if(!$statement->execute()){
+			echo 'Fout tijdens het maken van tabel Feedback';
+		}	
 	}
 	
 	public function createOnderdeelTable() {
@@ -102,7 +111,9 @@ class Install {
 			  KEY `fk_Onderdeel_Cursus1_idx` (`Cursus_cursus_Id`)
 			) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;";
 		$statement = $this->db->prepare($sql);
-		$statement->execute();
+		if(!$statement->execute()){
+			echo 'Fout tijdens het maken van tabel Onderdeel';
+		}	
 	}
 	
 	public function createRolTable() {
@@ -112,7 +123,9 @@ class Install {
 			  PRIMARY KEY (`rol_Id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 		$statement = $this->db->prepare($sql);
-		$statement->execute();
+		if(!$statement->execute()){
+			echo 'Fout tijdens het maken van tabel Rol';
+		}	
 	}	
 	
 	public function createUrenTable() {
@@ -128,13 +141,28 @@ class Install {
 				  KEY `fk_Uren_Onderdeel1_idx` (`Onderdeel_onderdeel_Id`)
 				) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;";
 		$statement = $this->db->prepare($sql);
-		$statement->execute();
+		if(!$statement->execute()){
+			echo 'Fout tijdens het maken van tabel uren';
+		}	
 	}
 
 	public function insertDefaultUser() {
 		$sql = "INSERT INTO `User` (`user_Id`, `user_Name`, `user_Code`, `user_Email`, `user_Pass`, `user_Klas`, `Rol_rol_Id`, `user_Online`, `actief`) VALUES
 			(1, 'admin', '12', 'admin@hz.nl', 'admin', 'null', 3, NOW(), 1);";
 		$statement = $this->db->prepare($sql);
-		$statement->execute();
+		if(!$statement->execute()){
+			echo 'Fout tijdens het toevoegen van een standaard account';
+		}	
 	}
+
+	public function insertDefaultRol() {
+		$sql = "INSERT INTO `Rol` (`rol_Id`, `rol_Naam`) VALUES
+				(1, 'student'),
+				(2, 'docent'),
+				(3, 'slc');";
+		$statement = $this->db->prepare($sql);
+		if(!$statement->execute()){
+			echo 'Fout tijdens het toevoegen van de gedefinieerde rollen';
+		}	
+	}	
 }
