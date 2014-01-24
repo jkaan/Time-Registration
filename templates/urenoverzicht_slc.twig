@@ -41,7 +41,6 @@ $(document).ready(function() {
 				<tr>
 					<th>Cursus</th>
 					<th>Totaal uren</th>
-					<th>Opties</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -49,7 +48,6 @@ $(document).ready(function() {
 				<tr>
 					<td>{{ data.cursus }}</td>
 					<td>{{ data.studielast }} | {{ data.berekening | raw}} norm. ({{ data.onderdeel_Norm }}) </td>
-					<td><a href="{{ constant('BASE') }}/docent/{{ id }}/overzicht/details/{{data.user_Id}}-{{ weeknr }}-{{ jaar }}-{{ cursus_Id }}">Details</a></td>
 				</tr>
 				{% endfor %}				
 			</tbody>

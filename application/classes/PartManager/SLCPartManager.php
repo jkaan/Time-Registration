@@ -36,7 +36,7 @@ class SLCPartManager {
 	public function slcPage($id) {
 		$result = getUserDetails($id);
 		// Gets the courses
-		$statement = $this->db->prepare('SELECT cursus_Name, cursus_Code, user_Name
+		$statement = $this->db->prepare('SELECT cursus_Id, cursus_Name, cursus_Code, user_Name
 			FROM Cursus as C, User as U
 			WHERE C.User_user_Id = U.user_Id
 			AND C.actief = :actief');
@@ -71,7 +71,7 @@ class SLCPartManager {
 			$statement->bindParam('user_id', $_POST['docent']);
 			
 			if($statement->execute()) {
-				$this->slim->redirect('/urenregistratie/application/index.php/slc/' . $id);
+				$this->slim->redirect(BASE . '/slc/' . $id);
 			}
 		} else {
 			if(isLogged($id)){
@@ -106,7 +106,7 @@ class SLCPartManager {
 			$statement->bindParam('cursusId', $courseId);
 			
 			if($statement->execute()) {
-				$this->slim->redirect('/urenregistratie/application/index.php/slc/' . $id);
+				$this->slim->redirect(BASE . '/slc/' . $id);
 			}
 		} else {
 			if(isLogged($id)) {
@@ -140,7 +140,7 @@ class SLCPartManager {
 			$statement->bindValue('actief', 0);
 
 			if($statement->execute()) {
-				$this->slim->redirect('/urenregistratie/application/index.php/slc/' . $id);
+				$this->slim->redirect(BASE . '/slc/' . $id);
 			} else {
 				print_r($statement->errorInfo());
 			}
@@ -219,7 +219,7 @@ class SLCPartManager {
 			$statement->bindParam('userId', $_POST['studentToAdd']);
 
 			if($statement->execute()) {
-				$this->slim->redirect('/urenregistratie/application/index.php/slc/' . $id);
+				$this->slim->redirect(BASE . '/slc/' . $id);
 			}
 		}
 	}
@@ -243,7 +243,7 @@ class SLCPartManager {
 			$statement->bindParam('Rol_rol_Id', $_POST['rol']);
 
 			if($statement->execute()) {
-				$this->slim->redirect('/urenregistratie/application/index.php/slc/' . $id);
+				$this->slim->redirect(BASE . '/slc/' . $id);
 			}
 		} else {
 			if(isLogged($id)) {
@@ -284,7 +284,7 @@ class SLCPartManager {
 			$statement->bindParam('userActief', $actief);
 			$statement->bindParam('userID', $studentId);
 			if($statement->execute()) {
-				$this->slim->redirect('/urenregistratie/application/slc/' . $id);
+				$this->slim->redirect(BASE . '/slc/' . $id);
 			}
 		} else {
 			if(isLogged($id)) {
@@ -321,7 +321,7 @@ class SLCPartManager {
 			$statement->bindValue('actief', 0);
 
 			if($statement->execute()) {
-				$this->slim->redirect('/urenregistratie/application/index.php/slc/' . $id);
+				$this->slim->redirect(BASE . '/slc/' . $id);
 			} else {
 				print_r($statement->errorInfo());
 			}
