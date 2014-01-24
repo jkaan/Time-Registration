@@ -6,18 +6,34 @@ use Application\TemplateRenderer\TwigRenderer;
 use Application\Config\Database;
 use Slim\Slim;
 
+/**
+ * This class handles all the requests and responses for the student part of the application
+ *
+ * @author  Joey Kaan & Trinco Ingels
+ * @version  1.0.0
+ */
 class StudentPartManager {
 
 	private $slim;
 	private $twigRenderer;
 	private $db;
 
+	/**
+	 * Initializes this class
+	 * Sets the connection to the database, the template renderer and slim instance for routing
+	 */
 	public function __construct() {
 		$this->slim = Slim::getInstance();
 		$this->twigRenderer = new TwigRenderer();
 		$this->db = Database::getInstance();
 	}
 
+	/**
+	 * Renders the page that is showed when you login with a student account
+	 * This page shows every function that is possible to be executed as a student
+	 * @param  Integer $id Id of the student
+	 * @return Template that contains every function of a student
+	 */
 	public function studentPage($id) {
 		$result = getUserDetails($id);
 		if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
@@ -27,15 +43,14 @@ class StudentPartManager {
 			echo $this->twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
-	
-	public function installDatabase() {
-		echo 'hoi';
-	}
-	
-	public function addStudielast($id) {
-		
 
-		$sql = "INSERT INTO Uren (onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (0, :datum, :studielast, :user_id)";
+	/**
+	 * This method is responsible for adding the hours of a student in the database
+	 * Onnodig?
+	 * @param Integer $id Id of the student
+	 */
+	public function addStudielast($id) {
+		$sql = "INSERT INTO Uren (onderdeel_Id, uren_Date, uren_Studielast, User_user_Id) VALUES (0, :datum, :studielast, :user_id)"; // De 0 hier klopt toch wel niet?
 		$statement = $this->db->prepare($sql);	
 		$statement->bindParam('datum', $_POST['date']);
 		$statement->bindParam('studielast', $_POST['studielast']);
@@ -43,8 +58,13 @@ class StudentPartManager {
 		$statement->execute();
 	}
 
+	/**
+	 * Renders the page where a student can see all his hours
+	 * Also responsible for adding new hours to the database
+	 * @param  Integer $id Id of the student
+	 * @return Template that shows all of a student's hours.
+	 */
 	public function urenPage($id) {
-		
 		if(isLogged($id)){
 			if(!empty($_POST)){
 				$sql = "INSERT INTO Uren (Onderdeel_onderdeel_Id, uren_Date, uren_Studielast, User_user_Id, uren_Created) VALUES (:onderdeel, :datum, :studielast, :user_id, NOW())";
@@ -54,19 +74,24 @@ class StudentPartManager {
 				$statement->bindParam('studielast', $_POST['studielast']);
 				$statement->bindParam('user_id', $id);
 				$statement->execute();
-
 			}			
 			$statement = $this->db->prepare("SELECT cursus_Id, cursus_Name FROM Cursus WHERE actief <> 0");
 			$statement->execute();
 			$coursearray = $statement->fetchALL(\PDO::FETCH_ASSOC);
-			echo $this->twigRenderer->renderTemplate('uren.twig', array('id' => $id, 'courses' => $coursearray));
 
+			echo $this->twigRenderer->renderTemplate('uren.twig', array('id' => $id, 'courses' => $coursearray));
 		}
 		else {		
 			echo $this->twigRenderer->renderTemplate('noaccess.twig'); 
 		}
 	}
 
+	/**
+	 * Renders a profile of a specific student
+	 * This method also enables you to change your password
+	 * @param  Integer $id Id of the student
+	 * @return Template that displays profile of a student
+	 */
 	public function studentProfiel($id){
 		$result = getUserDetails($id);
 		$error = false;
@@ -80,18 +105,22 @@ class StudentPartManager {
 					$statement = $this->db->prepare($sql);
 					$statement->bindParam('pass', $newpass);
 					$statement->execute();
-				}else{
+				} else {
 					$error = true;
 				}
 			}
 			echo $this->twigRenderer->renderTemplate('profiel.twig', array('name' => $result['user_Name'], 'code' => $result['user_Code'], 'email' => $result['user_email'], 'klas' => $result['user_Klas'], 'id' => $id, 'online' => $error));
-
 		}	
 		else {
 			echo $this->twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
 
+	/**
+	 * Renders the page where a student can see all of the feedback he received from one or more of his teachers
+	 * @param  Integer $id Id of the student
+	 * @return Template that shows all of the feedback the student received
+	 */
 	public function studentFeedback($id) {
 		$result = getUserDetails($id);
 		if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
@@ -105,6 +134,12 @@ class StudentPartManager {
 		}
 	}
 
+	/**
+	 * Renders a specific item on the feedback page
+	 * @param  Integer $id     Id of the student
+	 * @param  Integer $itemId Specific item on the feedback page
+	 * @return Template that shows a specific item of the feedback page
+	 */
 	public function studentFeedbackItem($id, $itemId) {
 		$result = getUserDetails($id);
 		if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
@@ -119,6 +154,11 @@ class StudentPartManager {
 		}
 	}
 
+	/**
+	 * Renders a complete display of all this student's hours.
+	 * @param  Integer $id Id of the student
+	 * @return Template that shows a complete display of all this student's hours.
+	 */
 	public function studentOverzicht($id){
 		$result = getUserDetails($id);
 		if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
@@ -164,8 +204,16 @@ class StudentPartManager {
 		}
 	}
 
+	/**
+	 * Renders a specific part out of the complete display of hours
+	 * This result is based on the course
+	 * @param  Integer $id       Id of the student
+	 * @param  Integer $weeknr   Week number to zoom in on
+	 * @param  Integer $jaar     Year to zoom in on
+	 * @param  Integer $cursusid Id of the course
+	 * @return Template that shows a specific part of the complete display of hours based on a course
+	 */
 	public function studentOverzichtDetail($id, $weeknr, $jaar, $cursusid){
-		
 		$result = getUserDetails($id);
 		if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
 			$startandenddate = getStartAndEndDate($weeknr, $jaar);	
@@ -200,8 +248,16 @@ class StudentPartManager {
 		}
 	}
 
+	/**
+	 * Renders a specific part out of the complete display of hours
+	 * This result is based on the assignment
+	 * @param  Integer $id       Id of the student
+	 * @param  Integer $weeknr   Week number to zoom in on
+	 * @param  Integer $jaar     Year to zoom in on
+	 * @param  Integer $cursusid Id of the course
+	 * @return Template that shows a specific part of the complete display of hours based on an assignment
+	 */
 	public function studentOverzichtDetailOnderdeel($id, $weeknr, $jaar, $onderdeelid){
-		
 		$result = getUserDetails($id);
 		if((isLogged($id)) && ($result['Rol_rol_Id'] == 1)) {
 			$startandenddate = getStartAndEndDate($weeknr, $jaar);	

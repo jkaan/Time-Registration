@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * This file is responsible for getting all of the assignments of a specific course
+ * It's used while a student fills in it's hours
+ *
+ * A student chooses a course, after he clicks on the course this file is used to get all of the assignments
+ * Then he can choose an assignment and fill in the rest.
+ */
+
 require "../vendor/autoload.php";
 
 use Application\Config\Database;

@@ -1,9 +1,15 @@
 <?php
 
+/**
+ * These functions are used by the components of the application to calculate all the neccesary data
+ *
+ * Also checks if a user is logged in, get user details of a specific user and updating the time that the user is logged in
+ */
+
 use Application\Config\Database;
 
 $db = Database::getInstance();
- 
+
 function getStartAndEndDate($week, $year)
 {
 

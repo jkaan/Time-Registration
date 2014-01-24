@@ -6,12 +6,24 @@ use Application\TemplateRenderer\TwigRenderer;
 use Application\Config\Database;
 use Slim\Slim;
 
+/**
+ * This class represents the whole application
+ * 
+ * Contains all of the routes used by Slim to generate the correct pages
+ *
+ * @author Joey Kaan & Trinco Ingels
+ * @version  1.0.1
+ */
 class Application {
 	private $slim;
 	private $twigRenderer;
 	private $db;
 	private $routes;
 
+	/**
+	 * Initializes all of the dependencies, Slim, TwigRenderer and the database connection
+	 * Also sets all of the routes
+	 */
 	public function __construct() {
 		$this->slim = Slim::getInstance();
 		$this->twigRenderer = new TwigRenderer();
@@ -19,18 +31,20 @@ class Application {
 		$this->setRoutes();
 	}
 
-	public function startPage() {
-		
-		echo $this->twigRenderer->renderTemplate('index.twig', array('page' => 'Start Page'));
-	}
-
+	/**
+	 * Responsible for rendering the login page
+	 * @return Template that shows the login page
+	 */
 	public function loginPage() {
-		
 		echo $this->twigRenderer->renderTemplate('login.twig', array('page' => 'Start Page'));
 	}
 
+	/**
+	 * When you login on the login page and click submit this method handles the request
+	 *
+	 * Checks for a valid username and password and redirects you to a page based on the role the user has (student, SLC, teacher)
+	 */
 	public function loginUser() {
-		
 		$statement = $this->db->prepare("SELECT rol_Naam, user_Id, user_Name FROM User, Rol WHERE user_Name = :username AND user_Pass = :password AND Rol.rol_Id = User.Rol_rol_Id AND actief <> 0 ");
 		$statement->bindParam('username', $_POST['username']);
 		$statement->bindParam('password', $_POST['password']);
@@ -58,27 +72,26 @@ class Application {
 		}
 	}
 
-	public function logOut($id){
-		
-		
-		if(isLogged($id)){
+	/**
+	 * Responsible for logging out
+	 * @param  Integer $id Id of the user
+	 */
+	public function logOut($id) {
+		if(isLogged($id)) {
 			$date = date('Y-m-d G:i:s');
 			$statement = $this->db->prepare("UPDATE User SET user_Online = null WHERE user_Id= " . $id);
 			$statement->execute();
 			$this->slim->redirect(BASE . '/login');
-		}else{
+		} else {
 			echo $this->twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
 
+	/**
+	 * Sets all the routes used by the Slim framework
+	 */
 	private function setRoutes() {
-		$this->routes = array(
-			array(
-				'class' => 'Application\\Application',
-				'method' => 'get',
-				'URL' => '/',
-				'action' => 'startPage',
-				),				
+		$this->routes = array(			
 			array(
 				'class' => 'Application\\Installation\\Install',
 				'method' => 'get',
@@ -370,6 +383,10 @@ class Application {
 			);
 }
 
+/**
+ * Gets all of the routes used by Slim
+ * @return Array that contains all of the Slim routes
+ */
 public function getRoutes() {
 	return $this->routes;
 }

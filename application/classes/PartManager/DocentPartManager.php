@@ -6,18 +6,33 @@ use Application\TemplateRenderer\TwigRenderer;
 use Application\Config\Database;
 use Slim\Slim;
 
+/**
+ * This class handles all the requests and responses for the teacher part of the application
+ *
+ * @author  Joey Kaan & Trinco Ingels
+ * @version  1.0.0
+ */
 class DocentPartManager {
 
 	private $slim;
 	private $twigRenderer;
 	private $db;
 
+	/**
+	 * Initializes this class
+	 * Sets the connection to the database, the template renderer and slim instance for routing
+	 */
 	public function __construct() {
 		$this->slim = Slim::getInstance();
 		$this->twigRenderer = new TwigRenderer();
 		$this->db = Database::getInstance();
 	}
 
+	/**
+	 * Renders the page you will see if you login as a teacher
+	 * @param  Integer $id Id of the teacher
+	 * @return The template of the teacher's page
+	 */
 	public function docentPage($id) {
 		$result = getUserDetails($id);
 		if((isLogged($id)) && ($result['Rol_rol_Id'] == 2)) {
@@ -28,6 +43,12 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template the teachers sees when he clicks on 'Overzicht'
+	 * This template renders all the hours the students that are enrolled in his courses have filled in
+	 * @param  Integer $id Id of the teacher
+	 * @return Template of the hours page
+	 */
 	public function docentOverzicht($id){
 		$result = getUserDetails($id);
 		if((isLogged($id))) {
@@ -73,6 +94,11 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template which displays all the courses that this teacher teaches
+	 * @param  Integer $id Id of the teacher
+	 * @return Template with all the courses this teacher teaches
+	 */
 	public function docentCursusBeheer($id) {
 		if(isLogged($id)) {
 
@@ -90,11 +116,14 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template which shows all of the assignments in a specific course
+	 * @param  Integer $id       Id of the teacher
+	 * @param  Integer $cursusId Id of the course
+	 * @return Template that shows the assignments of a specific course
+	 */
 	public function cursusOnderdelen($id, $cursusId) {
-
 		if(isLogged($id)) {
-
-
 			// First part, gets the corresponding course
 			$statement = $this->db->prepare('SELECT *
 				FROM Cursus
@@ -117,11 +146,13 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Handles the request to add a assignment to a course
+	 * @param Integer $id       Id of the teacher
+	 * @param Integer $cursusId Id of the course
+	 */
 	public function addOnderdeelToCursus($id, $cursusId) {
-
 		if(isLogged($id)) {
-
-
 			$statement = $this->db->prepare('INSERT INTO Onderdeel (onderdeel_Name, onderdeel_Norm, Cursus_cursus_Id) VALUES (:onderdeelNaam, :onderdeelNorm, :cursusId)');
 			$statement->bindParam('onderdeelNaam', $_POST['onderdeelNaam']);
 			$statement->bindParam('onderdeelNorm', $_POST['onderdeelNorm']);
@@ -133,12 +164,16 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template neccesary to edit an assignment of a specific course
+	 * @param  Integer $id          Id of the teacher
+	 * @param  Integer $cursusId    Id of the course
+	 * @param  Integer $onderdeelId Id of the assignment
+	 * @return Template that allows you to edit 
+	 */
 	public function editOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
 		if(isLogged($id)) {
 			if(empty($_POST)) {
-
-
-
 				$statement = $this->db->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 				$statement->bindParam('onderdeelId', $onderdeelId);
 				$statement->execute();
@@ -146,8 +181,6 @@ class DocentPartManager {
 
 				echo $this->twigRenderer->renderTemplate('editonderdeel.twig', array('id' => $id, 'cursusId' => $cursusId, 'onderdeelId' => $onderdeelId, 'onderdeel' => $onderdeel));
 			} else {
-
-
 				$statement = $this->db->prepare('UPDATE Onderdeel SET onderdeel_Name = :onderdeelNaam, onderdeel_Norm = :onderdeelNorm WHERE onderdeel_Id = :onderdeelId');
 				$statement->bindParam('onderdeelNaam', $_POST['onderdeelNaam']);
 				$statement->bindParam('onderdeelNorm', $_POST['onderdeelNorm']);
@@ -164,12 +197,16 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template neccesary for removing an assignment from a course
+	 * @param  Integer $id          Id of the teacher
+	 * @param  Integer $cursusId    Id of the course
+	 * @param  Integer $onderdeelId Id of the assignment
+	 * @return 
+	 */
 	public function removeOnderdeelFromCursus($id, $cursusId, $onderdeelId) {
 		if(isLogged($id)) {
 			if(empty($_POST)) {
-
-
-
 				$statement = $this->db->prepare('SELECT * FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 				$statement->bindParam('onderdeelId', $onderdeelId);
 				$statement->execute();
@@ -177,22 +214,27 @@ class DocentPartManager {
 
 				echo $this->twigRenderer->renderTemplate('removeonderdeel.twig', array('id' => $id, 'cursusId' => $cursusId, 'onderdeelId' => $onderdeelId, 'onderdeel' => $onderdeel));
 			} else {
-
-
 				$statement = $this->db->prepare('DELETE FROM Onderdeel WHERE onderdeel_Id = :onderdeelId');
 				$statement->bindParam('onderdeelId', $onderdeelId);
 
 				if($statement->execute()) {
-
 					$this->slim->redirect('/urenregistratie/application/index.php/docent/' . $id . '/cursus/' . $cursusId . '/onderdelen');
 				}
 			}
 		} else {
-
 			echo $this->twigRenderer->renderTemplate('noaccess.twig');
 		}
 	}
 
+	/**
+	 * Renders the template that shows a specific entry out of the hours page of the teacher
+	 * @param  Integer $id       Id of the teacher
+	 * @param  Integer $userid   Id of the user 
+	 * @param  Integer $weeknr   Week number
+	 * @param  Integer $jaar     The year
+	 * @param  Integer $cursusid Id of the course
+	 * @return Template of the specific entry based on the data provided
+	 */
 	public function docentOverzichtDetail($id, $userid, $weeknr, $jaar, $cursusid){
 		$result = getUserDetails($id);
 		if((isLogged($id))) {
@@ -250,6 +292,13 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Calculates and returns the hours of one user up until the date provided
+	 * @param  Integer $userid   Id of the user
+	 * @param  Integer $lastdate Last date
+	 * @param  Integer $cursusid Id of the course
+	 * @return The total of hours worked up until the date provided
+	 */
 	public function totaalTotDatum($userid, $lastdate, $cursusid){
 		$statement = $this->db->prepare("SELECT 
 			SUM(uren_Studielast) AS totaalOnderdeel
@@ -272,6 +321,14 @@ class DocentPartManager {
 		return $statement->fetchAll(\PDO::FETCH_ASSOC);;
 	}
 
+	/**
+	 * Renders the template needed to enable the teacher to add feedback to a specific student's hours
+	 * @param  Integer $id       Id of the teacher
+	 * @param  Integer $userid   Id of the user
+	 * @param  Integer $weeknr   Weeknumber
+	 * @param  Integer $cursusid Id of the course
+	 * @return Template that allows a teacher to add feedback to a student's hours
+	 */
 	public function docentFeedback($id, $userid, $weeknr, $cursusid){
 		if((isLogged($id))) {
 			if(!empty($_POST)){
@@ -308,6 +365,13 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template which enables a teacher to see a student's profile
+	 * 
+	 * A teacher can only see a student's profile if the student is enrolled in a course he teaches
+	 * @param  Integer $id Id of the teacher
+	 * @return Template which enables a teacher to see a student's profile
+	 */
 	public function gebruikersOverzicht($id) {
 		if(isLogged($id)) {
 			$sql = "SELECT User.user_Name, User.user_Id
@@ -325,6 +389,12 @@ class DocentPartManager {
 		}
 	}
 
+	/**
+	 * Renders the template that shows a profile of a student
+	 * @param  Integer $id          Id of the teacher
+	 * @param  Integer $gebruikerId Id of the user
+	 * @return Template that shows a profile of a student
+	 */
 	public function profielVanStudent($id, $gebruikerId) {
 		if(isLogged($id)) {
 			$sql = "SELECT * FROM User WHERE user_Id = :userId";
