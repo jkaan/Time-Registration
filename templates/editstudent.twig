@@ -43,7 +43,7 @@
 	</select>
 	
 	<!-- Veld voor Student Actief	-->
-	<label><input type="checkbox" name="actief" {% if student.actief == '1' %} checked {% endif %}/>Actief </label>
+	<label for="actief"><input type="checkbox" name="actief" id="actief" {% if student.actief == '1' %} checked {% endif %}/>Actief </label>
 	
 	<!-- Submit knop -->
 	<input type="submit" value="Opslaan" data-theme="b">

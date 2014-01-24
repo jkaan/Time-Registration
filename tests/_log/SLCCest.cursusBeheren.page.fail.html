@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+	<link rel="stylesheet" href="http://localhost/sop/urenregistratie/templates/layouts/customcss.css" />
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+	<script src="http://localhost/sop/urenregistratie/templates/js/printThis.js"></script>
+	
+	<script type='text/javascript'>
+
+	function printOverzicht() 
+	{
+		var idName = $(".print").attr('rel');
+		$("#"+idName).printThis();
+	}
+	</script>
+</head>
+<body>
+	
+<div data-role="header">
+	<h1>
+		SLC
+	</h1>
+</div>
+
+
+	<a href="http://localhost/urenregistratie/application/index.php/slc/3/overzicht" data-role="button">Overzicht</a>
+<div data-theme="a" data-role="collapsible-set">
+
+	<div id="cursusbeheer" name="cursusbeheer" data-role="collapsible">
+		<h3>Cursus beheer</h3>
+		<h4>Cursus toevoegen</h4>
+		<a href="http://localhost/urenregistratie/application/index.php/slc/3/course/add" data-role="button">Nieuwe course</a>
+		<h4>Cursus wijzigen</h4>
+		<table data-role="table" id="cursustabel" data-mode="columntoggle" class="ui-responsive table-stroke">
+			<thead>
+				<tr>
+					<th>Cursus Naam</th>
+					<th data-priority="1">Cursus Code</th>
+					<th data-priority="2">Docent</th>
+					<th data-priority="3">Wijzigen</th>
+					<th data-priority="4">Verwijderen</th>
+				</tr>
+			</thead>
+			<tbody>
+								<tr>
+					<td>SOP</td>
+					<td>SOP1234</td>
+					<td>Student</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/1" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/1" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>test</td>
+					<td>test123</td>
+					<td>Docent</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/2" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/2" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>JoeyCursus</td>
+					<td>JC-1234N</td>
+					<td>Docent</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/39" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/39" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>Test</td>
+					<td>test123450</td>
+					<td>Docent</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/41" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/41" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>123456789</td>
+					<td></td>
+					<td>Docent</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/44" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/44" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>123456789</td>
+					<td></td>
+					<td>Docent</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/45" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/45" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>123456789</td>
+					<td></td>
+					<td>Docent</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/46" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/46" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>slc1234</td>
+					<td>slc1234</td>
+					<td>Slc</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/38" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/38" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>TestJoey</td>
+					<td>123Test</td>
+					<td>Slc</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/edit/40" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/remove/40" data-role="button">&#10004;</a></td>
+				</tr>
+							</tbody>
+		</table>
+	</div>
+
+	<div name="gebruikersbeheer" id="gebruikersbeheer" data-role="collapsible">
+		<h3>Gebruikers Beheer</h3>
+		<h4>Gebruiker toevoegen</h4>
+		<a href="http://localhost/urenregistratie/application/index.php/slc/3/student/add" data-role="button">Nieuwe Student</a>
+		<h4>Gebruiker wijzigen</h4>
+		<table data-role="table" id="studententabel" data-mode="columntoggle" class="ui-responsive table-stroke">
+			<thead>
+				<tr>
+					<th>Naam</th>
+					<th data-priority="1">Student Code</th>
+					<th data-priority="2">Email</th>
+					<th data-priority="3">Klas</th>
+					<th data-priority="4">Rol</th>
+					<th data-priority="4">Actief</th>
+					<th data-priority="5">Wijzigen</th>
+					<th data-priority="6">Verwijderen</th>
+				</tr>
+			</thead>
+			<tbody>
+								<tr>
+					<td>student</td>
+					<td>10</td>
+					<td>student@student.nl</td>
+					<td>I12R</td>
+					<td>1</td>
+					<td>Ja </td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/edit/1" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/remove/1" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>docent</td>
+					<td>11</td>
+					<td>docent@docent.nl</td>
+					<td>I12Ra</td>
+					<td>2</td>
+					<td>Ja </td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/edit/2" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/remove/2" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>slc</td>
+					<td>12</td>
+					<td>slc@slc.nl</td>
+					<td>I12R</td>
+					<td>3</td>
+					<td>Ja </td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/edit/3" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/remove/3" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>Trinco</td>
+					<td>10</td>
+					<td>trinco@trinco.nl</td>
+					<td>I12R</td>
+					<td>1</td>
+					<td> Nee</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/edit/4" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/remove/4" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>TestSlc</td>
+					<td>123</td>
+					<td>test@test.nl</td>
+					<td>test</td>
+					<td>3</td>
+					<td>Ja </td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/edit/6" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/remove/6" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>test</td>
+					<td>20</td>
+					<td>lala@hz.nl</td>
+					<td>123456</td>
+					<td>1</td>
+					<td> Nee</td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/edit/7" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/remove/7" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>I12R</td>
+					<td>0</td>
+					<td></td>
+					<td></td>
+					<td>1</td>
+					<td>Ja </td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/edit/8" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/remove/8" data-role="button">&#10004;</a></td>
+				</tr>
+								<tr>
+					<td>I12R</td>
+					<td>0</td>
+					<td></td>
+					<td></td>
+					<td>1</td>
+					<td>Ja </td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/edit/9" data-role="button">&#10004;</a></td>
+					<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/student/remove/9" data-role="button">&#10004;</a></td>
+				</tr>
+							</tbody>
+		</table>
+		<div data-role="collapsible">
+			<h3>Gebruiker koppelen aan cursus</h3>
+			<table data-role="table" id="studentencursustabel" data-mode="columntoggle" class="ui-responsive table-stroke">
+				<thead>
+					<tr>
+						<th>Cursus Naam</th>
+						<th>Cursus Code</th>
+						<th>Studenten</th>
+					</tr>
+				</thead>
+				<tbody>
+										<tr>
+						<td>SOP</td>
+						<td>SOP1234</td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/1">Zie allen</a></td>
+					</tr>
+										<tr>
+						<td>test</td>
+						<td>test123</td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/2">Zie allen</a></td>
+					</tr>
+										<tr>
+						<td>JoeyCursus</td>
+						<td>JC-1234N</td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/39">Zie allen</a></td>
+					</tr>
+										<tr>
+						<td>Test</td>
+						<td>test123450</td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/41">Zie allen</a></td>
+					</tr>
+										<tr>
+						<td>123456789</td>
+						<td></td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/44">Zie allen</a></td>
+					</tr>
+										<tr>
+						<td>123456789</td>
+						<td></td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/45">Zie allen</a></td>
+					</tr>
+										<tr>
+						<td>123456789</td>
+						<td></td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/46">Zie allen</a></td>
+					</tr>
+										<tr>
+						<td>slc1234</td>
+						<td>slc1234</td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/38">Zie allen</a></td>
+					</tr>
+										<tr>
+						<td>TestJoey</td>
+						<td>123Test</td>
+						<td><a href="http://localhost/urenregistratie/application/index.php/slc/3/course/students/40">Zie allen</a></td>
+					</tr>
+									</tbody>
+			</table>
+		</div>
+
+	</div>
+
+</div>
+<a href="http://localhost/urenregistratie/application/index.php/3/logout" data-role="button">Uitloggen</a>
+
+</body>
+</html>

@@ -14,7 +14,7 @@
 <a href="{{ constant('BASE') }}/slc/{{ id }}/overzicht" data-role="button">Overzicht</a>
 <div data-theme="a" data-role="collapsible-set">
 
-	<div data-role="collapsible">
+	<div id="cursusbeheer" name="cursusbeheer" data-role="collapsible">
 		<h3>Cursus beheer</h3>
 		<h4>Cursus toevoegen</h4>
 		<a href="{{ constant('BASE') }}/slc/{{ id }}/course/add" data-role="button">Nieuwe course</a>
@@ -43,7 +43,7 @@
 		</table>
 	</div>
 
-	<div data-role="collapsible">
+	<div name="gebruikersbeheer" id="gebruikersbeheer" data-role="collapsible">
 		<h3>Gebruikers Beheer</h3>
 		<h4>Gebruiker toevoegen</h4>
 		<a href="{{ constant('BASE') }}/slc/{{ id }}/student/add" data-role="button">Nieuwe Student</a>
